@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🌸 Celebrating Anagha & Atharva</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root {
+  --pink:#FF6B9D;--pink-light:#FFB3CC;--pink-pale:#FFF0F5;
+  --blue:#60A5FA;--blue-light:#BFDBFE;--blue-pale:#EFF6FF;
+  --gold:#FFD700;--gold-dark:#E6B800;
+  --purple:#C084FC;--mint:#6EE7B7;
+  --bg:#FFF5F9;--text:#2D1B33;--text-light:#7C5C8A;
+  --white:#FFFFFF;--shadow:0 8px 32px rgba(255,107,157,0.18);--radius:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;color:var(--text);overflow-x:hidden;}
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;
+  background:radial-gradient(circle at 10% 20%,rgba(255,107,157,0.08) 0%,transparent 50%),
+  radial-gradient(circle at 90% 80%,rgba(96,165,250,0.07) 0%,transparent 50%),
+  radial-gradient(circle at 50% 50%,rgba(255,215,0,0.04) 0%,transparent 70%);
+  pointer-events:none;z-index:0;}
+.page{position:relative;z-index:1;min-height:100vh;}
+
+.brand-header{text-align:center;padding:20px 16px 10px;}
+.brand-header .crown{font-size:2rem;animation:bounce 2s infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.brand-title{font-family:'Playfair Display',serif;font-size:clamp(1.3rem,5vw,2.1rem);font-weight:900;
+  background:linear-gradient(135deg,var(--pink),var(--purple),var(--blue));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.2;}
+.brand-sub{font-size:0.82rem;color:var(--text-light);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-top:4px;}
+.flowers{font-size:1.1rem;letter-spacing:4px;margin-top:4px;}
+
+.card{background:var(--white);border-radius:var(--radius);padding:24px 20px;margin:12px 16px;
+  box-shadow:var(--shadow);border:1.5px solid rgba(255,107,157,0.1);}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 28px;
+  border-radius:50px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;
+  cursor:pointer;border:none;transition:all 0.2s;width:100%;margin-top:10px;}
+.btn-primary{background:linear-gradient(135deg,var(--pink),var(--purple));color:white;box-shadow:0 4px 20px rgba(255,107,157,0.4);}
+.btn-primary:hover{transform:translateY(-2px);}
+.btn-blue{background:linear-gradient(135deg,var(--blue),#3B82F6);color:white;box-shadow:0 4px 20px rgba(96,165,250,0.4);}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#FF9500);color:white;box-shadow:0 4px 20px rgba(255,215,0,0.4);}
+.btn-mint{background:linear-gradient(135deg,var(--mint),#10B981);color:white;box-shadow:0 4px 20px rgba(110,231,183,0.4);}
+.btn-danger{background:linear-gradient(135deg,#FF6B6B,#EE4444);color:white;box-shadow:0 4px 20px rgba(255,107,107,0.4);}
+.btn-outline{background:transparent;color:var(--pink);border:2px solid var(--pink);box-shadow:none;}
+.btn-outline-blue{background:transparent;color:var(--blue);border:2px solid var(--blue);box-shadow:none;}
+.btn:disabled{opacity:0.5;cursor:not-allowed;}
+.btn-sm{padding:10px 20px;font-size:0.88rem;width:auto;margin-top:0;}
+
+input[type=text],input[type=number],textarea,select{width:100%;padding:12px 16px;border-radius:12px;
+  border:2px solid rgba(255,107,157,0.2);font-family:'Nunito',sans-serif;font-size:0.95rem;
+  color:var(--text);background:var(--pink-pale);outline:none;transition:border 0.2s;margin-top:6px;}
+input:focus,textarea:focus,select:focus{border-color:var(--pink);}
+label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;margin-top:14px;}
+
+.child-toggle{display:flex;gap:0;border-radius:50px;overflow:hidden;border:2px solid rgba(255,107,157,0.2);margin:10px 0;}
+.child-toggle-btn{flex:1;padding:12px 8px;font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:800;
+  border:none;cursor:pointer;transition:all 0.25s;background:transparent;color:var(--text-light);}
+.child-toggle-btn.active-anagha{background:linear-gradient(135deg,var(--pink),var(--purple));color:white;}
+.child-toggle-btn.active-atharva{background:linear-gradient(135deg,var(--blue),#3B82F6);color:white;}
+.child-toggle-btn.active-both{background:linear-gradient(135deg,var(--pink),var(--blue));color:white;}
+
+.timer-ring{width:80px;height:80px;position:relative;margin:0 auto 16px;}
+.timer-ring svg{transform:rotate(-90deg);}
+.timer-ring circle{fill:none;stroke-width:6;stroke-linecap:round;}
+.timer-track{stroke:rgba(255,107,157,0.15);}
+.timer-bar{stroke:var(--pink);transition:stroke-dashoffset 1s linear;}
+.timer-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.6rem;font-weight:900;color:var(--pink);}
+.timer-text.urgent{color:#EE4444;animation:pulse 0.5s infinite;}
+@keyframes pulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.15)}}
+
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
+.choice-btn{padding:14px 10px;border-radius:14px;border:2.5px solid rgba(255,107,157,0.2);
+  background:var(--pink-pale);font-family:'Nunito',sans-serif;font-size:0.92rem;font-weight:700;
+  color:var(--text);cursor:pointer;transition:all 0.2s;text-align:center;line-height:1.3;}
+.choice-btn:hover:not(:disabled){border-color:var(--pink);background:#FFE4EF;transform:scale(1.02);}
+.choice-btn.selected{background:linear-gradient(135deg,var(--pink),var(--purple));color:white;border-color:transparent;}
+.choice-btn.correct{background:linear-gradient(135deg,var(--mint),#10B981);color:white;border-color:transparent;}
+.choice-btn.wrong{background:linear-gradient(135deg,#FF6B6B,#EE4444);color:white;border-color:transparent;}
+.choice-btn:disabled{cursor:not-allowed;}
+.choice-label{font-size:0.75rem;opacity:0.8;display:block;margin-bottom:3px;}
+
+.answer-reveal{background:linear-gradient(135deg,rgba(110,231,183,0.15),rgba(16,185,129,0.1));
+  border:2px solid var(--mint);border-radius:14px;padding:16px;margin-top:16px;text-align:center;animation:popIn 0.4s ease;}
+.answer-reveal.wrong-reveal{background:linear-gradient(135deg,rgba(255,107,107,0.1),rgba(238,68,68,0.08));border-color:#FF6B6B;}
+@keyframes popIn{0%{transform:scale(0.8);opacity:0}100%{transform:scale(1);opacity:1}}
+.reveal-icon{font-size:2.5rem;margin-bottom:6px;}
+.reveal-text{font-size:0.85rem;font-weight:700;color:var(--text-light);}
+.reveal-answer{font-size:1rem;font-weight:900;color:#059669;margin-top:4px;}
+.wrong-reveal .reveal-answer{color:#EE4444;}
+
+.q-number{font-size:0.8rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--pink);margin-bottom:8px;}
+.q-text{font-size:1.1rem;font-weight:800;line-height:1.5;color:var(--text);}
+
+.lb-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;margin-bottom:8px;
+  background:var(--pink-pale);border:1.5px solid rgba(255,107,157,0.1);}
+.lb-row.rank-1{background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,165,0,0.1));border-color:var(--gold);}
+.lb-row.rank-2{background:linear-gradient(135deg,rgba(200,200,200,0.15),rgba(180,180,180,0.1));border-color:#aaa;}
+.lb-row.rank-3{background:linear-gradient(135deg,rgba(205,127,50,0.15),rgba(180,110,40,0.1));border-color:#CD7F32;}
+.lb-rank{font-size:1.3rem;width:30px;text-align:center;font-weight:900;}
+.lb-name{flex:1;font-weight:800;font-size:0.95rem;}
+.lb-score{font-weight:900;font-size:1rem;color:var(--pink);}
+.lb-streak{font-size:0.75rem;color:var(--text-light);}
+
+.progress-bar{height:6px;background:rgba(255,107,157,0.15);border-radius:10px;margin:8px 0;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--purple));border-radius:10px;transition:width 0.5s ease;}
+
+.screen{display:none;}
+.screen.active{display:block;}
+
+.waiting-animation{display:flex;justify-content:center;gap:8px;margin:20px 0;}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--pink);animation:dotBounce 1.4s infinite ease-in-out;}
+.dot:nth-child(2){animation-delay:0.2s;background:var(--purple);}
+.dot:nth-child(3){animation-delay:0.4s;background:var(--gold);}
+@keyframes dotBounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+
+.admin-tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;flex-wrap:nowrap;}
+.tab-btn{padding:8px 13px;border-radius:50px;font-weight:800;font-size:0.78rem;border:2px solid var(--pink);
+  color:var(--pink);background:transparent;cursor:pointer;white-space:nowrap;transition:all 0.2s;}
+.tab-btn.active{background:var(--pink);color:white;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+.q-admin-row{background:var(--pink-pale);border-radius:14px;padding:14px;margin-bottom:10px;border:1.5px solid rgba(255,107,157,0.15);}
+
+/* ---- PROJECTOR ---- */
+.projector-overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:2000;
+  display:none;flex-direction:column;align-items:center;justify-content:center;padding:40px;}
+.projector-overlay.active{display:flex;}
+.proj-quiz-bg{background:linear-gradient(135deg,#1a0a2e,#2d1b33);}
+.proj-wishes-bg{background:linear-gradient(160deg,#0d1b2e,#1b2540,#2e1b3a);}
+.proj-close-btn{position:fixed;top:20px;right:20px;background:rgba(255,107,157,0.3);
+  border:none;color:white;font-size:1.5rem;width:44px;height:44px;border-radius:50%;
+  cursor:pointer;z-index:2001;display:flex;align-items:center;justify-content:center;}
+.proj-participants{position:fixed;top:20px;left:20px;color:rgba(255,255,255,0.5);font-size:0.85rem;font-weight:700;}
+.proj-brand{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--pink);font-weight:900;margin-bottom:18px;text-align:center;}
+.proj-q-num{font-size:1rem;color:rgba(255,255,255,0.45);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;}
+.proj-timer{font-size:3rem;font-weight:900;color:var(--gold);margin-bottom:18px;font-family:'Playfair Display',serif;}
+.proj-timer.urgent{color:#FF6B6B;animation:pulse 0.5s infinite;}
+.proj-q-text{font-size:clamp(1.4rem,3vw,2.4rem);font-weight:900;color:white;text-align:center;line-height:1.4;margin-bottom:28px;max-width:800px;}
+.proj-choices{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:900px;width:100%;}
+.proj-choice{background:rgba(255,255,255,0.08);border:2px solid rgba(255,107,157,0.3);border-radius:16px;
+  padding:20px;color:white;font-weight:700;font-size:clamp(1rem,2vw,1.3rem);text-align:center;line-height:1.4;transition:all 0.5s;}
+.proj-choice.correct{background:rgba(110,231,183,0.25);border-color:var(--mint);}
+
+/* ---- WISH SLIDESHOW ---- */
+.wish-slide-wrap{text-align:center;max-width:860px;width:100%;animation:fadeSlide 0.7s ease;}
+@keyframes fadeSlide{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:translateY(0)}}
+.wish-slide-photo{width:160px;height:160px;border-radius:50%;object-fit:cover;border:5px solid var(--pink);margin:0 auto 18px;display:block;}
+.wish-slide-photo.atharva-ph{border-color:var(--blue);}
+.wish-slide-for-tag{font-size:0.85rem;letter-spacing:3px;text-transform:uppercase;font-weight:800;margin-bottom:8px;}
+.wish-slide-for-tag.tag-anagha{color:var(--pink);}
+.wish-slide-for-tag.tag-atharva{color:var(--blue);}
+.wish-slide-for-tag.tag-both{color:var(--gold);}
+.wish-slide-sender{font-size:1rem;font-weight:800;color:rgba(255,255,255,0.6);margin-bottom:16px;}
+.wish-slide-text{font-family:'Playfair Display',serif;font-style:italic;
+  font-size:clamp(1.2rem,2.8vw,2rem);color:white;line-height:1.65;max-width:700px;margin:0 auto;}
+.wish-slide-type{display:inline-block;padding:4px 14px;border-radius:50px;font-size:0.75rem;font-weight:800;
+  margin-bottom:12px;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);}
+
+.wish-dots-bar{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:6px;}
+.wdot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.25);transition:all 0.3s;}
+.wdot.on{width:22px;border-radius:4px;background:var(--pink);}
+.wish-nav-btn{position:fixed;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.1);
+  border:none;color:white;font-size:2rem;width:48px;height:48px;border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:background 0.2s;}
+.wish-nav-btn:hover{background:rgba(255,255,255,0.22);}
+.wish-nav-prev{left:16px;}
+.wish-nav-next{right:16px;}
+.proj-toolbar{position:fixed;bottom:20px;right:20px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
+.ptool-btn{padding:7px 14px;border-radius:50px;border:1.5px solid rgba(255,255,255,0.25);
+  color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.08);font-weight:800;font-size:0.78rem;cursor:pointer;}
+.ptool-btn:hover{background:rgba(255,255,255,0.18);}
+.ptool-btn.on{background:var(--pink);border-color:var(--pink);color:white;}
+
+/* ---- WISH CARD (player & admin) ---- */
+.wish-card{border-radius:16px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden;}
+.wish-card.for-anagha{background:linear-gradient(135deg,rgba(255,107,157,0.07),rgba(192,132,252,0.05));border:1.5px solid rgba(255,107,157,0.18);}
+.wish-card.for-atharva{background:linear-gradient(135deg,rgba(96,165,250,0.07),rgba(59,130,246,0.05));border:1.5px solid rgba(96,165,250,0.18);}
+.wish-card.for-both{background:linear-gradient(135deg,rgba(255,107,157,0.05),rgba(96,165,250,0.05));border:1.5px solid rgba(192,132,252,0.2);}
+.wish-card-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.wish-thumb{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2.5px solid var(--pink-light);flex-shrink:0;}
+.wish-thumb.atharva-t{border-color:var(--blue-light);}
+.wish-sender-name{font-weight:800;font-size:0.95rem;}
+.wish-for-label{font-size:0.72rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;display:block;margin-top:2px;}
+.wish-for-label.a-label{color:var(--pink);}
+.wish-for-label.at-label{color:var(--blue);}
+.wish-for-label.b-label{color:var(--purple);}
+.wish-body{font-size:0.9rem;line-height:1.6;color:var(--text);font-style:italic;}
+.wish-type-pill{position:absolute;top:10px;right:10px;font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:50px;}
+.type-wish{background:rgba(255,107,157,0.15);color:var(--pink);}
+.type-blessing{background:rgba(255,215,0,0.18);color:var(--gold-dark);}
+.type-prediction{background:rgba(192,132,252,0.18);color:#7c3aed;}
+.wish-ts{margin-top:6px;font-size:0.7rem;color:var(--text-light);}
+
+/* ---- PHOTO UPLOAD ---- */
+.photo-zone{border:2.5px dashed rgba(255,107,157,0.35);border-radius:16px;padding:20px;
+  text-align:center;background:var(--pink-pale);cursor:pointer;transition:all 0.2s;margin-top:10px;min-height:100px;}
+.photo-zone:hover{border-color:var(--pink);background:#FFE8F2;}
+.photo-preview-img{width:100%;max-width:200px;height:170px;object-fit:cover;border-radius:14px;
+  margin:0 auto;display:block;border:3px solid var(--pink-light);}
+.upload-action-row{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap;}
+.upl-btn{padding:10px 18px;border-radius:50px;font-weight:800;font-size:0.83rem;cursor:pointer;border:none;display:flex;align-items:center;gap:6px;}
+.upl-camera{background:linear-gradient(135deg,var(--pink),var(--purple));color:white;}
+.upl-gallery{background:linear-gradient(135deg,var(--blue),#3B82F6);color:white;}
+.upl-clear{background:#eee;color:var(--text);}
+
+/* ---- WISH TYPE CHIPS ---- */
+.type-chips{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.type-chip{padding:8px 16px;border-radius:50px;border:2px solid rgba(255,107,157,0.25);
+  background:transparent;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.85rem;
+  cursor:pointer;transition:all 0.2s;color:var(--text-light);}
+.type-chip.sel{border-color:var(--pink);background:var(--pink);color:white;}
+
+/* ---- MISC ---- */
+.section-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--text);margin-bottom:12px;}
+.text-center{text-align:center;}.text-muted{font-size:0.82rem;color:var(--text-light);}
+.badge{display:inline-block;padding:3px 10px;border-radius:50px;font-size:0.72rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;}
+.badge-pink{background:rgba(255,107,157,0.15);color:var(--pink);}
+.badge-gold{background:rgba(255,215,0,0.2);color:var(--gold-dark);}
+.divider{height:1px;background:rgba(255,107,157,0.1);margin:14px 0;}
+.gap{height:80px;}
+.scroll-area{max-height:380px;overflow-y:auto;padding-right:4px;}
+.scroll-area::-webkit-scrollbar{width:4px;}
+.scroll-area::-webkit-scrollbar-thumb{background:var(--pink-light);border-radius:10px;}
+.participant-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(110,231,183,0.15);
+  border:1.5px solid var(--mint);border-radius:50px;padding:6px 14px;font-size:0.82rem;font-weight:800;color:#059669;margin:8px auto;width:fit-content;}
+.setup-banner{background:linear-gradient(135deg,rgba(255,215,0,0.12),rgba(255,165,0,0.08));border:2px solid var(--gold);
+  border-radius:14px;padding:14px 16px;margin-bottom:12px;font-size:0.85rem;line-height:1.75;}
+.setup-banner strong{color:var(--gold-dark);}
+#qrcode{background:white;padding:12px;border-radius:12px;display:inline-block;}
+.score-circle{width:110px;height:110px;border-radius:50%;margin:0 auto 14px;
+  background:linear-gradient(135deg,var(--pink),var(--purple));
+  display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 30px rgba(255,107,157,0.4);}
+.score-num{font-size:2rem;font-weight:900;color:white;line-height:1;}
+.score-label{font-size:0.68rem;color:rgba(255,255,255,0.8);font-weight:700;}
+.confetti{font-size:2rem;letter-spacing:4px;margin:8px 0;}
+.memory-banner{background:linear-gradient(135deg,rgba(255,107,157,0.08),rgba(96,165,250,0.07));
+  border-radius:16px;padding:18px;text-align:center;border:1.5px solid rgba(255,107,157,0.12);margin-bottom:4px;}
+.children-row{display:flex;justify-content:center;gap:24px;margin:12px 0;}
+.child-av .emoji{font-size:3rem;}
+.child-av .cname{font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;margin-top:4px;}
+.cname-a{color:var(--pink);}
+.cname-at{color:var(--blue);}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.filter-chip{padding:6px 14px;border-radius:50px;border:2px solid rgba(255,107,157,0.2);
+  background:transparent;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.78rem;cursor:pointer;color:var(--text-light);transition:all 0.2s;}
+.filter-chip.fa{background:var(--pink);border-color:var(--pink);color:white;}
+.filter-chip.fat{background:var(--blue);border-color:var(--blue);color:white;}
+.filter-chip.fgen{background:var(--text);border-color:var(--text);color:white;}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);
+  background:var(--text);color:white;padding:12px 24px;border-radius:50px;font-weight:700;font-size:0.9rem;
+  z-index:9999;transition:transform 0.3s;white-space:nowrap;max-width:90vw;text-align:center;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.spinner{display:inline-block;width:18px;height:18px;border:3px solid rgba(255,255,255,0.3);
+  border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- ===== QUIZ PROJECTOR ===== -->
+<div class="projector-overlay proj-quiz-bg" id="projectorView">
+  <button class="proj-close-btn" onclick="closeProjector()">✕</button>
+  <div class="proj-participants" id="projParticipants">👥 0 players</div>
+  <div class="proj-brand">🌸 Celebrating Anagha &amp; Atharva ⭐</div>
+  <div class="proj-q-num" id="projQNum">Question 1 of 15</div>
+  <div class="proj-timer" id="projTimer">15</div>
+  <div class="proj-q-text" id="projQText">Waiting for quiz to start…</div>
+  <div class="proj-choices" id="projChoices"></div>
+</div>
+
+<!-- ===== WISH SLIDESHOW PROJECTOR ===== -->
+<div class="projector-overlay proj-wishes-bg" id="wishProjView">
+  <button class="proj-close-btn" onclick="closeWishProj()">✕</button>
+  <button class="wish-nav-btn wish-nav-prev" onclick="prevSlide()">&#8249;</button>
+  <button class="wish-nav-btn wish-nav-next" onclick="nextSlide()">&#8250;</button>
+  <div id="wishSlideWrap"></div>
+  <div class="wish-dots-bar" id="wishDots"></div>
+  <div class="proj-toolbar">
+    <button class="ptool-btn" onclick="setWishFilter('all',this)" id="pf_all" style="background:rgba(255,255,255,0.15);color:white;">All</button>
+    <button class="ptool-btn" onclick="setWishFilter('anagha',this)" id="pf_anagha">🌸 Anagha</button>
+    <button class="ptool-btn" onclick="setWishFilter('atharva',this)" id="pf_atharva">⭐ Atharva</button>
+    <button class="ptool-btn" id="pf_auto" onclick="toggleAutoplay()">▶ Auto</button>
+  </div>
+</div>
+
+<!-- ===== LANDING ===== -->
+<div class="page screen active" id="screenLanding">
+  <div class="brand-header">
+    <div class="crown">👑</div>
+    <div class="brand-title">Celebrating Anagha &amp; Atharva</div>
+    <div class="brand-sub">Family Quiz &amp; Memory Book</div>
+    <div class="flowers">🌸⭐🌸</div>
+  </div>
+  <div class="card">
+    <div class="memory-banner">
+      <div class="children-row">
+        <div class="child-av"><div class="emoji">👶</div><div class="cname cname-a">Anagha</div><div class="text-muted" style="font-size:0.74rem;">3 months old</div></div>
+        <div style="font-size:2rem;padding-top:14px;">💕</div>
+        <div class="child-av"><div class="emoji">⭐</div><div class="cname cname-at">Atharva</div><div class="text-muted" style="font-size:0.74rem;">Our pride &amp; joy</div></div>
+      </div>
+      <p class="text-muted" style="font-size:0.84rem;">Join the quiz &amp; leave memories for our little ones! 🌸</p>
+    </div>
+    <button class="btn btn-primary" onclick="showScreen('screenJoin')" style="margin-top:14px;">🙋 Join as Player</button>
+    <button class="btn btn-outline" onclick="showAdminLogin()" style="margin-top:8px;">🔐 Admin Login</button>
+  </div>
+  <div class="card text-center" id="qrSection" style="display:none;">
+    <div class="section-title">📲 Share this Quiz</div>
+    <p class="text-muted" style="margin-bottom:12px;">Scan to join on your phone</p>
+    <div style="display:flex;justify-content:center;margin:12px 0;"><div id="qrcode"></div></div>
+    <p class="text-muted" style="font-size:0.74rem;word-break:break-all;" id="shareUrl"></p>
+  </div>
+</div>
+
+<!-- ===== ADMIN LOGIN ===== -->
+<div class="page screen" id="screenAdminLogin">
+  <div class="brand-header"><div class="crown">👑</div><div class="brand-title">Admin Panel</div><div class="brand-sub">Quiz Master</div></div>
+  <div class="card">
+    <div class="section-title">🔐 Admin Password</div>
+    <label>Password</label>
+    <input type="text" id="adminPassInput" placeholder="Enter password" />
+    <button class="btn btn-primary" onclick="adminLogin()">Login</button>
+    <button class="btn btn-outline" onclick="showScreen('screenLanding')" style="margin-top:8px;">← Back</button>
+  </div>
+</div>
+
+<!-- ===== ADMIN DASHBOARD ===== -->
+<div class="page screen" id="screenAdmin">
+  <div class="brand-header"><div class="crown">👑</div><div class="brand-title">Admin Dashboard</div><div class="brand-sub">Quiz Master</div></div>
+  <div class="card">
+    <div class="admin-tabs">
+      <button class="tab-btn active" onclick="switchTab('tabSetup',this)">⚙️ Setup</button>
+      <button class="tab-btn" onclick="switchTab('tabQuestions',this)">❓ Questions</button>
+      <button class="tab-btn" onclick="switchTab('tabControl',this)">▶️ Control</button>
+      <button class="tab-btn" onclick="switchTab('tabLeaderboard',this)">🏆 Scores</button>
+      <button class="tab-btn" onclick="switchTab('tabWishes',this)">💌 Memories</button>
+    </div>
+
+    <!-- SETUP -->
+    <div class="tab-content active" id="tabSetup">
+      <div class="section-title">Firebase Config</div>
+      <div class="setup-banner">
+        <strong>⚡ Free Setup (5 min):</strong><br>
+        1. Go to <strong>console.firebase.google.com</strong> → New project<br>
+        2. Add Web App → copy the config values<br>
+        3. Enable <strong>Realtime Database</strong> (test mode)<br>
+        4. Enable <strong>Storage</strong> (test mode) for photos<br>
+        5. Paste values below &amp; click Save
+      </div>
+      <label>API Key</label><input type="text" id="fbApiKey" placeholder="AIza..." />
+      <label>Auth Domain</label><input type="text" id="fbAuthDomain" placeholder="project.firebaseapp.com" />
+      <label>Database URL</label><input type="text" id="fbDbUrl" placeholder="https://project-default-rtdb.firebaseio.com" />
+      <label>Project ID</label><input type="text" id="fbProjectId" placeholder="your-project-id" />
+      <label>Storage Bucket (for photos)</label><input type="text" id="fbStorageBucket" placeholder="your-project.appspot.com" />
+      <label>Admin Password</label><input type="text" id="fbAdminPass" placeholder="e.g. anagha2024" />
+      <label>Question Timer (seconds)</label><input type="number" id="fbTimeLimit" value="15" min="5" max="60" />
+      <button class="btn btn-primary" onclick="saveFirebaseConfig()">💾 Save &amp; Connect</button>
+      <div id="fbStatus" style="margin-top:10px;font-size:0.85rem;font-weight:700;text-align:center;"></div>
+    </div>
+
+    <!-- QUESTIONS -->
+    <div class="tab-content" id="tabQuestions">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div class="section-title" style="margin-bottom:0;">Questions</div>
+        <button class="btn btn-primary btn-sm" onclick="toggleAddQ()">+ Add</button>
+      </div>
+      <div id="addQForm" style="display:none;background:var(--pink-pale);border-radius:14px;padding:16px;margin-bottom:14px;">
+        <div class="section-title">New Question</div>
+        <label>Question</label><textarea id="qText" rows="2" placeholder="Enter question…"></textarea>
+        <label>Option A</label><input type="text" id="qA" placeholder="Option A" />
+        <label>Option B</label><input type="text" id="qB" placeholder="Option B" />
+        <label>Option C</label><input type="text" id="qC" placeholder="Option C" />
+        <label>Option D</label><input type="text" id="qD" placeholder="Option D" />
+        <label>Correct Answer</label>
+        <select id="qCorrect"><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button class="btn btn-primary btn-sm" onclick="saveQuestion()">💾 Save</button>
+          <button class="btn btn-outline btn-sm" onclick="el('addQForm').style.display='none'">Cancel</button>
+        </div>
+      </div>
+      <div class="scroll-area" id="questionsList"><p class="text-muted text-center">No questions yet.</p></div>
+      <button class="btn btn-gold" onclick="pushQuestionsToDb()" style="margin-top:12px;">🚀 Publish to Live Quiz</button>
+    </div>
+
+    <!-- CONTROL -->
+    <div class="tab-content" id="tabControl">
+      <div class="section-title">Quiz Control</div>
+      <div id="participantCount" class="participant-badge" style="display:flex;">👥 0 players joined</div>
+      <div id="quizStatusBadge" style="margin:8px 0;font-size:0.85rem;font-weight:700;color:var(--text-light);">Status: Not started</div>
+      <div class="divider"></div>
+      <div id="controlCurrentQ" style="background:var(--pink-pale);border-radius:14px;padding:14px;margin-bottom:12px;display:none;">
+        <div class="q-number" id="controlQNum">Question 1</div>
+        <div class="q-text" id="controlQText">—</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;" id="adminLiveCount"></div>
+        <div class="progress-bar" style="margin-top:10px;"><div class="progress-fill" id="controlProgress" style="width:0%"></div></div>
+        <div style="text-align:center;font-size:1.4rem;font-weight:900;color:var(--pink);margin-top:6px;" id="controlTimer">—</div>
+      </div>
+      <button class="btn btn-mint" onclick="startQuiz()" id="btnStartQuiz">▶️ Start Quiz</button>
+      <button class="btn btn-gold" onclick="nextQuestion()" id="btnNext" style="display:none;">⏭ Next Question</button>
+      <div class="divider"></div>
+      <button class="btn btn-primary" onclick="openProjector()">🖥 Quiz Projector</button>
+      <button class="btn btn-blue" onclick="openWishProj()" style="margin-top:8px;">💌 Memories Slideshow</button>
+      <button class="btn btn-danger" onclick="resetQuiz()" style="margin-top:8px;">🔄 Reset Quiz</button>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div class="tab-content" id="tabLeaderboard">
+      <div class="section-title">🏆 Leaderboard</div>
+      <div class="scroll-area" id="adminLeaderboard"><p class="text-muted text-center">No scores yet.</p></div>
+    </div>
+
+    <!-- WISHES / MEMORY BOOK -->
+    <div class="tab-content" id="tabWishes">
+      <div class="section-title">💌 Memory Book</div>
+      <div class="filter-row" id="adminWishFilters">
+        <button class="filter-chip fa" onclick="filterWishes('all',this)">All</button>
+        <button class="filter-chip" onclick="filterWishes('anagha',this)">🌸 Anagha</button>
+        <button class="filter-chip" onclick="filterWishes('atharva',this)">⭐ Atharva</button>
+        <button class="filter-chip" onclick="filterWishes('both',this)">💕 Both</button>
+        <button class="filter-chip" onclick="filterWishes('blessing',this)">🙏 Blessings</button>
+        <button class="filter-chip" onclick="filterWishes('prediction',this)">🔮 Predictions</button>
+        <button class="filter-chip" onclick="filterWishes('wish',this)">💫 Wishes</button>
+      </div>
+      <div id="adminWishCount" style="font-size:0.8rem;color:var(--text-light);margin-bottom:8px;font-weight:700;"></div>
+      <div class="scroll-area" id="adminWishList"><p class="text-muted text-center">No memories yet.</p></div>
+    </div>
+  </div>
+  <div class="gap"></div>
+</div>
+
+<!-- ===== JOIN ===== -->
+<div class="page screen" id="screenJoin">
+  <div class="brand-header"><div class="crown">👑</div><div class="brand-title">Celebrating Anagha &amp; Atharva</div><div class="flowers">🌸⭐🌸</div></div>
+  <div class="card">
+    <div style="font-size:2.5rem;text-align:center;margin-bottom:10px;">🎀</div>
+    <div class="section-title text-center">What's your name?</div>
+    <label>Your Name</label>
+    <input type="text" id="playerName" placeholder="e.g. Priya" maxlength="20" />
+    <button class="btn btn-primary" onclick="joinQuiz()" style="margin-top:16px;">🌸 Join the Fun!</button>
+    <button class="btn btn-outline" onclick="showScreen('screenLanding')" style="margin-top:8px;">← Back</button>
+  </div>
+</div>
+
+<!-- ===== WAITING ===== -->
+<div class="page screen" id="screenWaiting">
+  <div class="brand-header"><div class="crown">👑</div><div class="brand-title">Celebrating Anagha &amp; Atharva</div><div class="flowers">🌸⭐🌸</div></div>
+  <div class="card text-center">
+    <div style="font-size:3rem;margin-bottom:8px;">🎉</div>
+    <div class="section-title">You're in!</div>
+    <p style="font-weight:800;font-size:1.1rem;color:var(--pink);margin-bottom:4px;" id="waitingName">Hello!</p>
+    <p class="text-muted">Waiting for the quiz master to start…</p>
+    <div class="waiting-animation"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div id="waitingParticipants" class="participant-badge" style="margin:0 auto;">👥 0 players ready</div>
+  </div>
+</div>
+
+<!-- ===== QUESTION ===== -->
+<div class="page screen" id="screenQuestion">
+  <div class="brand-header" style="padding-bottom:4px;"><div class="brand-title" style="font-size:1.05rem;">🌸 Anagha &amp; Atharva Quiz ⭐</div></div>
+  <div style="margin:0 16px 6px;display:flex;align-items:center;justify-content:space-between;">
+    <div class="badge badge-pink" id="qProgressBadge">Q 1 / 15</div>
+    <div id="playerScoreBadge" class="badge badge-gold">⭐ 0 pts</div>
+  </div>
+  <div style="margin:0 16px 8px;"><div class="progress-bar"><div class="progress-fill" id="qProgressBar" style="width:0%"></div></div></div>
+  <div class="card">
+    <div class="timer-ring">
+      <svg width="80" height="80" viewBox="0 0 80 80">
+        <circle class="timer-track" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="0"/>
+        <circle class="timer-bar" cx="40" cy="40" r="34" id="timerCircle" stroke-dasharray="213.6" stroke-dashoffset="0"/>
+      </svg>
+      <div class="timer-text" id="timerText">15</div>
+    </div>
+    <div class="q-number" id="qNumLabel">QUESTION 1</div>
+    <div class="q-text" id="qTextDisplay">Loading…</div>
+    <div class="choices" id="choicesGrid"></div>
+    <div id="answerReveal" style="display:none;"></div>
+    <button class="btn btn-primary" id="submitBtn" onclick="submitAnswer()" style="margin-top:16px;" disabled>Submit Answer</button>
+  </div>
+  <div class="gap"></div>
+</div>
+
+<!-- ===== FINAL ===== -->
+<div class="page screen" id="screenFinal">
+  <div class="brand-header"><div class="crown">👑</div><div class="brand-title">Quiz Complete!</div><div class="flowers">🌸⭐🌸</div></div>
+
+  <!-- Score + leaderboard -->
+  <div class="card">
+    <div style="text-align:center;padding:10px 0;">
+      <div class="confetti">🎊</div>
+      <div class="score-circle"><div class="score-num" id="finalScoreNum">0</div><div class="score-label">POINTS</div></div>
+      <div style="margin-top:14px;">
+        <div style="font-size:1.1rem;font-weight:800;margin-bottom:4px;" id="finalMsg">Great job!</div>
+        <div class="text-muted" id="finalSub">You answered 0 questions correctly</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="section-title">🏆 Final Leaderboard</div>
+    <div id="finalLeaderboard"></div>
+  </div>
+
+  <!-- MEMORY BOOK -->
+  <div class="card" id="memoryCard">
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="font-size:2.5rem;margin-bottom:6px;">💌</div>
+      <div class="section-title" style="margin-bottom:6px;">Leave a Memory</div>
+      <p class="text-muted" style="font-size:0.85rem;">Write a wish, blessing, or funny prediction for Anagha, Atharva, or both! Add your selfie too 📸</p>
+    </div>
+
+    <label>Who is this for?</label>
+    <div class="child-toggle">
+      <button class="child-toggle-btn active-anagha" id="togAnagha" onclick="setWishFor('anagha')">🌸 Anagha</button>
+      <button class="child-toggle-btn" id="togAtharva" onclick="setWishFor('atharva')">⭐ Atharva</button>
+      <button class="child-toggle-btn" id="togBoth" onclick="setWishFor('both')">💕 Both</button>
+    </div>
+
+    <label>Type</label>
+    <div class="type-chips">
+      <button class="type-chip sel" onclick="setWishType('wish',this)">💫 Wish</button>
+      <button class="type-chip" onclick="setWishType('blessing',this)">🙏 Blessing</button>
+      <button class="type-chip" onclick="setWishType('prediction',this)">🔮 Funny Prediction</button>
+    </div>
+
+    <label id="wishLabel">Your Wish</label>
+    <textarea id="wishText" rows="4" placeholder="Write your heartfelt wish here… 💕" maxlength="500"></textarea>
+    <div style="text-align:right;font-size:0.73rem;color:var(--text-light);margin-top:3px;"><span id="charCount">0</span>/500</div>
+
+    <label>Add a Photo (optional)</label>
+    <div class="photo-zone" id="photoZone">
+      <div id="photoPlaceholder">
+        <div style="font-size:2.5rem;margin-bottom:8px;">📸</div>
+        <div style="font-weight:700;font-size:0.9rem;margin-bottom:4px;">Add your selfie or family photo</div>
+        <div class="text-muted" style="font-size:0.8rem;">Tap a button below to open camera or gallery</div>
+      </div>
+      <img id="photoPreview" class="photo-preview-img" style="display:none;" />
+    </div>
+    <div class="upload-action-row" id="uploadRow">
+      <button class="upl-btn upl-camera" onclick="el('cameraIn').click()">📷 Camera</button>
+      <button class="upl-btn upl-gallery" onclick="el('galleryIn').click()">🖼 Gallery</button>
+      <button class="upl-btn upl-clear" id="clearPhotoBtn" onclick="clearPhoto()" style="display:none;">✕ Remove</button>
+    </div>
+    <input type="file" id="cameraIn" accept="image/*" capture="user" style="display:none;" onchange="onPhotoSelected(this)" />
+    <input type="file" id="galleryIn" accept="image/*" style="display:none;" onchange="onPhotoSelected(this)" />
+
+    <button class="btn btn-primary" id="wishBtn" onclick="submitWish()" style="margin-top:16px;">💌 Send My Memory</button>
+
+    <div id="wishDone" style="display:none;text-align:center;padding:18px 0;">
+      <div style="font-size:3rem;">🎉</div>
+      <div style="font-weight:800;font-size:1.1rem;color:var(--pink);margin-bottom:6px;">Memory Saved Forever! 💕</div>
+      <p class="text-muted">Your memory is now in Anagha &amp; Atharva's book.</p>
+      <button class="btn btn-outline" onclick="anotherWish()" style="margin-top:12px;">+ Add Another Memory</button>
+    </div>
+  </div>
+  <div class="gap"></div>
+</div>
+
+<script>
+// ================================================================
+// GLOBALS
+// ================================================================
+let db=null,storage=null;
+const S={
+  role:null,pid:null,pname:'',
+  questions:[],currentQ:0,
+  started:false,ended:false,
+  selAns:null,answered:false,
+  score:0,correct:0,
+  timerInt:null,timeLimit:15,
+  // wish state
+  wishFor:'anagha',wishType:'wish',
+  photoFile:null,photoDataUrl:null,
+  // wish projector
+  allWishes:[],slideIdx:0,wishFilter:'all',autoInt:null,
+};
+const el=id=>document.getElementById(id);
+const v=id=>el(id)?el(id).value:'';
+const ls=(k,val)=>{try{localStorage.setItem(k,val);}catch(e){}};
+
+// ================================================================
+// FIREBASE
+// ================================================================
+function initFirebase(cfg){
+  try{
+    if(firebase.apps.length)firebase.app().delete();
+    firebase.initializeApp(cfg);
+    db=firebase.database();
+    try{storage=firebase.storage();}catch(e){storage=null;}
+    showToast('🔥 Firebase connected!');
+    startListeners();
+    return true;
+  }catch(e){showToast('❌ '+e.message);return false;}
+}
+function saveFirebaseConfig(){
+  const cfg={apiKey:v('fbApiKey'),authDomain:v('fbAuthDomain'),databaseURL:v('fbDbUrl'),projectId:v('fbProjectId'),storageBucket:v('fbStorageBucket')};
+  if(!cfg.apiKey||!cfg.databaseURL){showToast('❌ Fill API Key + Database URL');return;}
+  const pass=v('fbAdminPass')||'anagha2024';
+  const tl=parseInt(v('fbTimeLimit'))||15;
+  ls('fbConfig',JSON.stringify(cfg));ls('fbPass',pass);ls('fbTL',tl);
+  S.timeLimit=tl;
+  const ok=initFirebase(cfg);
+  el('fbStatus').innerHTML=ok?'<span style="color:#059669">✅ Connected!</span>':'<span style="color:#EE4444">❌ Failed</span>';
+}
+
+// ================================================================
+// LISTENERS
+// ================================================================
+function startListeners(){
+  if(!db)return;
+  db.ref('quizState').on('value',s=>{const d=s.val();if(d)onStateChange(d);});
+  db.ref('participants').on('value',s=>{
+    const n=Object.keys(s.val()||{}).length;
+    el('participantCount').textContent=`👥 ${n} players joined`;
+    el('waitingParticipants').textContent=`👥 ${n} players ready`;
+    el('projParticipants').textContent=`👥 ${n} players`;
+  });
+  db.ref('scores').on('value',s=>{const d=s.val()||{};renderLB(d,'adminLeaderboard');renderLB(d,'finalLeaderboard');});
+  db.ref('answers').on('value',s=>updateCounts(s.val()||{}));
+  db.ref('wishes').on('value',s=>{
+    const d=s.val()||{};
+    S.allWishes=Object.values(d).sort((a,b)=>a.ts-b.ts);
+    renderAdminWishes();
+  });
+}
+function onStateChange(st){
+  S.started=st.started||false;S.ended=st.ended||false;S.timeLimit=st.timeLimit||15;
+  if(S.role==='admin'){
+    el('quizStatusBadge').textContent='Status: '+(st.ended?'Ended':st.started?`Q${(st.currentQ||0)+1} running`:'Not started');
+    updateAdminCtrl(st);return;
+  }
+  if(st.ended){showFinalScreen();return;}
+  if(!st.started){showScreen('screenWaiting');return;}
+  const qi=st.currentQ||0;
+  if(!S.questions.length){
+    db.ref('questions').once('value').then(s=>{S.questions=s.val()||[];showQ(qi,st);});
+  } else showQ(qi,st);
+  updateProj(st);
+}
+
+// ================================================================
+// ADMIN AUTH + LOAD
+// ================================================================
+function showAdminLogin(){
+  try{const c=JSON.parse(localStorage.getItem('fbConfig')||'{}');
+    el('fbApiKey').value=c.apiKey||'';el('fbAuthDomain').value=c.authDomain||'';
+    el('fbDbUrl').value=c.databaseURL||'';el('fbProjectId').value=c.projectId||'';el('fbStorageBucket').value=c.storageBucket||'';
+  }catch(e){}
+  el('fbAdminPass').value=localStorage.getItem('fbPass')||'';
+  el('fbTimeLimit').value=localStorage.getItem('fbTL')||'15';
+  showScreen('screenAdminLogin');
+}
+function adminLogin(){
+  const pass=v('adminPassInput');
+  const stored=localStorage.getItem('fbPass')||'anagha2024';
+  if(pass===stored||pass==='anagha2024'){
+    S.role='admin';showScreen('screenAdmin');
+    try{const c=JSON.parse(localStorage.getItem('fbConfig')||'{}');if(c.apiKey)initFirebase(c);}catch(e){}
+    loadLocalQ();
+  } else showToast('❌ Wrong password');
+}
+let localQ=[];
+function loadLocalQ(){try{localQ=JSON.parse(localStorage.getItem('localQ')||'[]');}catch(e){}renderAdminQ();}
+function toggleAddQ(){const f=el('addQForm');f.style.display=f.style.display==='none'?'block':'none';}
+function saveQuestion(){
+  const t=v('qText'),a=v('qA'),b=v('qB'),c=v('qC'),d=v('qD'),cor=v('qCorrect');
+  if(!t||!a||!b||!c||!d){showToast('❌ Fill all fields');return;}
+  localQ.push({text:t,options:{A:a,B:b,C:c,D:d},correct:cor});
+  ls('localQ',JSON.stringify(localQ));renderAdminQ();
+  el('addQForm').style.display='none';
+  ['qText','qA','qB','qC','qD'].forEach(id=>el(id).value='');
+  showToast('✅ Question saved!');
+}
+function deleteQ(i){localQ.splice(i,1);ls('localQ',JSON.stringify(localQ));renderAdminQ();}
+function renderAdminQ(){
+  const c=el('questionsList');
+  if(!localQ.length){c.innerHTML='<p class="text-muted text-center">No questions yet.</p>';return;}
+  c.innerHTML=localQ.map((q,i)=>`
+    <div class="q-admin-row">
+      <div style="font-weight:700;font-size:0.9rem;margin-bottom:6px;"><span class="badge badge-pink">Q${i+1}</span> ${q.text}</div>
+      <div style="font-size:0.77rem;color:var(--text-light);">A:${q.options.A} · B:${q.options.B} · C:${q.options.C} · D:${q.options.D} — ✅ <strong>${q.correct}</strong></div>
+      <button class="btn btn-danger btn-sm" style="margin-top:8px;padding:6px 14px;" onclick="deleteQ(${i})">🗑</button>
+    </div>`).join('');
+}
+function pushQuestionsToDb(){
+  if(!db){showToast('❌ Firebase not connected');return;}
+  if(!localQ.length){showToast('❌ No questions');return;}
+  db.ref('questions').set(localQ).then(()=>{showToast(`✅ ${localQ.length} questions published!`);S.questions=localQ;});
+}
+
+// ================================================================
+// QUIZ CONTROL
+// ================================================================
+function startQuiz(){
+  if(!db){showToast('❌ Firebase not connected');return;}
+  const run=()=>{
+    const tl=parseInt(localStorage.getItem('fbTL'))||S.timeLimit;
+    db.ref('quizState').set({started:true,ended:false,currentQ:0,questionStartTime:Date.now(),timeLimit:tl});
+    db.ref('answers/q0').remove();
+    showToast('🚀 Quiz started!');
+    el('btnStartQuiz').style.display='none';el('btnNext').style.display='block';
+    S.currentQ=0;startAdminTimer(0,tl);
+  };
+  if(!S.questions.length)db.ref('questions').once('value').then(s=>{S.questions=s.val()||[];if(!S.questions.length){showToast('❌ Publish questions first');return;}run();});
+  else run();
+}
+function nextQuestion(){
+  if(!db)return;
+  const next=S.currentQ+1,tl=parseInt(localStorage.getItem('fbTL'))||S.timeLimit;
+  if(next>=S.questions.length){
+    db.ref('quizState').update({ended:true,started:false});
+    showToast('🏁 Quiz ended!');
+    el('btnNext').style.display='none';el('btnStartQuiz').style.display='block';el('btnStartQuiz').textContent='▶️ Restart Quiz';
+    return;
+  }
+  db.ref('answers/q'+next).remove();
+  db.ref('quizState').update({currentQ:next,questionStartTime:Date.now(),timeLimit:tl});
+  S.currentQ=next;startAdminTimer(next,tl);showToast('⏭ Q'+(next+1)+' started');
+}
+function resetQuiz(){
+  if(!db)return;if(!confirm('Reset everything?'))return;
+  db.ref('quizState').set({started:false,ended:false,currentQ:0,timeLimit:S.timeLimit});
+  ['scores','answers','participants'].forEach(r=>db.ref(r).remove());
+  S.currentQ=0;clearInterval(adminTI);
+  showToast('🔄 Reset!');
+  el('btnStartQuiz').style.display='block';el('btnStartQuiz').textContent='▶️ Start Quiz';el('btnNext').style.display='none';
+}
+let adminTI=null;
+function startAdminTimer(qi,tl){
+  clearInterval(adminTI);
+  const start=Date.now();
+  const tick=()=>{
+    const rem=Math.max(0,tl-Math.floor((Date.now()-start)/1000));
+    el('controlTimer').textContent=rem+'s';
+    el('controlTimer').style.color=rem<=3?'#EE4444':'var(--pink)';
+    el('projTimer').textContent=rem;
+    el('projTimer').className='proj-timer'+(rem<=3?' urgent':'');
+    if(rem===0){clearInterval(adminTI);revealProjAnswer(qi);}
+  };
+  tick();adminTI=setInterval(tick,500);
+}
+function updateAdminCtrl(st){
+  const qi=st.currentQ||0;
+  if(!S.questions.length){db.ref('questions').once('value').then(s=>{S.questions=s.val()||[];updateAdminCtrl(st);});return;}
+  const q=S.questions[qi];if(!q)return;
+  el('controlCurrentQ').style.display='block';
+  el('controlQNum').textContent=`Question ${qi+1} of ${S.questions.length}`;
+  el('controlQText').textContent=q.text;
+  el('controlProgress').style.width=((qi+1)/S.questions.length*100)+'%';
+  S.currentQ=qi;
+}
+function updateCounts(all){
+  const ans=all['q'+S.currentQ]||{};
+  const c={A:0,B:0,C:0,D:0};
+  Object.values(ans).forEach(a=>{if(c[a.answer]!==undefined)c[a.answer]++;});
+  const tot=Object.values(c).reduce((s,v)=>s+v,0);
+  el('adminLiveCount').innerHTML=['A','B','C','D'].map(o=>`<div class="count-pill">${o}: ${c[o]}${tot?' ('+(Math.round(c[o]/tot*100))+'%)':''}</div>`).join('');
+}
+
+// ================================================================
+// PLAYER JOIN + QUIZ
+// ================================================================
+function joinQuiz(){
+  const name=v('playerName').trim();
+  if(!name){showToast('❌ Enter your name');return;}
+  S.pname=name;S.pid='p_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
+  S.role='player';S.score=0;S.correct=0;
+  const saved=localStorage.getItem('fbConfig');
+  if(!saved){showToast('❌ Firebase not configured yet');return;}
+  try{if(!db)initFirebase(JSON.parse(saved));}catch(e){}
+  if(!db){showToast('❌ Cannot connect');return;}
+  db.ref('participants/'+S.pid).set({name,joinedAt:Date.now()});
+  db.ref('scores/'+S.pid).set({name,score:0,correct:0});
+  el('waitingName').textContent=`Hello, ${name}! 🌸`;
+  showScreen('screenWaiting');
+  db.ref('quizState').once('value').then(s=>{
+    const st=s.val();
+    if(st&&st.started&&!st.ended)db.ref('questions').once('value').then(qs=>{S.questions=qs.val()||[];showQ(st.currentQ||0,st);});
+  });
+}
+function showQ(qi,st){
+  if(S.ended){showFinalScreen();return;}
+  S.currentQ=qi;S.answered=false;S.selAns=null;
+  const q=S.questions[qi];if(!q)return;
+  showScreen('screenQuestion');
+  el('qNumLabel').textContent=`QUESTION ${qi+1}`;
+  el('qTextDisplay').textContent=q.text;
+  el('qProgressBadge').textContent=`Q ${qi+1} / ${S.questions.length}`;
+  el('qProgressBar').style.width=((qi+1)/S.questions.length*100)+'%';
+  el('playerScoreBadge').textContent=`⭐ ${S.score} pts`;
+  el('answerReveal').style.display='none';
+  el('submitBtn').disabled=true;el('submitBtn').style.display='block';
+  el('choicesGrid').innerHTML=['A','B','C','D'].map(o=>`
+    <button class="choice-btn" id="ch_${o}" onclick="selChoice('${o}')">
+      <span class="choice-label">${o}</span>${q.options[o]}</button>`).join('');
+  const tl=st.timeLimit||S.timeLimit;
+  const elapsed=Math.floor((Date.now()-(st.questionStartTime||Date.now()))/1000);
+  startPTimer(Math.max(0,tl-elapsed),tl,qi,q);
+}
+function selChoice(o){
+  if(S.answered)return;
+  S.selAns=o;
+  document.querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('selected'));
+  el('ch_'+o).classList.add('selected');
+  el('submitBtn').disabled=false;
+}
+function submitAnswer(){
+  if(S.answered||!S.selAns)return;
+  S.answered=true;el('submitBtn').disabled=true;
+  const q=S.questions[S.currentQ],correct=S.selAns===q.correct;
+  if(db)db.ref(`answers/q${S.currentQ}/${S.pid}`).set({name:S.pname,answer:S.selAns,correct,time:Date.now()});
+  document.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+  el('ch_'+S.selAns).classList.add(correct?'correct':'wrong');
+  showToast(correct?'✅ Locked in!':'Locked in!');
+}
+function startPTimer(rem,tl,qi,q){
+  clearInterval(S.timerInt);
+  let t=rem;const circ=213.6;
+  const tick=()=>{
+    el('timerCircle').style.strokeDashoffset=circ*(1-t/tl);
+    el('timerText').textContent=t;
+    el('timerText').className='timer-text'+(t<=3?' urgent':'');
+    el('timerCircle').style.stroke=t<=3?'#EE4444':'var(--pink)';
+    if(t<=0){clearInterval(S.timerInt);revealAns(q);}
+    t--;
+  };
+  tick();S.timerInt=setInterval(tick,1000);
+}
+function revealAns(q){
+  clearInterval(S.timerInt);
+  document.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+  el('submitBtn').style.display='none';
+  const ua=S.selAns,cor=q.correct,isC=ua===cor,didNot=!S.answered;
+  el('ch_'+cor).classList.add('correct');
+  if(ua&&ua!==cor)el('ch_'+ua).classList.add('wrong');
+  let pts=0;
+  if(isC&&!didNot){pts=100;S.score+=pts;S.correct++;
+    if(db)db.ref(`scores/${S.pid}`).set({name:S.pname,score:S.score,correct:S.correct});}
+  else if(didNot&&db)db.ref(`answers/q${S.currentQ}/${S.pid}`).set({name:S.pname,answer:null,correct:false,time:Date.now()});
+  const rev=el('answerReveal');rev.style.display='block';
+  if(isC){
+    rev.className='answer-reveal';
+    rev.innerHTML=`<div class="reveal-icon">🎉</div><div class="reveal-text">Correct! +${pts} pts</div><div class="reveal-answer">✅ ${cor}: ${q.options[cor]}</div>`;
+  } else {
+    rev.className='answer-reveal wrong-reveal';
+    rev.innerHTML=`<div class="reveal-icon">${didNot?'⏰':'😅'}</div><div class="reveal-text">${didNot?"Time's up!":'Not quite!'}</div><div class="reveal-answer">✅ Answer: ${cor}: ${q.options[cor]}</div>`;
+  }
+  el('playerScoreBadge').textContent=`⭐ ${S.score} pts`;
+}
+
+// ================================================================
+// FINAL + LEADERBOARD
+// ================================================================
+function showFinalScreen(){
+  clearInterval(S.timerInt);
+  showScreen('screenFinal');
+  el('finalScoreNum').textContent=S.score;
+  const tot=S.questions.length||1,pct=Math.round(S.correct/tot*100);
+  el('finalMsg').textContent=pct>=80?'🌟 Brilliant!':pct>=60?'😊 Well done!':pct>=40?'👍 Good try!':'💕 Better luck next time!';
+  el('finalSub').textContent=`${S.correct} of ${tot} questions correct`;
+  if(db)db.ref('scores').once('value').then(s=>renderLB(s.val()||{},'finalLeaderboard'));
+  resetWishForm();
+}
+function renderLB(data,cid){
+  const c=el(cid);if(!c)return;
+  const sorted=Object.entries(data).map(([id,v])=>({id,name:v.name,score:v.score||0,correct:v.correct||0})).sort((a,b)=>b.score-a.score);
+  if(!sorted.length){c.innerHTML='<p class="text-muted text-center">No scores yet.</p>';return;}
+  const medals=['🥇','🥈','🥉'];
+  c.innerHTML=sorted.slice(0,20).map((p,i)=>`
+    <div class="lb-row ${i<3?'rank-'+(i+1):''}">
+      <div class="lb-rank">${i<3?medals[i]:i+1}</div>
+      <div class="lb-name">${p.name}${p.id===S.pid?' <span style="color:var(--pink)">(you)</span>':''}</div>
+      <div><div class="lb-score">${p.score} pts</div><div class="lb-streak">${p.correct} correct</div></div>
+    </div>`).join('');
+}
+
+// ================================================================
+// WISH / MEMORY BOOK
+// ================================================================
+function setWishFor(who){
+  S.wishFor=who;
+  ['Anagha','Atharva','Both'].forEach(n=>{
+    const b=el('tog'+n);b.className='child-toggle-btn';
+    if(n.toLowerCase()===who||n.toLowerCase()==='both'&&who==='both')
+      b.className='child-toggle-btn '+(who==='atharva'?'active-atharva':who==='both'?'active-both':'active-anagha');
+  });
+}
+function setWishType(type,btn){
+  S.wishType=type;
+  document.querySelectorAll('.type-chip').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  const phs={wish:'Write your heartfelt wish… 💕',blessing:'Share your blessing… 🙏',prediction:"Predict their future in a funny way! 🔮 e.g. 'Anagha will become a rocket scientist!'"};
+  el('wishText').placeholder=phs[type];
+  el('wishLabel').textContent={wish:'Your Wish 💫',blessing:'Your Blessing 🙏',prediction:'Your Funny Prediction 🔮'}[type];
+}
+function onPhotoSelected(inp){
+  const file=inp.files[0];if(!file)return;
+  S.photoFile=file;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    S.photoDataUrl=e.target.result;
+    el('photoPreview').src=e.target.result;
+    el('photoPreview').style.display='block';
+    el('photoPlaceholder').style.display='none';
+    el('clearPhotoBtn').style.display='inline-flex';
+  };
+  reader.readAsDataURL(file);
+}
+function clearPhoto(){
+  S.photoFile=null;S.photoDataUrl=null;
+  el('photoPreview').style.display='none';
+  el('photoPlaceholder').style.display='block';
+  el('clearPhotoBtn').style.display='none';
+  el('cameraIn').value='';el('galleryIn').value='';
+}
+async function submitWish(){
+  const txt=v('wishText').trim();
+  if(!txt){showToast('❌ Please write your message');return;}
+  if(!db){showToast('❌ Firebase not connected');return;}
+  const btn=el('wishBtn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Saving…';
+  try{
+    let photoUrl=null;
+    if(S.photoDataUrl){
+      if(storage&&S.photoFile){
+        try{
+          const ref=storage.ref('wishes/'+Date.now()+'_'+(S.pid||'g')+'.jpg');
+          await ref.put(S.photoFile);
+          photoUrl=await ref.getDownloadURL();
+        }catch(e){photoUrl=await compressImg(S.photoDataUrl,400);}
+      } else photoUrl=await compressImg(S.photoDataUrl,400);
+    }
+    await db.ref('wishes').push({
+      pid:S.pid||'guest',pname:S.pname||'A friend',
+      for:S.wishFor,type:S.wishType,text:txt,
+      photoUrl:photoUrl||null,ts:Date.now()
+    });
+    el('wishBtn').style.display='none';el('wishDone').style.display='block';
+    showToast('💌 Memory saved forever!');
+  }catch(e){showToast('❌ '+e.message);btn.disabled=false;btn.innerHTML='💌 Send My Memory';}
+}
+function compressImg(dataUrl,maxW){
+  return new Promise(res=>{
+    const img=new Image();img.onload=()=>{
+      const r=Math.min(1,maxW/img.width);
+      const c=document.createElement('canvas');c.width=img.width*r;c.height=img.height*r;
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      res(c.toDataURL('image/jpeg',0.72));
+    };img.src=dataUrl;
+  });
+}
+function resetWishForm(){
+  S.wishFor='anagha';S.wishType='wish';S.photoFile=null;S.photoDataUrl=null;
+  el('wishText').value='';el('charCount').textContent='0';clearPhoto();
+  setWishFor('anagha');
+  document.querySelectorAll('.type-chip').forEach((b,i)=>b.classList.toggle('sel',i===0));
+  el('wishBtn').style.display='block';el('wishBtn').disabled=false;el('wishBtn').innerHTML='💌 Send My Memory';
+  el('wishDone').style.display='none';
+}
+function anotherWish(){resetWishForm();}
+
+// Admin wish render
+let wishFilterMode='all';
+function renderAdminWishes(){
+  let wishes=S.allWishes;
+  if(wishFilterMode==='anagha')wishes=wishes.filter(w=>w.for==='anagha'||w.for==='both');
+  else if(wishFilterMode==='atharva')wishes=wishes.filter(w=>w.for==='atharva'||w.for==='both');
+  else if(wishFilterMode==='both')wishes=wishes.filter(w=>w.for==='both');
+  else if(['blessing','prediction','wish'].includes(wishFilterMode))wishes=wishes.filter(w=>w.type===wishFilterMode);
+  el('adminWishCount').textContent=`${wishes.length} memor${wishes.length!==1?'ies':'y'}`;
+  const c=el('adminWishList');
+  if(!wishes.length){c.innerHTML='<p class="text-muted text-center">No memories in this category yet.</p>';return;}
+  c.innerHTML=[...wishes].reverse().map(w=>{
+    const isAt=w.for==='atharva',isBoth=w.for==='both';
+    const forTxt=isBoth?'Both 💕':isAt?'Atharva ⭐':'Anagha 🌸';
+    const forClass=isBoth?'b-label':isAt?'at-label':'a-label';
+    const cardClass=isBoth?'for-both':isAt?'for-atharva':'for-anagha';
+    const typeLabel=w.type==='blessing'?'🙏 Blessing':w.type==='prediction'?'🔮 Prediction':'💫 Wish';
+    const typePill=w.type==='blessing'?'type-blessing':w.type==='prediction'?'type-prediction':'type-wish';
+    return `<div class="wish-card ${cardClass}">
+      <span class="wish-type-pill ${typePill}">${typeLabel}</span>
+      <div class="wish-card-header">
+        ${w.photoUrl?`<img class="wish-thumb ${isAt?'atharva-t':''}" src="${w.photoUrl}" onerror="this.style.display='none'" />`
+          :`<div class="wish-thumb ${isAt?'atharva-t':''}" style="background:${isAt?'var(--blue-pale)':'var(--pink-pale)'};display:flex;align-items:center;justify-content:center;font-size:1.5rem;">${isAt?'⭐':'🌸'}</div>`}
+        <div><div class="wish-sender-name">${w.pname||'Anonymous'}</div><span class="wish-for-label ${forClass}">For ${forTxt}</span></div>
+      </div>
+      <div class="wish-body">"${w.text}"</div>
+      <div class="wish-ts">${new Date(w.ts).toLocaleString()}</div>
+    </div>`;}).join('');
+}
+function filterWishes(mode,btn){
+  wishFilterMode=mode;
+  document.querySelectorAll('.filter-chip').forEach(b=>{b.className='filter-chip';});
+  if(btn){
+    if(mode==='atharva')btn.className='filter-chip fat';
+    else if(mode==='all'||mode==='both'||mode==='anagha')btn.className='filter-chip fa';
+    else btn.className='filter-chip fgen';
+  }
+  renderAdminWishes();
+}
+
+// ================================================================
+// PROJECTORS
+// ================================================================
+function openProjector(){
+  el('projectorView').classList.add('active');
+  if(db)db.ref('quizState').once('value').then(s=>{const st=s.val();if(st)updateProj(st);});
+}
+function closeProjector(){el('projectorView').classList.remove('active');}
+function updateProj(st){
+  const pv=el('projectorView');if(!pv.classList.contains('active'))return;
+  const qi=st.currentQ||0,q=S.questions[qi];if(!q)return;
+  el('projQNum').textContent=`Question ${qi+1} of ${S.questions.length}`;
+  el('projQText').textContent=q.text;
+  el('projChoices').innerHTML=['A','B','C','D'].map(o=>`<div class="proj-choice" id="pc_${o}"><strong>${o}.</strong> ${q.options[o]}</div>`).join('');
+}
+function revealProjAnswer(qi){
+  const q=S.questions[qi];if(!q)return;
+  const c=el('pc_'+q.correct);if(c)c.classList.add('correct');
+}
+
+// --- WISH SLIDESHOW ---
+function openWishProj(){
+  if(!S.allWishes.length&&db){
+    db.ref('wishes').once('value').then(s=>{
+      S.allWishes=Object.values(s.val()||{}).sort((a,b)=>a.ts-b.ts);
+      if(!S.allWishes.length){showToast('❌ No memories yet!');return;}
+      _doOpenWishProj();
+    });
+  } else if(!S.allWishes.length){showToast('❌ No memories yet!');return;}
+  else _doOpenWishProj();
+}
+function _doOpenWishProj(){
+  S.slideIdx=0;el('wishProjView').classList.add('active');renderSlide();
+}
+function closeWishProj(){
+  el('wishProjView').classList.remove('active');
+  clearInterval(S.autoInt);S.autoInt=null;
+  el('pf_auto').classList.remove('on');
+}
+function filteredSlides(){
+  if(S.wishFilter==='anagha')return S.allWishes.filter(w=>w.for==='anagha'||w.for==='both');
+  if(S.wishFilter==='atharva')return S.allWishes.filter(w=>w.for==='atharva'||w.for==='both');
+  return S.allWishes;
+}
+function renderSlide(){
+  const slides=filteredSlides();
+  if(!slides.length){el('wishSlideWrap').innerHTML='<div style="color:rgba(255,255,255,0.4);font-size:1.5rem;text-align:center;">No memories in this filter.</div>';el('wishDots').innerHTML='';return;}
+  if(S.slideIdx>=slides.length)S.slideIdx=0;
+  const w=slides[S.slideIdx];
+  const isAt=w.for==='atharva',isBoth=w.for==='both';
+  const tagClass=isBoth?'tag-both':isAt?'tag-atharva':'tag-anagha';
+  const forTxt=isBoth?'💕 For Both':isAt?'⭐ For Atharva':'🌸 For Anagha';
+  const typeLabel=w.type==='blessing'?'🙏 Blessing':w.type==='prediction'?'🔮 Funny Prediction':'💫 Wish';
+  el('wishSlideWrap').innerHTML=`
+    <div class="wish-slide-wrap">
+      ${w.photoUrl?`<img src="${w.photoUrl}" class="wish-slide-photo${isAt?' atharva-ph':''}" onerror="this.style.display='none'" />`:`<div style="font-size:6rem;margin-bottom:16px;text-align:center;">${isBoth?'🌸⭐':isAt?'⭐':'🌸'}</div>`}
+      <div class="wish-slide-type">${typeLabel}</div>
+      <div class="wish-slide-for-tag ${tagClass}">${forTxt}</div>
+      <div class="wish-slide-sender">from ${w.pname||'A friend'}</div>
+      <div class="wish-slide-text">"${w.text}"</div>
+    </div>`;
+  el('wishDots').innerHTML=slides.map((_,i)=>`<div class="wdot${i===S.slideIdx?' on':''}"></div>`).join('');
+}
+function prevSlide(){const s=filteredSlides();S.slideIdx=(S.slideIdx-1+s.length)%s.length;renderSlide();}
+function nextSlide(){const s=filteredSlides();S.slideIdx=(S.slideIdx+1)%s.length;renderSlide();}
+function setWishFilter(f,btn){
+  S.wishFilter=f;S.slideIdx=0;
+  document.querySelectorAll('.ptool-btn').forEach(b=>{if(['pf_all','pf_anagha','pf_atharva'].some(id=>el(id)===b))b.style.cssText='';});
+  if(btn){btn.style.background='rgba(255,255,255,0.2)';btn.style.color='white';}
+  renderSlide();
+}
+function toggleAutoplay(){
+  if(S.autoInt){clearInterval(S.autoInt);S.autoInt=null;el('pf_auto').classList.remove('on');showToast('⏸ Autoplay off');}
+  else{S.autoInt=setInterval(nextSlide,5000);el('pf_auto').classList.add('on');showToast('▶ Autoplay on (5s)');}
+}
+
+// ================================================================
+// TABS / SCREEN / QR / TOAST
+// ================================================================
+function switchTab(tid,btn){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));
+  el(tid).classList.add('active');if(btn)btn.classList.add('active');
+  if(tid==='tabLeaderboard'&&db)db.ref('scores').once('value').then(s=>renderLB(s.val()||{},'adminLeaderboard'));
+  if(tid==='tabWishes'){if(db)db.ref('wishes').once('value').then(s=>{S.allWishes=Object.values(s.val()||{}).sort((a,b)=>a.ts-b.ts);renderAdminWishes();});else renderAdminWishes();}
+}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));el(id).classList.add('active');}
+function generateQR(){
+  const url=window.location.href.split('?')[0];
+  el('shareUrl').textContent=url;el('qrcode').innerHTML='';
+  new QRCode(el('qrcode'),{text:url,width:160,height:160,colorDark:'#2D1B33',colorLight:'#FFFFFF'});
+  el('qrSection').style.display='block';
+}
+function showToast(msg){const t=el('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+
+// ================================================================
+// INIT
+// ================================================================
+window.addEventListener('DOMContentLoaded',()=>{
+  generateQR();
+  try{const c=JSON.parse(localStorage.getItem('fbConfig')||'{}');if(c.apiKey)initFirebase(c);}catch(e){}
+  el('wishText').addEventListener('input',()=>{el('charCount').textContent=el('wishText').value.length;});
+});
+</script>
+</body>
+</html>
