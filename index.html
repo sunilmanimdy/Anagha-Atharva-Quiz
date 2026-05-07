@@ -771,10 +771,9 @@ function joinQuiz(){
   if(!name){showToast('❌ Enter your name');return;}
   S.pname=name;S.pid='p_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
   S.role='player';S.score=0;S.correct=0;
-  const saved=localStorage.getItem('fbConfig');
-  if(!saved){showToast('❌ Firebase not configured yet');return;}
-  try{if(!db)initFirebase(JSON.parse(saved));}catch(e){}
-  if(!db){showToast('❌ Cannot connect');return;}
+  // Firebase is already initialised on page load for every device
+  if(!db){try{initFirebase(FIREBASE_CONFIG);}catch(e){}}
+  if(!db){showToast('❌ Cannot connect. Please refresh and try again.');return;}
   db.ref('participants/'+S.pid).set({name,joinedAt:Date.now()});
   db.ref('scores/'+S.pid).set({name,score:0,correct:0});
   el('waitingName').textContent=`Hello, ${name}! 🌸`;
@@ -1100,11 +1099,45 @@ function generateQR(){
 function showToast(msg){const t=el('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 
 // ================================================================
+// HARDCODED FIREBASE CONFIG
+// Players never need to configure anything — Firebase loads for everyone automatically.
+// Admin can still override via the Setup tab if needed.
+// ================================================================
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyA25tLNF9OI1LdBp52qb8wOrsVJcsXg9Qg",
+  authDomain: "celebrating-anagha.firebaseapp.com",
+  databaseURL: "https://celebrating-anagha-default-rtdb.firebaseio.com",
+  projectId: "celebrating-anagha",
+  storageBucket: "", // leave blank — using DB fallback for photos
+};
+const ADMIN_PASSWORD = "anagha2024"; // change this to your preferred password
+const QUESTION_TIME_LIMIT = 15; // seconds per question
+
+// ================================================================
 // INIT
 // ================================================================
 window.addEventListener('DOMContentLoaded',()=>{
   generateQR();
-  try{const c=JSON.parse(localStorage.getItem('fbConfig')||'{}');if(c.apiKey)initFirebase(c);}catch(e){}
+
+  // Auto-connect Firebase for ALL devices using hardcoded config
+  // (overridden by localStorage if admin has saved a different config)
+  const savedConfig = localStorage.getItem('fbConfig');
+  let configToUse = FIREBASE_CONFIG;
+  try {
+    const parsed = JSON.parse(savedConfig || '{}');
+    if (parsed.apiKey) configToUse = parsed;
+  } catch(e) {}
+  initFirebase(configToUse);
+
+  // Pre-fill admin setup tab with hardcoded values
+  if(el('fbApiKey')) el('fbApiKey').value = configToUse.apiKey || '';
+  if(el('fbAuthDomain')) el('fbAuthDomain').value = configToUse.authDomain || '';
+  if(el('fbDbUrl')) el('fbDbUrl').value = configToUse.databaseURL || '';
+  if(el('fbProjectId')) el('fbProjectId').value = configToUse.projectId || '';
+  if(el('fbStorageBucket')) el('fbStorageBucket').value = configToUse.storageBucket || '';
+  if(el('fbAdminPass')) el('fbAdminPass').value = localStorage.getItem('fbPass') || ADMIN_PASSWORD;
+  if(el('fbTimeLimit')) el('fbTimeLimit').value = localStorage.getItem('fbTL') || QUESTION_TIME_LIMIT;
+
   el('wishText').addEventListener('input',()=>{el('charCount').textContent=el('wishText').value.length;});
 });
 </script>
