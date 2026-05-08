@@ -315,6 +315,22 @@ label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;mar
 </head>
 <body>
 
+<!-- Floating Admin Return Button (visible only when logged in as admin) -->
+<div id="floatingAdminBtn" style="display:none;position:fixed;bottom:24px;right:16px;z-index:1500;
+  flex-direction:column;align-items:flex-end;gap:8px;">
+  <button onclick="showScreen('screenAdmin')" style="background:linear-gradient(135deg,#FF6B9D,#C084FC);
+    color:white;border:none;border-radius:50px;padding:12px 20px;font-family:Nunito,sans-serif;
+    font-weight:800;font-size:0.85rem;cursor:pointer;box-shadow:0 4px 20px rgba(255,107,157,0.5);
+    display:flex;align-items:center;gap:8px;">
+    👑 Admin Panel
+  </button>
+  <button onclick="adminLogout()" style="background:rgba(45,27,51,0.85);
+    color:rgba(255,255,255,0.7);border:none;border-radius:50px;padding:8px 16px;
+    font-family:Nunito,sans-serif;font-weight:700;font-size:0.75rem;cursor:pointer;">
+    🔓 Logout
+  </button>
+</div>
+
 <!-- Firebase load error banner -->
 <div id="firebaseErrorBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;
   background:#EE4444;color:white;padding:14px 16px;font-family:Nunito,sans-serif;font-weight:800;
@@ -371,7 +387,8 @@ label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;mar
       </div>
       <p class="text-muted" style="font-size:0.84rem;">Join the quiz &amp; leave memories for our little ones! 🌸</p>
     </div>
-    <button class="btn btn-primary" onclick="showScreen('screenJoin')" style="margin-top:14px;">🙋 Join as Player</button>
+    <button class="btn btn-primary" onclick="showScreen('screenJoin')" style="margin-top:14px;">🙋 Join the Quiz</button>
+    <button class="btn btn-blue" onclick="showMemoryScreen()" style="margin-top:8px;">💌 Leave a Memory for Anagha &amp; Atharva</button>
     <button class="btn btn-outline" onclick="showAdminLogin()" style="margin-top:8px;">🔐 Admin Login</button>
   </div>
   <div class="card text-center" id="qrSection" style="display:none;">
@@ -517,12 +534,19 @@ label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;mar
 <div class="page screen" id="screenWaiting">
   <div class="brand-header"><div class="crown">👑</div><div class="brand-title">Celebrating Anagha &amp; Atharva</div><div class="flowers">🌸⭐🌸</div></div>
   <div class="card text-center">
-    <div style="font-size:3rem;margin-bottom:8px;">🎉</div>
+    <div style="font-size:3rem;margin-bottom:8px;">🎀</div>
     <div class="section-title">You're in!</div>
-    <p style="font-weight:800;font-size:1.1rem;color:var(--pink);margin-bottom:4px;" id="waitingName">Hello!</p>
-    <p class="text-muted">Waiting for the quiz master to start…</p>
-    <div class="waiting-animation"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-    <div id="waitingParticipants" class="participant-badge" style="margin:0 auto;">👥 0 players ready</div>
+    <p style="font-weight:800;font-size:1.15rem;color:var(--pink);margin-bottom:4px;" id="waitingName">Hello!</p>
+
+    <!-- Shown when waiting for quiz to start -->
+    <div id="waitingDots">
+      <p class="text-muted" style="margin-bottom:12px;">Waiting for the quiz master to start…</p>
+      <div class="waiting-animation"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div id="waitingParticipants" class="participant-badge" style="margin:0 auto;">👥 0 players ready</div>
+    </div>
+
+    <!-- Shown when joining mid-quiz -->
+    <div id="lateJoinNotice" style="display:none;"></div>
   </div>
 </div>
 
@@ -547,6 +571,92 @@ label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;mar
     <div class="choices" id="choicesGrid"></div>
     <div id="answerReveal" style="display:none;"></div>
     <button class="btn btn-primary" id="submitBtn" onclick="submitAnswer()" style="margin-top:16px;" disabled>Submit Answer</button>
+  </div>
+  <div class="gap"></div>
+</div>
+
+<!-- ===== STANDALONE MEMORY SCREEN ===== -->
+<div class="page screen" id="screenMemory">
+  <div class="brand-header">
+    <div class="crown">👑</div>
+    <div class="brand-title">Memory Book</div>
+    <div class="brand-sub">Anagha &amp; Atharva</div>
+    <div class="flowers">🌸⭐🌸</div>
+  </div>
+
+  <!-- Name entry for non-quiz visitors -->
+  <div class="card" id="memoryNameCard">
+    <div style="text-align:center;margin-bottom:14px;">
+      <div style="font-size:2.5rem;margin-bottom:6px;">💌</div>
+      <div class="section-title" style="margin-bottom:4px;">Who are you?</div>
+      <p class="text-muted" style="font-size:0.85rem;">Just your name so we know who left this memory 🌸</p>
+    </div>
+    <label>Your Name</label>
+    <input type="text" id="memoryVisitorName" placeholder="e.g. Priya Aunty" maxlength="30" />
+    <button class="btn btn-primary" onclick="continueToMemory()" style="margin-top:14px;">💌 Continue to Memory Book</button>
+    <button class="btn btn-outline" onclick="showScreen('screenLanding')" style="margin-top:8px;">← Back</button>
+  </div>
+
+  <!-- Actual memory form — shown after name entered -->
+  <div class="card" id="memoryFormCard" style="display:none;">
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="font-size:2.5rem;margin-bottom:6px;">💌</div>
+      <div class="section-title" style="margin-bottom:6px;">Leave a Memory</div>
+      <p class="text-muted" style="font-size:0.85rem;">Write a wish, blessing, or funny prediction for Anagha, Atharva, or both! 🌸⭐</p>
+    </div>
+
+    <label>Who is this for?</label>
+    <div class="child-toggle">
+      <button class="child-toggle-btn active-anagha" id="memTogAnagha" onclick="setMemWishFor('anagha')">🌸 Anagha</button>
+      <button class="child-toggle-btn" id="memTogAtharva" onclick="setMemWishFor('atharva')">⭐ Atharva</button>
+      <button class="child-toggle-btn" id="memTogBoth" onclick="setMemWishFor('both')">💕 Both</button>
+    </div>
+
+    <label>Type of message</label>
+    <div class="type-chips">
+      <button class="type-chip sel" onclick="setMemWishType('wish',this)">💫 Wish</button>
+      <button class="type-chip" onclick="setMemWishType('blessing',this)">🙏 Blessing</button>
+      <button class="type-chip" onclick="setMemWishType('prediction',this)">🔮 Funny Prediction</button>
+    </div>
+
+    <label id="memWishLabel">Your Wish</label>
+    <textarea id="memWishText" rows="4" placeholder="Write your heartfelt wish here… 💕" maxlength="500"></textarea>
+    <div style="text-align:right;font-size:0.73rem;color:var(--text-light);margin-top:3px;"><span id="memCharCount">0</span>/500</div>
+
+    <label>Add a Photo (optional)</label>
+    <div class="photo-zone" id="memPhotoZone" style="cursor:default;min-height:120px;display:flex;align-items:center;justify-content:center;">
+      <div id="memPhotoPlaceholder" style="width:100%;">
+        <div style="font-size:2.8rem;margin-bottom:8px;">📸</div>
+        <div style="font-weight:800;font-size:0.95rem;margin-bottom:4px;color:var(--pink);">Add your selfie or family photo</div>
+        <div class="text-muted" style="font-size:0.82rem;">Use the buttons below — Camera opens your camera app,<br>Gallery lets you pick an existing photo</div>
+      </div>
+      <img id="memPhotoPreview" class="photo-preview-img" style="display:none;" />
+    </div>
+    <div class="upload-action-row" style="margin-top:12px;">
+      <button class="upl-btn upl-camera" onclick="el('memCameraIn').click()"
+        style="padding:13px 22px;font-size:0.95rem;border-radius:50px;min-width:130px;">
+        📷 Camera
+      </button>
+      <button class="upl-btn upl-gallery" onclick="el('memGalleryIn').click()"
+        style="padding:13px 22px;font-size:0.95rem;border-radius:50px;min-width:130px;">
+        🖼 Gallery
+      </button>
+      <button class="upl-btn upl-clear" id="memClearPhotoBtn" onclick="clearMemPhoto()"
+        style="display:none;padding:10px 18px;border-radius:50px;">✕ Remove</button>
+    </div>
+    <input type="file" id="memCameraIn" accept="image/*" capture style="display:none;" onchange="onMemPhotoSelected(this)" />
+    <input type="file" id="memGalleryIn" accept="image/*" style="display:none;" onchange="onMemPhotoSelected(this)" />
+
+    <button class="btn btn-primary" id="memWishBtn" onclick="submitMemWish()" style="margin-top:16px;">💌 Send My Memory</button>
+    <button class="btn btn-outline" onclick="showScreen('screenLanding')" style="margin-top:8px;">← Back to Home</button>
+
+    <div id="memWishDone" style="display:none;text-align:center;padding:18px 0;">
+      <div style="font-size:3rem;">🎉</div>
+      <div style="font-weight:800;font-size:1.1rem;color:var(--pink);margin-bottom:6px;">Memory Saved Forever! 💕</div>
+      <p class="text-muted">Your memory is now in Anagha &amp; Atharva's book.</p>
+      <button class="btn btn-primary" onclick="resetMemForm()" style="margin-top:12px;">+ Add Another Memory</button>
+      <button class="btn btn-outline" onclick="showScreen('screenLanding')" style="margin-top:8px;">🏠 Back to Home</button>
+    </div>
   </div>
   <div class="gap"></div>
 </div>
@@ -605,12 +715,19 @@ label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;mar
       </div>
       <img id="photoPreview" class="photo-preview-img" style="display:none;" />
     </div>
-    <div class="upload-action-row" id="uploadRow">
-      <button class="upl-btn upl-camera" onclick="el('cameraIn').click()">📷 Camera</button>
-      <button class="upl-btn upl-gallery" onclick="el('galleryIn').click()">🖼 Gallery</button>
-      <button class="upl-btn upl-clear" id="clearPhotoBtn" onclick="clearPhoto()" style="display:none;">✕ Remove</button>
+    <div class="upload-action-row" id="uploadRow" style="margin-top:12px;">
+      <button class="upl-btn upl-camera" onclick="el('cameraIn').click()"
+        style="padding:13px 22px;font-size:0.95rem;border-radius:50px;min-width:130px;">
+        📷 Camera
+      </button>
+      <button class="upl-btn upl-gallery" onclick="el('galleryIn').click()"
+        style="padding:13px 22px;font-size:0.95rem;border-radius:50px;min-width:130px;">
+        🖼 Gallery
+      </button>
+      <button class="upl-btn upl-clear" id="clearPhotoBtn" onclick="clearPhoto()"
+        style="display:none;padding:10px 18px;border-radius:50px;">✕ Remove</button>
     </div>
-    <input type="file" id="cameraIn" accept="image/*" capture="user" style="display:none;" onchange="onPhotoSelected(this)" />
+    <input type="file" id="cameraIn" accept="image/*" capture style="display:none;" onchange="onPhotoSelected(this)" />
     <input type="file" id="galleryIn" accept="image/*" style="display:none;" onchange="onPhotoSelected(this)" />
 
     <button class="btn btn-primary" id="wishBtn" onclick="submitWish()" style="margin-top:16px;">💌 Send My Memory</button>
@@ -727,15 +844,23 @@ function startListeners(){
 }
 function onStateChange(st){
   S.started=st.started||false;S.ended=st.ended||false;S.timeLimit=st.timeLimit||15;
+
+  // Always protect admin — never redirect them to player screens
   if(S.role==='admin'){
-    el('quizStatusBadge').textContent='Status: '+(st.ended?'Ended':st.started?`Q${(st.currentQ||0)+1} running`:'Not started');
-    updateAdminCtrl(st);return;
+    var badge = el('quizStatusBadge');
+    if(badge) badge.textContent='Status: '+(st.ended?'Ended':st.started?'Q'+((st.currentQ||0)+1)+' running':'Not started');
+    updateAdminCtrl(st);
+    return;
   }
+
+  // Only affect player screens if user has actually joined as a player
+  if(S.role !== 'player') return;
+
   if(st.ended){showFinalScreen();return;}
   if(!st.started){showScreen('screenWaiting');return;}
-  const qi=st.currentQ||0;
+  var qi=st.currentQ||0;
   if(!S.questions.length){
-    db.ref('questions').once('value').then(s=>{S.questions=s.val()||[];showQ(qi,st);});
+    db.ref('questions').once('value').then(function(s){S.questions=s.val()||[];showQ(qi,st);});
   } else showQ(qi,st);
   updateProj(st);
 }
@@ -753,25 +878,34 @@ function showAdminLogin(){
   showScreen('screenAdminLogin');
 }
 function adminLogin(){
-  const pass=v('adminPassInput');
-  const stored=localStorage.getItem('fbPass')||'anagha2024';
-  if(pass===stored||pass==='anagha2024'){
+  var pass=v('adminPassInput');
+  var stored=localStorage.getItem('fbPass')||ADMIN_PASSWORD;
+  if(pass===stored||pass===ADMIN_PASSWORD){
     S.role='admin';
+    sessionStorage.setItem('adminRole','true');
     showScreen('screenAdmin');
+    showAdminFloatingBtn(true);
     loadLocalQ();
-    // Pre-fetch questions from DB into memory so Start Quiz works immediately
     if(db){
       db.ref('questions').once('value').then(function(snap){
-        var qs = snap.val();
-        if(qs && qs.length){
-          S.questions = qs;
-          showToast('Ready! ' + qs.length + ' questions loaded.');
-        } else {
-          showToast('Go to Questions tab to add and publish questions first.');
-        }
+        var qs=snap.val();
+        if(qs&&qs.length){ S.questions=qs; showToast(qs.length+' questions loaded.'); }
+        else showToast('Add questions in the Questions tab, then Publish.');
       });
     }
-  } else showToast('Wrong password - try anagha2024');
+  } else showToast('Wrong password');
+}
+
+function adminLogout(){
+  S.role=null;
+  sessionStorage.removeItem('adminRole');
+  showAdminFloatingBtn(false);
+  showScreen('screenLanding');
+}
+
+function showAdminFloatingBtn(visible){
+  var btn=el('floatingAdminBtn');
+  if(btn) btn.style.display=visible?'flex':'none';
 }
 let localQ=[];
 function loadLocalQ(){
@@ -951,20 +1085,76 @@ function updateCounts(all){
 // PLAYER JOIN + QUIZ
 // ================================================================
 function joinQuiz(){
-  const name=v('playerName').trim();
-  if(!name){showToast('❌ Enter your name');return;}
-  S.pname=name;S.pid='p_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
+  var name=v('playerName').trim();
+  if(!name){showToast('Please enter your name');return;}
+  S.pname=name;
+  S.pid='p_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
   S.role='player';S.score=0;S.correct=0;
-  // Firebase is already initialised on page load for every device
+
   if(!db){try{initFirebase(FIREBASE_CONFIG);}catch(e){}}
-  if(!db){showToast('❌ Cannot connect. Please refresh and try again.');return;}
-  db.ref('participants/'+S.pid).set({name,joinedAt:Date.now()});
-  db.ref('scores/'+S.pid).set({name,score:0,correct:0});
-  el('waitingName').textContent=`Hello, ${name}! 🌸`;
+  if(!db){showToast('Cannot connect. Please refresh and try again.');return;}
+
+  // Register player
+  db.ref('participants/'+S.pid).set({name:name, joinedAt:Date.now()});
+  db.ref('scores/'+S.pid).set({name:name, score:0, correct:0});
+
+  // Always show welcome screen first — even if quiz is already running
+  el('waitingName').textContent='Hello, '+name+'! 🌸';
+  // Reset waiting screen to default state
+  var wd=el('waitingDots'); if(wd) wd.style.display='block';
+  var lj=el('lateJoinNotice'); if(lj) lj.style.display='none';
   showScreen('screenWaiting');
-  db.ref('quizState').once('value').then(s=>{
-    const st=s.val();
-    if(st&&st.started&&!st.ended)db.ref('questions').once('value').then(qs=>{S.questions=qs.val()||[];showQ(st.currentQ||0,st);});
+
+  // Check current quiz state
+  db.ref('quizState').once('value').then(function(snap){
+    var st=snap.val();
+
+    if(!st || !st.started){
+      // Quiz hasn't started yet — just wait, listeners will handle it
+      el('lateJoinNotice').style.display='none';
+      return;
+    }
+
+    if(st.ended){
+      // Quiz is over — go straight to final
+      db.ref('questions').once('value').then(function(qs){
+        S.questions=qs.val()||[];
+        showFinalScreen();
+      });
+      return;
+    }
+
+    // Quiz is MID-GAME — show a late join welcome for 2.5 seconds then enter
+    var qNum = (st.currentQ||0)+1;
+    var totalQ = 0;
+    db.ref('questions').once('value').then(function(qs){
+      S.questions=qs.val()||[];
+      totalQ=S.questions.length;
+
+      // Show late join notice on waiting screen
+      el('waitingDots').style.display='none';
+      el('lateJoinNotice').style.display='block';
+      el('lateJoinNotice').innerHTML =
+        '<div style="font-size:2rem;margin-bottom:8px;">🎉</div>'+
+        '<div style="font-weight:800;font-size:1rem;color:var(--pink);margin-bottom:6px;">You joined mid-quiz!</div>'+
+        '<div style="font-size:0.88rem;color:var(--text-light);margin-bottom:4px;">Currently on <strong>Question '+qNum+' of '+totalQ+'</strong></div>'+
+        '<div style="font-size:0.82rem;color:var(--text-light);">Jumping in now… good luck! 🌸</div>'+
+        '<div style="margin-top:14px;"><div class="progress-bar"><div class="progress-fill" id="lateJoinBar" style="width:0%;transition:width 2.5s linear;"></div></div></div>';
+
+      // Animate progress bar then jump in
+      setTimeout(function(){ var b=el('lateJoinBar'); if(b) b.style.width='100%'; }, 50);
+      setTimeout(function(){
+        // Re-fetch state in case question changed during the 2.5s wait
+        db.ref('quizState').once('value').then(function(fresh){
+          var freshSt=fresh.val();
+          if(freshSt && freshSt.started && !freshSt.ended){
+            showQ(freshSt.currentQ||0, freshSt);
+          } else if(freshSt && freshSt.ended){
+            showFinalScreen();
+          }
+        });
+      }, 2500);
+    });
   });
 }
 function showQ(qi,st){
@@ -1283,6 +1473,129 @@ function generateQR(){
 function showToast(msg){const t=el('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 
 // ================================================================
+// STANDALONE MEMORY SCREEN (accessible without joining quiz)
+// ================================================================
+var MEM = { wishFor:'anagha', wishType:'wish', photoFile:null, photoDataUrl:null };
+
+function showMemoryScreen(){
+  // If player already has a name (joined quiz), skip name entry
+  if(S.pname){
+    el('memoryNameCard').style.display='none';
+    el('memoryFormCard').style.display='block';
+    el('memoryVisitorName').value=S.pname;
+  } else {
+    el('memoryNameCard').style.display='block';
+    el('memoryFormCard').style.display='none';
+    el('memWishDone').style.display='none';
+  }
+  resetMemForm();
+  showScreen('screenMemory');
+}
+
+function continueToMemory(){
+  var name=el('memoryVisitorName').value.trim();
+  if(!name){showToast('Please enter your name first');return;}
+  // Use this as their player name for the wish
+  if(!S.pname) S.pname=name;
+  if(!S.pid) S.pid='v_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
+  el('memoryNameCard').style.display='none';
+  el('memoryFormCard').style.display='block';
+}
+
+function setMemWishFor(who){
+  MEM.wishFor=who;
+  ['Anagha','Atharva','Both'].forEach(function(n){
+    var b=el('memTog'+n);
+    if(!b)return;
+    b.className='child-toggle-btn';
+    if(n.toLowerCase()===who){
+      b.className='child-toggle-btn '+(who==='atharva'?'active-atharva':who==='both'?'active-both':'active-anagha');
+    }
+  });
+}
+
+function setMemWishType(type,btn){
+  MEM.wishType=type;
+  document.querySelectorAll('#memoryFormCard .type-chip').forEach(function(b){b.classList.remove('sel');});
+  btn.classList.add('sel');
+  var phs={wish:'Write your heartfelt wish… 💕',blessing:'Share your blessing… 🙏',
+    prediction:"Predict their future in a funny way! 🔮 e.g. 'Anagha will invent flying cars!'"};
+  el('memWishText').placeholder=phs[type];
+  el('memWishLabel').textContent={wish:'Your Wish 💫',blessing:'Your Blessing 🙏',prediction:'Your Funny Prediction 🔮'}[type];
+}
+
+function onMemPhotoSelected(inp){
+  var file=inp.files[0];if(!file)return;
+  MEM.photoFile=file;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    MEM.photoDataUrl=e.target.result;
+    el('memPhotoPreview').src=e.target.result;
+    el('memPhotoPreview').style.display='block';
+    el('memPhotoPlaceholder').style.display='none';
+    el('memClearPhotoBtn').style.display='inline-flex';
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearMemPhoto(){
+  MEM.photoFile=null;MEM.photoDataUrl=null;
+  el('memPhotoPreview').style.display='none';
+  el('memPhotoPlaceholder').style.display='block';
+  el('memClearPhotoBtn').style.display='none';
+  el('memCameraIn').value='';el('memGalleryIn').value='';
+}
+
+async function submitMemWish(){
+  var txt=el('memWishText').value.trim();
+  if(!txt){showToast('Please write your message first');return;}
+  if(!db){showToast('Not connected to Firebase. Please refresh.');return;}
+  var btn=el('memWishBtn');
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Saving…';
+  try{
+    var photoUrl=null;
+    if(MEM.photoDataUrl){
+      if(storage&&MEM.photoFile){
+        try{
+          var ref=storage.ref('wishes/'+Date.now()+'_'+(S.pid||'g')+'.jpg');
+          await ref.put(MEM.photoFile);
+          photoUrl=await ref.getDownloadURL();
+        }catch(e){ photoUrl=await compressImg(MEM.photoDataUrl,400); }
+      } else photoUrl=await compressImg(MEM.photoDataUrl,400);
+    }
+    await db.ref('wishes').push({
+      pid:S.pid||'guest',
+      pname:S.pname||el('memoryVisitorName').value||'A friend',
+      for:MEM.wishFor, type:MEM.wishType, text:txt,
+      photoUrl:photoUrl||null, ts:Date.now()
+    });
+    el('memWishBtn').style.display='none';
+    el('memWishDone').style.display='block';
+    showToast('Memory saved forever! 💕');
+  }catch(e){
+    showToast('Error: '+e.message);
+    btn.disabled=false;btn.innerHTML='💌 Send My Memory';
+  }
+}
+
+function resetMemForm(){
+  MEM={wishFor:'anagha',wishType:'wish',photoFile:null,photoDataUrl:null};
+  if(el('memWishText')) el('memWishText').value='';
+  if(el('memCharCount')) el('memCharCount').textContent='0';
+  clearMemPhoto();
+  setMemWishFor('anagha');
+  document.querySelectorAll('#memoryFormCard .type-chip').forEach(function(b,i){
+    b.classList.toggle('sel',i===0);
+  });
+  if(el('memWishBtn')){
+    el('memWishBtn').style.display='block';
+    el('memWishBtn').disabled=false;
+    el('memWishBtn').innerHTML='💌 Send My Memory';
+  }
+  if(el('memWishDone')) el('memWishDone').style.display='none';
+}
+
+// ================================================================
 // FIREBASE DIAGNOSTICS
 // ================================================================
 function testFirebaseConnection(){
@@ -1351,6 +1664,16 @@ window.addEventListener('DOMContentLoaded', function() {
   if(el('wishText')) el('wishText').addEventListener('input', function() {
     el('charCount').textContent = el('wishText').value.length;
   });
+  if(el('memWishText')) el('memWishText').addEventListener('input', function() {
+    el('memCharCount').textContent = el('memWishText').value.length;
+  });
+
+  // Restore admin session if they refreshed the page
+  if(sessionStorage.getItem('adminRole') === 'true'){
+    S.role = 'admin';
+    showAdminFloatingBtn(true);
+    // Don't redirect yet — wait for Firebase to init first (handled after polling below)
+  }
 
   // Wait for Firebase SDK to load (it loads asynchronously from CDN)
   // Poll every 200ms for up to 10 seconds
@@ -1362,6 +1685,19 @@ window.addEventListener('DOMContentLoaded', function() {
       clearInterval(pollInterval);
       console.log('Firebase SDK ready after ' + (attempts * 200) + 'ms, initialising...');
       initFirebase(configToUse);
+      // If admin session was restored, show admin screen and load questions
+      if(S.role === 'admin'){
+        setTimeout(function(){
+          showScreen('screenAdmin');
+          loadLocalQ();
+          if(db){
+            db.ref('questions').once('value').then(function(snap){
+              var qs=snap.val();
+              if(qs&&qs.length){ S.questions=qs; showToast(qs.length+' questions loaded.'); }
+            });
+          }
+        }, 500);
+      }
     } else if(attempts >= maxAttempts) {
       clearInterval(pollInterval);
       console.error('Firebase SDK never loaded after 10 seconds');
