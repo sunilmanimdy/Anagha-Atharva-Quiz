@@ -3,82 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>🌸 Celebrating Anagha & Atharva</title>
+<title>Celebrating Anagha &amp; Atharva</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<script>
-// ---- Dynamic Firebase loader with 3 CDN fallbacks ----
-// Defined FIRST so it exists before any script onerror fires
-(function() {
-  var CDNS = [
-    'https://www.gstatic.com/firebasejs/9.22.0/',
-    'https://cdn.jsdelivr.net/npm/firebase@9.22.0/compat/',
-    'https://unpkg.com/firebase@9.22.0/compat/'
-  ];
-  var SCRIPTS = ['app', 'database'];
-  var cdnIdx = 0;
-
-  function loadFromCDN(idx) {
-    if(idx >= CDNS.length) {
-      // All CDNs failed — show error banner
-      window.addEventListener('DOMContentLoaded', function() {
-        var b = document.getElementById('firebaseErrorBanner');
-        if(b) b.style.display = 'block';
-      });
-      console.error('All Firebase CDNs failed');
-      return;
-    }
-    var base = CDNS[idx];
-    var loaded = 0;
-    var failed = false;
-
-    function tryNext() {
-      if(!failed) { failed=true; loadFromCDN(idx+1); }
-    }
-
-    SCRIPTS.forEach(function(name) {
-      var s = document.createElement('script');
-      // gstatic uses different filename pattern
-      if(idx === 0) {
-        s.src = base + 'firebase-' + name + '-compat.js';
-      } else {
-        s.src = base + 'firebase-' + name + '.js';
-      }
-      s.onload = function() {
-        loaded++;
-        console.log('Loaded firebase-' + name + ' from CDN ' + idx);
-      };
-      s.onerror = function() {
-        console.warn('Failed firebase-' + name + ' from CDN ' + idx + ', trying next CDN');
-        tryNext();
-      };
-      document.head.appendChild(s);
-    });
-  }
-
-  loadFromCDN(0);
-})();
-</script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-:root {
+:root{
   --pink:#FF6B9D;--pink-light:#FFB3CC;--pink-pale:#FFF0F5;
   --blue:#60A5FA;--blue-light:#BFDBFE;--blue-pale:#EFF6FF;
-  --gold:#FFD700;--gold-dark:#E6B800;
-  --purple:#C084FC;--mint:#6EE7B7;
+  --gold:#FFD700;--gold-dark:#E6B800;--purple:#C084FC;--mint:#6EE7B7;
   --bg:#FFF5F9;--text:#2D1B33;--text-light:#7C5C8A;
   --white:#FFFFFF;--shadow:0 8px 32px rgba(255,107,157,0.18);--radius:20px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;color:var(--text);overflow-x:hidden;}
-body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;
-  background:radial-gradient(circle at 10% 20%,rgba(255,107,157,0.08) 0%,transparent 50%),
-  radial-gradient(circle at 90% 80%,rgba(96,165,250,0.07) 0%,transparent 50%),
-  radial-gradient(circle at 50% 50%,rgba(255,215,0,0.04) 0%,transparent 70%);
+body::before{content:'';position:fixed;inset:0;background:
+  radial-gradient(circle at 10% 20%,rgba(255,107,157,0.08) 0%,transparent 50%),
+  radial-gradient(circle at 90% 80%,rgba(96,165,250,0.07) 0%,transparent 50%);
   pointer-events:none;z-index:0;}
 .page{position:relative;z-index:1;min-height:100vh;}
+.screen{display:none;}.screen.active{display:block;}
 
+/* BRAND */
 .brand-header{text-align:center;padding:20px 16px 10px;}
-.brand-header .crown{font-size:2rem;animation:bounce 2s infinite;}
+.crown{font-size:2rem;animation:bounce 2s infinite;display:block;}
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .brand-title{font-family:'Playfair Display',serif;font-size:clamp(1.3rem,5vw,2.1rem);font-weight:900;
   background:linear-gradient(135deg,var(--pink),var(--purple),var(--blue));
@@ -86,224 +35,193 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;
 .brand-sub{font-size:0.82rem;color:var(--text-light);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-top:4px;}
 .flowers{font-size:1.1rem;letter-spacing:4px;margin-top:4px;}
 
+/* CARDS */
 .card{background:var(--white);border-radius:var(--radius);padding:24px 20px;margin:12px 16px;
   box-shadow:var(--shadow);border:1.5px solid rgba(255,107,157,0.1);}
 
+/* BUTTONS */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 28px;
   border-radius:50px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;
   cursor:pointer;border:none;transition:all 0.2s;width:100%;margin-top:10px;}
+.btn:active{transform:scale(0.97);}
+.btn:disabled{opacity:0.5;cursor:not-allowed;}
 .btn-primary{background:linear-gradient(135deg,var(--pink),var(--purple));color:white;box-shadow:0 4px 20px rgba(255,107,157,0.4);}
-.btn-primary:hover{transform:translateY(-2px);}
 .btn-blue{background:linear-gradient(135deg,var(--blue),#3B82F6);color:white;box-shadow:0 4px 20px rgba(96,165,250,0.4);}
 .btn-gold{background:linear-gradient(135deg,var(--gold),#FF9500);color:white;box-shadow:0 4px 20px rgba(255,215,0,0.4);}
 .btn-mint{background:linear-gradient(135deg,var(--mint),#10B981);color:white;box-shadow:0 4px 20px rgba(110,231,183,0.4);}
-.btn-danger{background:linear-gradient(135deg,#FF6B6B,#EE4444);color:white;box-shadow:0 4px 20px rgba(255,107,107,0.4);}
+.btn-red{background:linear-gradient(135deg,#FF6B6B,#EE4444);color:white;box-shadow:0 4px 20px rgba(255,107,107,0.4);}
 .btn-outline{background:transparent;color:var(--pink);border:2px solid var(--pink);box-shadow:none;}
 .btn-outline-blue{background:transparent;color:var(--blue);border:2px solid var(--blue);box-shadow:none;}
-.btn:disabled{opacity:0.5;cursor:not-allowed;}
 .btn-sm{padding:10px 20px;font-size:0.88rem;width:auto;margin-top:0;}
 
-input[type=text],input[type=number],textarea,select{width:100%;padding:12px 16px;border-radius:12px;
-  border:2px solid rgba(255,107,157,0.2);font-family:'Nunito',sans-serif;font-size:0.95rem;
-  color:var(--text);background:var(--pink-pale);outline:none;transition:border 0.2s;margin-top:6px;}
+/* INPUTS */
+input[type=text],input[type=number],textarea,select{
+  width:100%;padding:12px 16px;border-radius:12px;border:2px solid rgba(255,107,157,0.2);
+  font-family:'Nunito',sans-serif;font-size:0.95rem;color:var(--text);
+  background:var(--pink-pale);outline:none;transition:border 0.2s;margin-top:6px;}
 input:focus,textarea:focus,select:focus{border-color:var(--pink);}
 label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;margin-top:14px;}
 
-.child-toggle{display:flex;gap:0;border-radius:50px;overflow:hidden;border:2px solid rgba(255,107,157,0.2);margin:10px 0;}
-.child-toggle-btn{flex:1;padding:12px 8px;font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:800;
+/* CHILD TOGGLE */
+.child-toggle{display:flex;border-radius:50px;overflow:hidden;border:2px solid rgba(255,107,157,0.2);margin:10px 0;}
+.ctbtn{flex:1;padding:12px 8px;font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:800;
   border:none;cursor:pointer;transition:all 0.25s;background:transparent;color:var(--text-light);}
-.child-toggle-btn.active-anagha{background:linear-gradient(135deg,var(--pink),var(--purple));color:white;}
-.child-toggle-btn.active-atharva{background:linear-gradient(135deg,var(--blue),#3B82F6);color:white;}
-.child-toggle-btn.active-both{background:linear-gradient(135deg,var(--pink),var(--blue));color:white;}
+.ctbtn.ca{background:linear-gradient(135deg,var(--pink),var(--purple));color:white;}
+.ctbtn.cat{background:linear-gradient(135deg,var(--blue),#3B82F6);color:white;}
+.ctbtn.cb{background:linear-gradient(135deg,var(--pink),var(--blue));color:white;}
 
+/* TYPE CHIPS */
+.type-chips{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.tchip{padding:8px 16px;border-radius:50px;border:2px solid rgba(255,107,157,0.25);
+  background:transparent;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.85rem;
+  cursor:pointer;transition:all 0.2s;color:var(--text-light);}
+.tchip.sel{border-color:var(--pink);background:var(--pink);color:white;}
+
+/* TIMER */
 .timer-ring{width:80px;height:80px;position:relative;margin:0 auto 16px;}
 .timer-ring svg{transform:rotate(-90deg);}
 .timer-ring circle{fill:none;stroke-width:6;stroke-linecap:round;}
-.timer-track{stroke:rgba(255,107,157,0.15);}
-.timer-bar{stroke:var(--pink);transition:stroke-dashoffset 1s linear;}
-.timer-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.6rem;font-weight:900;color:var(--pink);}
-.timer-text.urgent{color:#EE4444;animation:pulse 0.5s infinite;}
+.t-track{stroke:rgba(255,107,157,0.15);}
+.t-bar{stroke:var(--pink);transition:stroke-dashoffset 1s linear;}
+.t-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.6rem;font-weight:900;color:var(--pink);}
+.t-text.urgent{color:#EE4444;animation:pulse 0.5s infinite;}
 @keyframes pulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.15)}}
 
+/* CHOICES */
 .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
-.choice-btn{padding:14px 10px;border-radius:14px;border:2.5px solid rgba(255,107,157,0.2);
+.cbtn{padding:14px 10px;border-radius:14px;border:2.5px solid rgba(255,107,157,0.2);
   background:var(--pink-pale);font-family:'Nunito',sans-serif;font-size:0.92rem;font-weight:700;
   color:var(--text);cursor:pointer;transition:all 0.2s;text-align:center;line-height:1.3;}
-.choice-btn:hover:not(:disabled){border-color:var(--pink);background:#FFE4EF;transform:scale(1.02);}
-.choice-btn.selected{background:linear-gradient(135deg,var(--pink),var(--purple));color:white;border-color:transparent;}
-.choice-btn.correct{background:linear-gradient(135deg,var(--mint),#10B981);color:white;border-color:transparent;}
-.choice-btn.wrong{background:linear-gradient(135deg,#FF6B6B,#EE4444);color:white;border-color:transparent;}
-.choice-btn:disabled{cursor:not-allowed;}
-.choice-label{font-size:0.75rem;opacity:0.8;display:block;margin-bottom:3px;}
+.cbtn:hover:not(:disabled){border-color:var(--pink);background:#FFE4EF;}
+.cbtn.sel{background:linear-gradient(135deg,var(--pink),var(--purple));color:white;border-color:transparent;}
+.cbtn.correct{background:linear-gradient(135deg,var(--mint),#10B981);color:white;border-color:transparent;}
+.cbtn.wrong{background:linear-gradient(135deg,#FF6B6B,#EE4444);color:white;border-color:transparent;}
+.cbtn:disabled{cursor:not-allowed;}
+.clabel{font-size:0.75rem;opacity:0.8;display:block;margin-bottom:3px;}
 
-.answer-reveal{background:linear-gradient(135deg,rgba(110,231,183,0.15),rgba(16,185,129,0.1));
+/* ANSWER REVEAL */
+.reveal{background:linear-gradient(135deg,rgba(110,231,183,0.15),rgba(16,185,129,0.1));
   border:2px solid var(--mint);border-radius:14px;padding:16px;margin-top:16px;text-align:center;animation:popIn 0.4s ease;}
-.answer-reveal.wrong-reveal{background:linear-gradient(135deg,rgba(255,107,107,0.1),rgba(238,68,68,0.08));border-color:#FF6B6B;}
+.reveal.wrong{background:linear-gradient(135deg,rgba(255,107,107,0.1),rgba(238,68,68,0.08));border-color:#FF6B6B;}
 @keyframes popIn{0%{transform:scale(0.8);opacity:0}100%{transform:scale(1);opacity:1}}
-.reveal-icon{font-size:2.5rem;margin-bottom:6px;}
-.reveal-text{font-size:0.85rem;font-weight:700;color:var(--text-light);}
-.reveal-answer{font-size:1rem;font-weight:900;color:#059669;margin-top:4px;}
-.wrong-reveal .reveal-answer{color:#EE4444;}
 
-.q-number{font-size:0.8rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--pink);margin-bottom:8px;}
-.q-text{font-size:1.1rem;font-weight:800;line-height:1.5;color:var(--text);}
-
-.lb-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;margin-bottom:8px;
-  background:var(--pink-pale);border:1.5px solid rgba(255,107,157,0.1);}
-.lb-row.rank-1{background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,165,0,0.1));border-color:var(--gold);}
-.lb-row.rank-2{background:linear-gradient(135deg,rgba(200,200,200,0.15),rgba(180,180,180,0.1));border-color:#aaa;}
-.lb-row.rank-3{background:linear-gradient(135deg,rgba(205,127,50,0.15),rgba(180,110,40,0.1));border-color:#CD7F32;}
-.lb-rank{font-size:1.3rem;width:30px;text-align:center;font-weight:900;}
-.lb-name{flex:1;font-weight:800;font-size:0.95rem;}
-.lb-score{font-weight:900;font-size:1rem;color:var(--pink);}
-.lb-streak{font-size:0.75rem;color:var(--text-light);}
-
+/* PROGRESS */
 .progress-bar{height:6px;background:rgba(255,107,157,0.15);border-radius:10px;margin:8px 0;overflow:hidden;}
 .progress-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--purple));border-radius:10px;transition:width 0.5s ease;}
 
-.screen{display:none;}
-.screen.active{display:block;}
+/* LEADERBOARD */
+.lb-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;margin-bottom:8px;
+  background:var(--pink-pale);border:1.5px solid rgba(255,107,157,0.1);}
+.lb-row.r1{background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,165,0,0.1));border-color:var(--gold);}
+.lb-row.r2{background:linear-gradient(135deg,rgba(200,200,200,0.15),rgba(180,180,180,0.1));border-color:#aaa;}
+.lb-row.r3{background:linear-gradient(135deg,rgba(205,127,50,0.15),rgba(180,110,40,0.1));border-color:#CD7F32;}
 
-.waiting-animation{display:flex;justify-content:center;gap:8px;margin:20px 0;}
-.dot{width:12px;height:12px;border-radius:50%;background:var(--pink);animation:dotBounce 1.4s infinite ease-in-out;}
-.dot:nth-child(2){animation-delay:0.2s;background:var(--purple);}
-.dot:nth-child(3){animation-delay:0.4s;background:var(--gold);}
-@keyframes dotBounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+/* ADMIN TABS */
+.admin-tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;}
+.tabBtn{padding:8px 13px;border-radius:50px;font-weight:800;font-size:0.78rem;border:2px solid var(--pink);
+  color:var(--pink);background:transparent;cursor:pointer;white-space:nowrap;transition:all 0.2s;font-family:'Nunito',sans-serif;}
+.tabBtn.active{background:var(--pink);color:white;}
+.tabContent{display:none;}.tabContent.active{display:block;}
 
-.admin-tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;flex-wrap:nowrap;}
-.tab-btn{padding:8px 13px;border-radius:50px;font-weight:800;font-size:0.78rem;border:2px solid var(--pink);
-  color:var(--pink);background:transparent;cursor:pointer;white-space:nowrap;transition:all 0.2s;}
-.tab-btn.active{background:var(--pink);color:white;}
-.tab-content{display:none;}
-.tab-content.active{display:block;}
-.q-admin-row{background:var(--pink-pale);border-radius:14px;padding:14px;margin-bottom:10px;border:1.5px solid rgba(255,107,157,0.15);}
+/* WISH CARDS */
+.wish-card{border-radius:16px;padding:16px;margin-bottom:12px;position:relative;}
+.wish-card.fa{background:linear-gradient(135deg,rgba(255,107,157,0.07),rgba(192,132,252,0.05));border:1.5px solid rgba(255,107,157,0.18);}
+.wish-card.fat{background:linear-gradient(135deg,rgba(96,165,250,0.07),rgba(59,130,246,0.05));border:1.5px solid rgba(96,165,250,0.18);}
+.wish-card.fb{background:linear-gradient(135deg,rgba(255,107,157,0.05),rgba(96,165,250,0.05));border:1.5px solid rgba(192,132,252,0.2);}
+.wish-thumb{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2.5px solid var(--pink-light);flex-shrink:0;}
+.wish-thumb.at{border-color:var(--blue-light);}
 
-/* ---- PROJECTOR ---- */
-.projector-overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:2000;
-  display:none;flex-direction:column;align-items:center;justify-content:center;padding:40px;}
-.projector-overlay.active{display:flex;}
+/* PHOTO UPLOAD */
+.photo-zone{border:2.5px dashed rgba(255,107,157,0.35);border-radius:16px;padding:20px;
+  text-align:center;background:var(--pink-pale);margin-top:10px;min-height:110px;
+  display:flex;align-items:center;justify-content:center;}
+.photo-preview-img{width:100%;max-width:200px;height:170px;object-fit:cover;border-radius:14px;
+  margin:0 auto;display:block;border:3px solid var(--pink-light);}
+.upl-row{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap;}
+.upl-btn{padding:13px 22px;border-radius:50px;font-weight:800;font-size:0.9rem;cursor:pointer;
+  border:none;display:flex;align-items:center;gap:6px;font-family:'Nunito',sans-serif;}
+.upl-cam{background:linear-gradient(135deg,var(--pink),var(--purple));color:white;}
+.upl-gal{background:linear-gradient(135deg,var(--blue),#3B82F6);color:white;}
+.upl-clr{background:#eee;color:var(--text);}
+
+/* PROJECTOR */
+.proj-overlay{position:fixed;inset:0;z-index:2000;display:none;flex-direction:column;
+  align-items:center;justify-content:center;padding:40px;}
+.proj-overlay.open{display:flex;}
 .proj-quiz-bg{background:linear-gradient(135deg,#1a0a2e,#2d1b33);}
-.proj-wishes-bg{background:linear-gradient(160deg,#0d1b2e,#1b2540,#2e1b3a);}
-.proj-close-btn{position:fixed;top:20px;right:20px;background:rgba(255,107,157,0.3);
+.proj-wish-bg{background:linear-gradient(160deg,#0d1b2e,#1b2540,#2e1b3a);}
+.proj-close{position:fixed;top:20px;right:20px;background:rgba(255,107,157,0.3);
   border:none;color:white;font-size:1.5rem;width:44px;height:44px;border-radius:50%;
   cursor:pointer;z-index:2001;display:flex;align-items:center;justify-content:center;}
 .proj-participants{position:fixed;top:20px;left:20px;color:rgba(255,255,255,0.5);font-size:0.85rem;font-weight:700;}
 .proj-brand{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--pink);font-weight:900;margin-bottom:18px;text-align:center;}
-.proj-q-num{font-size:1rem;color:rgba(255,255,255,0.45);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;}
+.proj-qnum{font-size:1rem;color:rgba(255,255,255,0.45);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;}
 .proj-timer{font-size:3rem;font-weight:900;color:var(--gold);margin-bottom:18px;font-family:'Playfair Display',serif;}
 .proj-timer.urgent{color:#FF6B6B;animation:pulse 0.5s infinite;}
-.proj-q-text{font-size:clamp(1.4rem,3vw,2.4rem);font-weight:900;color:white;text-align:center;line-height:1.4;margin-bottom:28px;max-width:800px;}
+.proj-qtext{font-size:clamp(1.4rem,3vw,2.4rem);font-weight:900;color:white;text-align:center;line-height:1.4;margin-bottom:28px;max-width:800px;}
 .proj-choices{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:900px;width:100%;}
 .proj-choice{background:rgba(255,255,255,0.08);border:2px solid rgba(255,107,157,0.3);border-radius:16px;
-  padding:20px;color:white;font-weight:700;font-size:clamp(1rem,2vw,1.3rem);text-align:center;line-height:1.4;transition:all 0.5s;}
+  padding:20px;color:white;font-weight:700;font-size:clamp(1rem,2vw,1.3rem);text-align:center;transition:all 0.5s;}
 .proj-choice.correct{background:rgba(110,231,183,0.25);border-color:var(--mint);}
 
-/* ---- WISH SLIDESHOW ---- */
-.wish-slide-wrap{text-align:center;max-width:860px;width:100%;animation:fadeSlide 0.7s ease;}
+/* WISH SLIDESHOW */
+.wish-slide{text-align:center;max-width:860px;width:100%;animation:fadeSlide 0.7s ease;}
 @keyframes fadeSlide{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:translateY(0)}}
-.wish-slide-photo{width:160px;height:160px;border-radius:50%;object-fit:cover;border:5px solid var(--pink);margin:0 auto 18px;display:block;}
-.wish-slide-photo.atharva-ph{border-color:var(--blue);}
-.wish-slide-for-tag{font-size:0.85rem;letter-spacing:3px;text-transform:uppercase;font-weight:800;margin-bottom:8px;}
-.wish-slide-for-tag.tag-anagha{color:var(--pink);}
-.wish-slide-for-tag.tag-atharva{color:var(--blue);}
-.wish-slide-for-tag.tag-both{color:var(--gold);}
-.wish-slide-sender{font-size:1rem;font-weight:800;color:rgba(255,255,255,0.6);margin-bottom:16px;}
-.wish-slide-text{font-family:'Playfair Display',serif;font-style:italic;
-  font-size:clamp(1.2rem,2.8vw,2rem);color:white;line-height:1.65;max-width:700px;margin:0 auto;}
-.wish-slide-type{display:inline-block;padding:4px 14px;border-radius:50px;font-size:0.75rem;font-weight:800;
-  margin-bottom:12px;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);}
-
-.wish-dots-bar{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:6px;}
+.slide-photo{width:160px;height:160px;border-radius:50%;object-fit:cover;border:5px solid var(--pink);margin:0 auto 18px;display:block;}
+.slide-photo.at-ph{border-color:var(--blue);}
+.slide-for{font-size:0.85rem;letter-spacing:3px;text-transform:uppercase;font-weight:800;margin-bottom:8px;}
+.slide-for.sf-a{color:var(--pink);}.slide-for.sf-at{color:var(--blue);}.slide-for.sf-b{color:var(--gold);}
+.slide-sender{font-size:1rem;font-weight:800;color:rgba(255,255,255,0.6);margin-bottom:16px;}
+.slide-text{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.2rem,2.8vw,2rem);color:white;line-height:1.65;max-width:700px;margin:0 auto;}
+.slide-type{display:inline-block;padding:4px 14px;border-radius:50px;font-size:0.75rem;font-weight:800;margin-bottom:12px;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);}
+.wish-dots{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:6px;}
 .wdot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.25);transition:all 0.3s;}
 .wdot.on{width:22px;border-radius:4px;background:var(--pink);}
-.wish-nav-btn{position:fixed;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.1);
+.wnav{position:fixed;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.1);
   border:none;color:white;font-size:2rem;width:48px;height:48px;border-radius:50%;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;transition:background 0.2s;}
-.wish-nav-btn:hover{background:rgba(255,255,255,0.22);}
-.wish-nav-prev{left:16px;}
-.wish-nav-next{right:16px;}
-.proj-toolbar{position:fixed;bottom:20px;right:20px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
-.ptool-btn{padding:7px 14px;border-radius:50px;border:1.5px solid rgba(255,255,255,0.25);
-  color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.08);font-weight:800;font-size:0.78rem;cursor:pointer;}
-.ptool-btn:hover{background:rgba(255,255,255,0.18);}
-.ptool-btn.on{background:var(--pink);border-color:var(--pink);color:white;}
+  display:flex;align-items:center;justify-content:center;}
+.wnav.prev{left:16px;}.wnav.next{right:16px;}
+.ptoolbar{position:fixed;bottom:20px;right:20px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
+.ptool{padding:7px 14px;border-radius:50px;border:1.5px solid rgba(255,255,255,0.25);
+  color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.08);font-weight:800;font-size:0.78rem;cursor:pointer;font-family:'Nunito',sans-serif;}
+.ptool:hover{background:rgba(255,255,255,0.18);}
+.ptool.on{background:var(--pink);border-color:var(--pink);color:white;}
 
-/* ---- WISH CARD (player & admin) ---- */
-.wish-card{border-radius:16px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden;}
-.wish-card.for-anagha{background:linear-gradient(135deg,rgba(255,107,157,0.07),rgba(192,132,252,0.05));border:1.5px solid rgba(255,107,157,0.18);}
-.wish-card.for-atharva{background:linear-gradient(135deg,rgba(96,165,250,0.07),rgba(59,130,246,0.05));border:1.5px solid rgba(96,165,250,0.18);}
-.wish-card.for-both{background:linear-gradient(135deg,rgba(255,107,157,0.05),rgba(96,165,250,0.05));border:1.5px solid rgba(192,132,252,0.2);}
-.wish-card-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-.wish-thumb{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2.5px solid var(--pink-light);flex-shrink:0;}
-.wish-thumb.atharva-t{border-color:var(--blue-light);}
-.wish-sender-name{font-weight:800;font-size:0.95rem;}
-.wish-for-label{font-size:0.72rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;display:block;margin-top:2px;}
-.wish-for-label.a-label{color:var(--pink);}
-.wish-for-label.at-label{color:var(--blue);}
-.wish-for-label.b-label{color:var(--purple);}
-.wish-body{font-size:0.9rem;line-height:1.6;color:var(--text);font-style:italic;}
-.wish-type-pill{position:absolute;top:10px;right:10px;font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:50px;}
-.type-wish{background:rgba(255,107,157,0.15);color:var(--pink);}
-.type-blessing{background:rgba(255,215,0,0.18);color:var(--gold-dark);}
-.type-prediction{background:rgba(192,132,252,0.18);color:#7c3aed;}
-.wish-ts{margin-top:6px;font-size:0.7rem;color:var(--text-light);}
+/* WAITING */
+.dot{width:12px;height:12px;border-radius:50%;background:var(--pink);animation:dotBounce 1.4s infinite ease-in-out;display:inline-block;margin:0 4px;}
+.dot.d2{animation-delay:0.2s;background:var(--purple);}
+.dot.d3{animation-delay:0.4s;background:var(--gold);}
+@keyframes dotBounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
 
-/* ---- PHOTO UPLOAD ---- */
-.photo-zone{border:2.5px dashed rgba(255,107,157,0.35);border-radius:16px;padding:20px;
-  text-align:center;background:var(--pink-pale);cursor:pointer;transition:all 0.2s;margin-top:10px;min-height:100px;}
-.photo-zone:hover{border-color:var(--pink);background:#FFE8F2;}
-.photo-preview-img{width:100%;max-width:200px;height:170px;object-fit:cover;border-radius:14px;
-  margin:0 auto;display:block;border:3px solid var(--pink-light);}
-.upload-action-row{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap;}
-.upl-btn{padding:10px 18px;border-radius:50px;font-weight:800;font-size:0.83rem;cursor:pointer;border:none;display:flex;align-items:center;gap:6px;}
-.upl-camera{background:linear-gradient(135deg,var(--pink),var(--purple));color:white;}
-.upl-gallery{background:linear-gradient(135deg,var(--blue),#3B82F6);color:white;}
-.upl-clear{background:#eee;color:var(--text);}
-
-/* ---- WISH TYPE CHIPS ---- */
-.type-chips{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
-.type-chip{padding:8px 16px;border-radius:50px;border:2px solid rgba(255,107,157,0.25);
-  background:transparent;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.85rem;
-  cursor:pointer;transition:all 0.2s;color:var(--text-light);}
-.type-chip.sel{border-color:var(--pink);background:var(--pink);color:white;}
-
-/* ---- MISC ---- */
+/* MISC */
 .section-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--text);margin-bottom:12px;}
-.text-center{text-align:center;}.text-muted{font-size:0.82rem;color:var(--text-light);}
+.tc{text-align:center;}.tm{font-size:0.82rem;color:var(--text-light);}
 .badge{display:inline-block;padding:3px 10px;border-radius:50px;font-size:0.72rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;}
-.badge-pink{background:rgba(255,107,157,0.15);color:var(--pink);}
-.badge-gold{background:rgba(255,215,0,0.2);color:var(--gold-dark);}
+.bp{background:rgba(255,107,157,0.15);color:var(--pink);}
+.bg{background:rgba(255,215,0,0.2);color:var(--gold-dark);}
 .divider{height:1px;background:rgba(255,107,157,0.1);margin:14px 0;}
 .gap{height:80px;}
 .scroll-area{max-height:380px;overflow-y:auto;padding-right:4px;}
 .scroll-area::-webkit-scrollbar{width:4px;}
 .scroll-area::-webkit-scrollbar-thumb{background:var(--pink-light);border-radius:10px;}
-.participant-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(110,231,183,0.15);
+.pb{display:inline-flex;align-items:center;gap:6px;background:rgba(110,231,183,0.15);
   border:1.5px solid var(--mint);border-radius:50px;padding:6px 14px;font-size:0.82rem;font-weight:800;color:#059669;margin:8px auto;width:fit-content;}
 .setup-banner{background:linear-gradient(135deg,rgba(255,215,0,0.12),rgba(255,165,0,0.08));border:2px solid var(--gold);
   border-radius:14px;padding:14px 16px;margin-bottom:12px;font-size:0.85rem;line-height:1.75;}
 .setup-banner strong{color:var(--gold-dark);}
-#qrcode{background:white;padding:12px;border-radius:12px;display:inline-block;}
+.q-admin-row{background:var(--pink-pale);border-radius:14px;padding:14px;margin-bottom:10px;border:1.5px solid rgba(255,107,157,0.15);}
 .score-circle{width:110px;height:110px;border-radius:50%;margin:0 auto 14px;
   background:linear-gradient(135deg,var(--pink),var(--purple));
   display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 30px rgba(255,107,157,0.4);}
 .score-num{font-size:2rem;font-weight:900;color:white;line-height:1;}
-.score-label{font-size:0.68rem;color:rgba(255,255,255,0.8);font-weight:700;}
-.confetti{font-size:2rem;letter-spacing:4px;margin:8px 0;}
-.memory-banner{background:linear-gradient(135deg,rgba(255,107,157,0.08),rgba(96,165,250,0.07));
-  border-radius:16px;padding:18px;text-align:center;border:1.5px solid rgba(255,107,157,0.12);margin-bottom:4px;}
-.children-row{display:flex;justify-content:center;gap:24px;margin:12px 0;}
-.child-av .emoji{font-size:3rem;}
-.child-av .cname{font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;margin-top:4px;}
-.cname-a{color:var(--pink);}
-.cname-at{color:var(--blue);}
-.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
-.filter-chip{padding:6px 14px;border-radius:50px;border:2px solid rgba(255,107,157,0.2);
-  background:transparent;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.78rem;cursor:pointer;color:var(--text-light);transition:all 0.2s;}
-.filter-chip.fa{background:var(--pink);border-color:var(--pink);color:white;}
-.filter-chip.fat{background:var(--blue);border-color:var(--blue);color:white;}
-.filter-chip.fgen{background:var(--text);border-color:var(--text);color:white;}
-
+.score-lbl{font-size:0.68rem;color:rgba(255,255,255,0.8);font-weight:700;}
+.floating-admin{position:fixed;bottom:24px;right:16px;z-index:1500;display:none;flex-direction:column;align-items:flex-end;gap:8px;}
+.fab-main{background:linear-gradient(135deg,var(--pink),var(--purple));color:white;border:none;border-radius:50px;
+  padding:12px 20px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.85rem;cursor:pointer;
+  box-shadow:0 4px 20px rgba(255,107,157,0.5);}
+.fab-logout{background:rgba(45,27,51,0.85);color:rgba(255,255,255,0.7);border:none;border-radius:50px;
+  padding:8px 16px;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.75rem;cursor:pointer;}
+#qrcode{background:white;padding:12px;border-radius:12px;display:inline-block;}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);
   background:var(--text);color:white;padding:12px 24px;border-radius:50px;font-weight:700;font-size:0.9rem;
   z-index:9999;transition:transform 0.3s;white-space:nowrap;max-width:90vw;text-align:center;}
@@ -311,69 +229,70 @@ label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;mar
 .spinner{display:inline-block;width:18px;height:18px;border:3px solid rgba(255,255,255,0.3);
   border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:6px;}
 @keyframes spin{to{transform:rotate(360deg)}}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.fchip{padding:6px 14px;border-radius:50px;border:2px solid rgba(255,107,157,0.2);
+  background:transparent;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.78rem;cursor:pointer;color:var(--text-light);}
+.fchip.fp{background:var(--pink);border-color:var(--pink);color:white;}
+.fchip.fat{background:var(--blue);border-color:var(--blue);color:white;}
+.fchip.fg{background:var(--text);border-color:var(--text);color:white;}
+.memory-banner{background:linear-gradient(135deg,rgba(255,107,157,0.08),rgba(96,165,250,0.07));
+  border-radius:16px;padding:18px;text-align:center;border:1.5px solid rgba(255,107,157,0.12);}
+.children-row{display:flex;justify-content:center;gap:24px;margin:12px 0;}
+.child-av .emoji{font-size:3rem;}
+.cname{font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;margin-top:4px;}
+.cname-a{color:var(--pink);}.cname-at{color:var(--blue);}
 </style>
 </head>
 <body>
 
-<!-- Floating Admin Return Button (visible only when logged in as admin) -->
-<div id="floatingAdminBtn" style="display:none;position:fixed;bottom:24px;right:16px;z-index:1500;
-  flex-direction:column;align-items:flex-end;gap:8px;">
-  <button onclick="showScreen('screenAdmin')" style="background:linear-gradient(135deg,#FF6B9D,#C084FC);
-    color:white;border:none;border-radius:50px;padding:12px 20px;font-family:Nunito,sans-serif;
-    font-weight:800;font-size:0.85rem;cursor:pointer;box-shadow:0 4px 20px rgba(255,107,157,0.5);
-    display:flex;align-items:center;gap:8px;">
-    👑 Admin Panel
-  </button>
-  <button onclick="adminLogout()" style="background:rgba(45,27,51,0.85);
-    color:rgba(255,255,255,0.7);border:none;border-radius:50px;padding:8px 16px;
-    font-family:Nunito,sans-serif;font-weight:700;font-size:0.75rem;cursor:pointer;">
-    🔓 Logout
-  </button>
-</div>
-
-<!-- Firebase load error banner -->
-<div id="firebaseErrorBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;
-  background:#EE4444;color:white;padding:14px 16px;font-family:Nunito,sans-serif;font-weight:800;
-  font-size:0.9rem;text-align:center;line-height:1.6;">
-  ⚠️ Firebase scripts failed to load. Please check your internet connection and reload the page.
-  <br><span style="font-weight:400;font-size:0.8rem;">If this keeps happening, try opening in Chrome or Safari.</span>
-  <button onclick="location.reload()" style="margin-left:12px;padding:6px 16px;border-radius:50px;
-    border:2px solid white;background:transparent;color:white;font-weight:800;cursor:pointer;">
-    🔄 Reload
-  </button>
-</div>
 <div class="toast" id="toast"></div>
 
-<!-- ===== QUIZ PROJECTOR ===== -->
-<div class="projector-overlay proj-quiz-bg" id="projectorView">
-  <button class="proj-close-btn" onclick="closeProjector()">✕</button>
-  <div class="proj-participants" id="projParticipants">👥 0 players</div>
+<!-- FLOATING ADMIN BUTTON -->
+<div class="floating-admin" id="floatingAdmin">
+  <button class="fab-main" onclick="G.el('screenAdmin')&&showScreen('screenAdmin')">👑 Admin Panel</button>
+  <button class="fab-logout" onclick="adminLogout()">🔓 Logout</button>
+</div>
+
+<!-- QUIZ PROJECTOR -->
+<div class="proj-overlay proj-quiz-bg" id="projQuiz">
+  <button class="proj-close" onclick="G.el('projQuiz').classList.remove('open')">✕</button>
+  <div class="proj-participants" id="projParts">👥 0 players</div>
   <div class="proj-brand">🌸 Celebrating Anagha &amp; Atharva ⭐</div>
-  <div class="proj-q-num" id="projQNum">Question 1 of 15</div>
+  <div class="proj-qnum" id="projQNum">Question 1</div>
   <div class="proj-timer" id="projTimer">15</div>
-  <div class="proj-q-text" id="projQText">Waiting for quiz to start…</div>
+  <div class="proj-qtext" id="projQText">Waiting…</div>
   <div class="proj-choices" id="projChoices"></div>
 </div>
 
-<!-- ===== WISH SLIDESHOW PROJECTOR ===== -->
-<div class="projector-overlay proj-wishes-bg" id="wishProjView">
-  <button class="proj-close-btn" onclick="closeWishProj()">✕</button>
-  <button class="wish-nav-btn wish-nav-prev" onclick="prevSlide()">&#8249;</button>
-  <button class="wish-nav-btn wish-nav-next" onclick="nextSlide()">&#8250;</button>
-  <div id="wishSlideWrap"></div>
-  <div class="wish-dots-bar" id="wishDots"></div>
-  <div class="proj-toolbar">
-    <button class="ptool-btn" onclick="setWishFilter('all',this)" id="pf_all" style="background:rgba(255,255,255,0.15);color:white;">All</button>
-    <button class="ptool-btn" onclick="setWishFilter('anagha',this)" id="pf_anagha">🌸 Anagha</button>
-    <button class="ptool-btn" onclick="setWishFilter('atharva',this)" id="pf_atharva">⭐ Atharva</button>
-    <button class="ptool-btn" id="pf_auto" onclick="toggleAutoplay()">▶ Auto</button>
+<!-- WISH SLIDESHOW PROJECTOR -->
+<div class="proj-overlay proj-wish-bg" id="projWish">
+  <button class="proj-close" onclick="closeWishProj()">✕</button>
+  <button class="wnav prev" onclick="prevSlide()">&#8249;</button>
+  <button class="wnav next" onclick="nextSlide()">&#8250;</button>
+  <div id="slideContent"></div>
+  <div class="wish-dots" id="slideDots"></div>
+  <div class="ptoolbar">
+    <button class="ptool on" id="pf_all" onclick="setSlideFilter('all',this)">All</button>
+    <button class="ptool" id="pf_a" onclick="setSlideFilter('anagha',this)">🌸 Anagha</button>
+    <button class="ptool" id="pf_at" onclick="setSlideFilter('atharva',this)">⭐ Atharva</button>
+    <button class="ptool" id="pf_auto" onclick="toggleAutoplay()">▶ Auto</button>
   </div>
+</div>
+
+<!-- MEMORY WALL OVERLAY -->
+<div id="memWallOverlay" style="display:none;position:fixed;inset:0;z-index:1800;background:var(--bg);overflow-y:auto;padding:16px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <div style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:var(--pink);">💌 Memory Wall</div>
+    <button onclick="document.getElementById('memWallOverlay').style.display='none'"
+      style="background:var(--pink);color:white;border:none;border-radius:50px;padding:8px 16px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;">✕ Close</button>
+  </div>
+  <div id="memWallContent"><p class="tm tc">No published memories yet.</p></div>
 </div>
 
 <!-- ===== LANDING ===== -->
 <div class="page screen active" id="screenLanding">
   <div class="brand-header">
-    <div class="crown">👑</div>
+    <span class="crown">👑</span>
     <div class="brand-title">Celebrating Anagha &amp; Atharva</div>
     <div class="brand-sub">Family Quiz &amp; Memory Book</div>
     <div class="flowers">🌸⭐🌸</div>
@@ -381,28 +300,27 @@ label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;mar
   <div class="card">
     <div class="memory-banner">
       <div class="children-row">
-        <div class="child-av"><div class="emoji">👶</div><div class="cname cname-a">Anagha</div><div class="text-muted" style="font-size:0.74rem;">3 months old</div></div>
+        <div class="child-av"><div class="emoji">👶</div><div class="cname cname-a">Anagha</div><div class="tm" style="font-size:0.74rem;">3 months old</div></div>
         <div style="font-size:2rem;padding-top:14px;">💕</div>
-        <div class="child-av"><div class="emoji">⭐</div><div class="cname cname-at">Atharva</div><div class="text-muted" style="font-size:0.74rem;">Our pride &amp; joy</div></div>
+        <div class="child-av"><div class="emoji">⭐</div><div class="cname cname-at">Atharva</div><div class="tm" style="font-size:0.74rem;">Our pride &amp; joy</div></div>
       </div>
-      <p class="text-muted" style="font-size:0.84rem;">Join the quiz &amp; leave memories for our little ones! 🌸</p>
+      <p class="tm" style="font-size:0.84rem;">Join the quiz &amp; leave memories for our little ones! 🌸</p>
     </div>
     <button class="btn btn-primary" onclick="showScreen('screenJoin')" style="margin-top:14px;">🙋 Join the Quiz</button>
-    <button class="btn btn-blue" onclick="showMemoryScreen()" style="margin-top:8px;">💌 Leave a Memory for Anagha &amp; Atharva</button>
-    <button class="btn btn-outline-blue" onclick="openMemoryWall()" style="margin-top:8px;">👁 View Memory Wall</button>
-    <button class="btn btn-outline" onclick="showAdminLogin()" style="margin-top:8px;">🔐 Admin Login</button>
+    <button class="btn btn-blue" onclick="showMemoryScreen()">💌 Leave a Memory</button>
+    <button class="btn btn-outline-blue" onclick="openMemWall()">👁 View Memory Wall</button>
+    <button class="btn btn-outline" onclick="showScreen('screenAdminLogin')">🔐 Admin Login</button>
   </div>
-  <div class="card text-center" id="qrSection" style="display:none;">
+  <div class="card tc" id="qrSection" style="display:none;">
     <div class="section-title">📲 Share this Quiz</div>
-    <p class="text-muted" style="margin-bottom:12px;">Scan to join on your phone</p>
     <div style="display:flex;justify-content:center;margin:12px 0;"><div id="qrcode"></div></div>
-    <p class="text-muted" style="font-size:0.74rem;word-break:break-all;" id="shareUrl"></p>
+    <p class="tm" style="font-size:0.74rem;word-break:break-all;" id="shareUrl"></p>
   </div>
 </div>
 
 <!-- ===== ADMIN LOGIN ===== -->
 <div class="page screen" id="screenAdminLogin">
-  <div class="brand-header"><div class="crown">👑</div><div class="brand-title">Admin Panel</div><div class="brand-sub">Quiz Master</div></div>
+  <div class="brand-header"><span class="crown">👑</span><div class="brand-title">Admin Panel</div></div>
   <div class="card">
     <div class="section-title">🔐 Admin Password</div>
     <label>Password</label>
@@ -414,41 +332,39 @@ label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;mar
 
 <!-- ===== ADMIN DASHBOARD ===== -->
 <div class="page screen" id="screenAdmin">
-  <div class="brand-header"><div class="crown">👑</div><div class="brand-title">Admin Dashboard</div><div class="brand-sub">Quiz Master</div></div>
+  <div class="brand-header"><span class="crown">👑</span><div class="brand-title">Admin Dashboard</div></div>
   <div class="card">
     <div class="admin-tabs">
-      <button class="tab-btn active" onclick="switchTab('tabSetup',this)">⚙️ Setup</button>
-      <button class="tab-btn" onclick="switchTab('tabQuestions',this)">❓ Questions</button>
-      <button class="tab-btn" onclick="switchTab('tabControl',this)">▶️ Control</button>
-      <button class="tab-btn" onclick="switchTab('tabLeaderboard',this)">🏆 Scores</button>
-      <button class="tab-btn" onclick="switchTab('tabWishes',this)">💌 Memories</button>
+      <button class="tabBtn active" onclick="switchTab('tabSetup',this)">⚙️ Setup</button>
+      <button class="tabBtn" onclick="switchTab('tabQs',this)">❓ Questions</button>
+      <button class="tabBtn" onclick="switchTab('tabCtrl',this)">▶️ Control</button>
+      <button class="tabBtn" onclick="switchTab('tabLB',this)">🏆 Scores</button>
+      <button class="tabBtn" onclick="switchTab('tabWishes',this)">💌 Memories</button>
     </div>
 
-    <!-- SETUP -->
-    <div class="tab-content active" id="tabSetup">
+    <!-- SETUP TAB -->
+    <div class="tabContent active" id="tabSetup">
       <div class="section-title">Firebase Config</div>
       <div class="setup-banner">
-        <strong>⚡ Free Setup (5 min):</strong><br>
-        1. Go to <strong>console.firebase.google.com</strong> → New project<br>
-        2. Add Web App → copy the config values<br>
+        <strong>⚡ Free Setup:</strong><br>
+        1. <strong>console.firebase.google.com</strong> → New project<br>
+        2. Add Web App → copy config values<br>
         3. Enable <strong>Realtime Database</strong> (test mode)<br>
-        4. Enable <strong>Storage</strong> (test mode) for photos<br>
-        5. Paste values below &amp; click Save
+        4. Paste values below and Save
       </div>
       <label>API Key</label><input type="text" id="fbApiKey" placeholder="AIza..." />
       <label>Auth Domain</label><input type="text" id="fbAuthDomain" placeholder="project.firebaseapp.com" />
       <label>Database URL</label><input type="text" id="fbDbUrl" placeholder="https://project-default-rtdb.firebaseio.com" />
       <label>Project ID</label><input type="text" id="fbProjectId" placeholder="your-project-id" />
-      <label>Storage Bucket (for photos)</label><input type="text" id="fbStorageBucket" placeholder="your-project.appspot.com" />
       <label>Admin Password</label><input type="text" id="fbAdminPass" placeholder="e.g. anagha2024" />
       <label>Question Timer (seconds)</label><input type="number" id="fbTimeLimit" value="15" min="5" max="60" />
-      <button class="btn btn-primary" onclick="saveFirebaseConfig()">💾 Save &amp; Connect</button>
-      <button class="btn btn-outline" onclick="testFirebaseConnection()" style="margin-top:8px;">🔍 Test Connection</button>
+      <button class="btn btn-primary" onclick="saveConfig()">💾 Save &amp; Connect</button>
+      <button class="btn btn-outline" onclick="testConn()" style="margin-top:8px;">🔍 Test Connection</button>
       <div id="fbStatus" style="margin-top:10px;font-size:0.85rem;font-weight:700;text-align:center;"></div>
     </div>
 
-    <!-- QUESTIONS -->
-    <div class="tab-content" id="tabQuestions">
+    <!-- QUESTIONS TAB -->
+    <div class="tabContent" id="tabQs">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
         <div class="section-title" style="margin-bottom:0;">Questions</div>
         <button class="btn btn-primary btn-sm" onclick="toggleAddQ()">+ Add</button>
@@ -456,68 +372,67 @@ label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;mar
       <div id="addQForm" style="display:none;background:var(--pink-pale);border-radius:14px;padding:16px;margin-bottom:14px;">
         <div class="section-title">New Question</div>
         <label>Question</label><textarea id="qText" rows="2" placeholder="Enter question…"></textarea>
-        <label>Option A</label><input type="text" id="qA" placeholder="Option A" />
-        <label>Option B</label><input type="text" id="qB" placeholder="Option B" />
-        <label>Option C</label><input type="text" id="qC" placeholder="Option C" />
-        <label>Option D</label><input type="text" id="qD" placeholder="Option D" />
+        <label>Option A</label><input type="text" id="qA" />
+        <label>Option B</label><input type="text" id="qB" />
+        <label>Option C</label><input type="text" id="qC" />
+        <label>Option D</label><input type="text" id="qD" />
         <label>Correct Answer</label>
         <select id="qCorrect"><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select>
         <div style="display:flex;gap:8px;margin-top:12px;">
-          <button class="btn btn-primary btn-sm" onclick="saveQuestion()">💾 Save</button>
-          <button class="btn btn-outline btn-sm" onclick="el('addQForm').style.display='none'">Cancel</button>
+          <button class="btn btn-primary btn-sm" onclick="saveQ()">💾 Save</button>
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('addQForm').style.display='none'">Cancel</button>
         </div>
       </div>
-      <div class="scroll-area" id="questionsList"><p class="text-muted text-center">No questions yet.</p></div>
-      <button class="btn btn-gold" onclick="pushQuestionsToDb()" style="margin-top:12px;">🚀 Publish to Live Quiz</button>
+      <div class="scroll-area" id="qList"><p class="tm tc">No questions yet.</p></div>
+      <button class="btn btn-gold" onclick="publishQs()" style="margin-top:12px;">🚀 Publish Questions</button>
     </div>
 
-    <!-- CONTROL -->
-    <div class="tab-content" id="tabControl">
+    <!-- CONTROL TAB -->
+    <div class="tabContent" id="tabCtrl">
       <div class="section-title">Quiz Control</div>
-      <div id="participantCount" class="participant-badge" style="display:flex;">👥 0 players joined</div>
-      <div id="quizStatusBadge" style="margin:8px 0;font-size:0.85rem;font-weight:700;color:var(--text-light);">Status: Not started</div>
-      <div id="fbConnStatus" style="margin:4px 0;font-size:0.8rem;font-weight:700;color:#EE4444;">Firebase: Checking...</div>
+      <div id="partCount" class="pb" style="display:flex;">👥 0 players</div>
+      <div id="quizStatus" style="margin:6px 0;font-size:0.85rem;font-weight:700;color:var(--text-light);">Status: Not started</div>
+      <div id="fbConnStatus" style="margin:4px 0;font-size:0.8rem;font-weight:700;color:#FF9500;">Firebase: Connecting…</div>
       <div class="divider"></div>
-      <div id="controlCurrentQ" style="background:var(--pink-pale);border-radius:14px;padding:14px;margin-bottom:12px;display:none;">
-        <div class="q-number" id="controlQNum">Question 1</div>
-        <div class="q-text" id="controlQText">—</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;" id="adminLiveCount"></div>
-        <div class="progress-bar" style="margin-top:10px;"><div class="progress-fill" id="controlProgress" style="width:0%"></div></div>
-        <div style="text-align:center;font-size:1.4rem;font-weight:900;color:var(--pink);margin-top:6px;" id="controlTimer">—</div>
+      <div id="ctrlQ" style="background:var(--pink-pale);border-radius:14px;padding:14px;margin-bottom:12px;display:none;">
+        <div style="font-size:0.8rem;font-weight:800;letter-spacing:2px;color:var(--pink);" id="ctrlQNum">Q1</div>
+        <div style="font-size:1rem;font-weight:800;margin:6px 0;" id="ctrlQText">—</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;" id="liveCounts"></div>
+        <div class="progress-bar" style="margin-top:10px;"><div class="progress-fill" id="ctrlProg" style="width:0%"></div></div>
+        <div style="text-align:center;font-size:1.4rem;font-weight:900;color:var(--pink);margin-top:6px;" id="ctrlTimer">—</div>
       </div>
-      <button class="btn btn-mint" onclick="startQuiz()" id="btnStartQuiz">▶️ Start Quiz</button>
-      <button class="btn btn-gold" onclick="nextQuestion()" id="btnNext" style="display:none;">⏭ Next Question</button>
+      <button class="btn btn-mint" id="btnStart" onclick="startQuiz()">▶️ Start Quiz</button>
+      <button class="btn btn-gold" id="btnNext" style="display:none;" onclick="nextQ()">⏭ Next Question</button>
+      <button class="btn btn-red" id="btnStop" style="display:none;" onclick="stopQuiz()">⏹ Stop Quiz</button>
       <div class="divider"></div>
-      <button class="btn btn-primary" onclick="openProjector()">🖥 Quiz Projector</button>
+      <button class="btn btn-primary" onclick="openProjQuiz()">🖥 Quiz Projector</button>
       <button class="btn btn-blue" onclick="openWishProj()" style="margin-top:8px;">💌 Memories Slideshow</button>
-      <button class="btn btn-danger" onclick="stopQuiz()" style="margin-top:8px;">⏹ Stop Quiz Now</button>
-      <button class="btn btn-danger" onclick="resetQuiz()" style="margin-top:8px;opacity:0.7;">🔄 Full Reset</button>
+      <button class="btn btn-red" onclick="resetQuiz()" style="margin-top:8px;opacity:0.8;">🔄 Full Reset</button>
     </div>
 
-    <!-- LEADERBOARD -->
-    <div class="tab-content" id="tabLeaderboard">
-      <div class="section-title">🏆 Leaderboard</div>
-      <div class="scroll-area" id="adminLeaderboard"><p class="text-muted text-center">No scores yet.</p></div>
+    <!-- SCORES TAB -->
+    <div class="tabContent" id="tabLB">
+      <div class="section-title">🏆 Live Leaderboard</div>
+      <div id="adminLB"><p class="tm tc">No scores yet.</p></div>
     </div>
 
-    <!-- WISHES / MEMORY BOOK -->
-    <div class="tab-content" id="tabWishes">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <!-- MEMORIES TAB -->
+    <div class="tabContent" id="tabWishes">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
         <div class="section-title" style="margin-bottom:0;">💌 Memory Book</div>
         <button class="btn btn-mint btn-sm" onclick="exportMemories()">⬇️ Export</button>
       </div>
-      <button class="btn btn-blue" onclick="openMemoryWall()" style="margin-bottom:12px;">👁 Open Public Memory Wall</button>
-      <div class="filter-row" id="adminWishFilters">
-        <button class="filter-chip fa" onclick="filterWishes('all',this)">All</button>
-        <button class="filter-chip" onclick="filterWishes('anagha',this)">🌸 Anagha</button>
-        <button class="filter-chip" onclick="filterWishes('atharva',this)">⭐ Atharva</button>
-        <button class="filter-chip" onclick="filterWishes('both',this)">💕 Both</button>
-        <button class="filter-chip" onclick="filterWishes('blessing',this)">🙏 Blessings</button>
-        <button class="filter-chip" onclick="filterWishes('prediction',this)">🔮 Predictions</button>
-        <button class="filter-chip" onclick="filterWishes('wish',this)">💫 Wishes</button>
+      <button class="btn btn-blue" onclick="openMemWall()" style="margin-bottom:12px;">👁 Open Memory Wall</button>
+      <div class="filter-row" id="wishFilters">
+        <button class="fchip fp" onclick="filterWishes('all',this)">All</button>
+        <button class="fchip" onclick="filterWishes('anagha',this)">🌸 Anagha</button>
+        <button class="fchip" onclick="filterWishes('atharva',this)">⭐ Atharva</button>
+        <button class="fchip" onclick="filterWishes('both',this)">💕 Both</button>
+        <button class="fchip" onclick="filterWishes('blessing',this)">🙏 Blessings</button>
+        <button class="fchip" onclick="filterWishes('prediction',this)">🔮 Predictions</button>
       </div>
-      <div id="adminWishCount" style="font-size:0.8rem;color:var(--text-light);margin-bottom:8px;font-weight:700;"></div>
-      <div class="scroll-area" id="adminWishList"><p class="text-muted text-center">No memories yet.</p></div>
+      <div id="wishCount" style="font-size:0.8rem;color:var(--text-light);margin-bottom:8px;font-weight:700;"></div>
+      <div class="scroll-area" id="adminWishList"><p class="tm tc">No memories yet.</p></div>
     </div>
   </div>
   <div class="gap"></div>
@@ -525,10 +440,10 @@ label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;mar
 
 <!-- ===== JOIN ===== -->
 <div class="page screen" id="screenJoin">
-  <div class="brand-header"><div class="crown">👑</div><div class="brand-title">Celebrating Anagha &amp; Atharva</div><div class="flowers">🌸⭐🌸</div></div>
+  <div class="brand-header"><span class="crown">👑</span><div class="brand-title">Celebrating Anagha &amp; Atharva</div><div class="flowers">🌸⭐🌸</div></div>
   <div class="card">
     <div style="font-size:2.5rem;text-align:center;margin-bottom:10px;">🎀</div>
-    <div class="section-title text-center">What's your name?</div>
+    <div class="section-title tc">What's your name?</div>
     <label>Your Name</label>
     <input type="text" id="playerName" placeholder="e.g. Priya" maxlength="20" />
     <button class="btn btn-primary" onclick="joinQuiz()" style="margin-top:16px;">🌸 Join the Fun!</button>
@@ -538,1386 +453,1199 @@ label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;mar
 
 <!-- ===== WAITING ===== -->
 <div class="page screen" id="screenWaiting">
-  <div class="brand-header"><div class="crown">👑</div><div class="brand-title">Celebrating Anagha &amp; Atharva</div><div class="flowers">🌸⭐🌸</div></div>
-  <div class="card text-center">
+  <div class="brand-header"><span class="crown">👑</span><div class="brand-title">Celebrating Anagha &amp; Atharva</div><div class="flowers">🌸⭐🌸</div></div>
+  <div class="card tc">
     <div style="font-size:3rem;margin-bottom:8px;">🎀</div>
     <div class="section-title">You're in!</div>
     <p style="font-weight:800;font-size:1.15rem;color:var(--pink);margin-bottom:4px;" id="waitingName">Hello!</p>
-
-    <!-- Shown when waiting for quiz to start -->
     <div id="waitingDots">
-      <p class="text-muted" style="margin-bottom:12px;">Waiting for the quiz master to start…</p>
-      <div class="waiting-animation"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-      <div id="waitingParticipants" class="participant-badge" style="margin:0 auto;">👥 0 players ready</div>
+      <p class="tm" style="margin-bottom:12px;">Waiting for the quiz master to start…</p>
+      <div style="display:flex;justify-content:center;margin:20px 0;"><div class="dot"></div><div class="dot d2"></div><div class="dot d3"></div></div>
+      <div id="partBadge" class="pb" style="margin:0 auto;">👥 0 players ready</div>
     </div>
-
-    <!-- Shown when joining mid-quiz -->
     <div id="lateJoinNotice" style="display:none;"></div>
   </div>
 </div>
 
 <!-- ===== QUESTION ===== -->
-<div class="page screen" id="screenQuestion">
+<div class="page screen" id="screenQ">
   <div class="brand-header" style="padding-bottom:4px;"><div class="brand-title" style="font-size:1.05rem;">🌸 Anagha &amp; Atharva Quiz ⭐</div></div>
-  <div style="margin:0 16px 6px;display:flex;align-items:center;justify-content:space-between;">
-    <div class="badge badge-pink" id="qProgressBadge">Q 1 / 15</div>
-    <div id="playerScoreBadge" class="badge badge-gold">⭐ 0 pts</div>
+  <div style="margin:0 16px 6px;display:flex;justify-content:space-between;">
+    <div class="badge bp" id="qBadge">Q 1/15</div>
+    <div class="badge bg" id="scoreBadge">⭐ 0 pts</div>
   </div>
-  <div style="margin:0 16px 8px;"><div class="progress-bar"><div class="progress-fill" id="qProgressBar" style="width:0%"></div></div></div>
+  <div style="margin:0 16px 8px;"><div class="progress-bar"><div class="progress-fill" id="qProg" style="width:0%"></div></div></div>
   <div class="card">
     <div class="timer-ring">
       <svg width="80" height="80" viewBox="0 0 80 80">
-        <circle class="timer-track" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="0"/>
-        <circle class="timer-bar" cx="40" cy="40" r="34" id="timerCircle" stroke-dasharray="213.6" stroke-dashoffset="0"/>
+        <circle class="t-track" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="0"/>
+        <circle class="t-bar" cx="40" cy="40" r="34" id="timerCircle" stroke-dasharray="213.6" stroke-dashoffset="0"/>
       </svg>
-      <div class="timer-text" id="timerText">15</div>
+      <div class="t-text" id="timerText">15</div>
     </div>
-    <div class="q-number" id="qNumLabel">QUESTION 1</div>
-    <div class="q-text" id="qTextDisplay">Loading…</div>
+    <div style="font-size:0.8rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--pink);margin-bottom:8px;" id="qNumLbl">QUESTION 1</div>
+    <div style="font-size:1.1rem;font-weight:800;line-height:1.5;" id="qTextDisp">Loading…</div>
     <div class="choices" id="choicesGrid"></div>
-    <div id="answerReveal" style="display:none;"></div>
+    <div id="ansReveal" style="display:none;"></div>
     <button class="btn btn-primary" id="submitBtn" onclick="submitAnswer()" style="margin-top:16px;" disabled>Submit Answer</button>
-  </div>
-  <div class="gap"></div>
-</div>
-
-<!-- ===== STANDALONE MEMORY SCREEN ===== -->
-<div class="page screen" id="screenMemory">
-  <div class="brand-header">
-    <div class="crown">👑</div>
-    <div class="brand-title">Memory Book</div>
-    <div class="brand-sub">Anagha &amp; Atharva</div>
-    <div class="flowers">🌸⭐🌸</div>
-  </div>
-
-  <!-- Name entry for non-quiz visitors -->
-  <div class="card" id="memoryNameCard">
-    <div style="text-align:center;margin-bottom:14px;">
-      <div style="font-size:2.5rem;margin-bottom:6px;">💌</div>
-      <div class="section-title" style="margin-bottom:4px;">Who are you?</div>
-      <p class="text-muted" style="font-size:0.85rem;">Just your name so we know who left this memory 🌸</p>
-    </div>
-    <label>Your Name</label>
-    <input type="text" id="memoryVisitorName" placeholder="e.g. Priya Aunty" maxlength="30" />
-    <button class="btn btn-primary" onclick="continueToMemory()" style="margin-top:14px;">💌 Continue to Memory Book</button>
-    <button class="btn btn-outline" onclick="showScreen('screenLanding')" style="margin-top:8px;">← Back</button>
-  </div>
-
-  <!-- Actual memory form — shown after name entered -->
-  <div class="card" id="memoryFormCard" style="display:none;">
-    <div style="text-align:center;margin-bottom:16px;">
-      <div style="font-size:2.5rem;margin-bottom:6px;">💌</div>
-      <div class="section-title" style="margin-bottom:6px;">Leave a Memory</div>
-      <p class="text-muted" style="font-size:0.85rem;">Write a wish, blessing, or funny prediction for Anagha, Atharva, or both! 🌸⭐</p>
-    </div>
-
-    <label>Who is this for?</label>
-    <div class="child-toggle">
-      <button class="child-toggle-btn active-anagha" id="memTogAnagha" onclick="setMemWishFor('anagha')">🌸 Anagha</button>
-      <button class="child-toggle-btn" id="memTogAtharva" onclick="setMemWishFor('atharva')">⭐ Atharva</button>
-      <button class="child-toggle-btn" id="memTogBoth" onclick="setMemWishFor('both')">💕 Both</button>
-    </div>
-
-    <label>Type of message</label>
-    <div class="type-chips">
-      <button class="type-chip sel" onclick="setMemWishType('wish',this)">💫 Wish</button>
-      <button class="type-chip" onclick="setMemWishType('blessing',this)">🙏 Blessing</button>
-      <button class="type-chip" onclick="setMemWishType('prediction',this)">🔮 Funny Prediction</button>
-    </div>
-
-    <label id="memWishLabel">Your Wish</label>
-    <textarea id="memWishText" rows="4" placeholder="Write your heartfelt wish here… 💕" maxlength="500"></textarea>
-    <div style="text-align:right;font-size:0.73rem;color:var(--text-light);margin-top:3px;"><span id="memCharCount">0</span>/500</div>
-
-    <label>Add a Photo (optional)</label>
-    <div class="photo-zone" id="memPhotoZone" style="cursor:default;min-height:120px;display:flex;align-items:center;justify-content:center;">
-      <div id="memPhotoPlaceholder" style="width:100%;">
-        <div style="font-size:2.8rem;margin-bottom:8px;">📸</div>
-        <div style="font-weight:800;font-size:0.95rem;margin-bottom:4px;color:var(--pink);">Add your selfie or family photo</div>
-        <div class="text-muted" style="font-size:0.82rem;">Use the buttons below — Camera opens your camera app,<br>Gallery lets you pick an existing photo</div>
-      </div>
-      <img id="memPhotoPreview" class="photo-preview-img" style="display:none;" />
-    </div>
-    <div class="upload-action-row" style="margin-top:12px;">
-      <button class="upl-btn upl-camera" onclick="el('memCameraIn').click()"
-        style="padding:13px 22px;font-size:0.95rem;border-radius:50px;min-width:130px;">
-        📷 Camera
-      </button>
-      <button class="upl-btn upl-gallery" onclick="el('memGalleryIn').click()"
-        style="padding:13px 22px;font-size:0.95rem;border-radius:50px;min-width:130px;">
-        🖼 Gallery
-      </button>
-      <button class="upl-btn upl-clear" id="memClearPhotoBtn" onclick="clearMemPhoto()"
-        style="display:none;padding:10px 18px;border-radius:50px;">✕ Remove</button>
-    </div>
-    <input type="file" id="memCameraIn" accept="image/*" capture style="display:none;" onchange="onMemPhotoSelected(this)" />
-    <input type="file" id="memGalleryIn" accept="image/*" style="display:none;" onchange="onMemPhotoSelected(this)" />
-
-    <button class="btn btn-primary" id="memWishBtn" onclick="submitMemWish()" style="margin-top:16px;">💌 Send My Memory</button>
-    <button class="btn btn-outline" onclick="showScreen('screenLanding')" style="margin-top:8px;">← Back to Home</button>
-
-    <div id="memWishDone" style="display:none;text-align:center;padding:18px 0;">
-      <div style="font-size:3rem;">🎉</div>
-      <div style="font-weight:800;font-size:1.1rem;color:var(--pink);margin-bottom:6px;">Memory Saved Forever! 💕</div>
-      <p class="text-muted" id="memWishDoneMsg">Your memory is in the book.</p>
-      <div style="margin-top:14px;padding:14px;background:var(--blue-pale);border-radius:14px;border:1.5px solid var(--blue-light);">
-        <div style="font-weight:800;font-size:0.9rem;color:var(--blue);margin-bottom:10px;">Leave a message for the other child too?</div>
-        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-          <button class="btn btn-blue btn-sm" onclick="resetMemFormFor('anagha')" style="margin-top:0;">🌸 Write for Anagha</button>
-          <button class="btn btn-primary btn-sm" onclick="resetMemFormFor('atharva')" style="margin-top:0;">⭐ Write for Atharva</button>
-        </div>
-      </div>
-      <button class="btn btn-outline" onclick="resetMemForm()" style="margin-top:10px;font-size:0.85rem;">+ Different Message</button>
-      <button class="btn btn-outline" onclick="showScreen('screenLanding')" style="margin-top:8px;">🏠 Back to Home</button>
-    </div>
   </div>
   <div class="gap"></div>
 </div>
 
 <!-- ===== FINAL ===== -->
 <div class="page screen" id="screenFinal">
-  <div class="brand-header"><div class="crown">👑</div><div class="brand-title">Quiz Complete!</div><div class="flowers">🌸⭐🌸</div></div>
-
-  <!-- Score + leaderboard -->
+  <div class="brand-header"><span class="crown">👑</span><div class="brand-title">Quiz Complete!</div><div class="flowers">🌸⭐🌸</div></div>
   <div class="card">
     <div style="text-align:center;padding:10px 0;">
-      <div class="confetti">🎊</div>
-      <div class="score-circle"><div class="score-num" id="finalScoreNum">0</div><div class="score-label">POINTS</div></div>
+      <div style="font-size:2rem;letter-spacing:4px;margin:8px 0;">🎊</div>
+      <div class="score-circle"><div class="score-num" id="finalScore">0</div><div class="score-lbl">POINTS</div></div>
       <div style="margin-top:14px;">
         <div style="font-size:1.1rem;font-weight:800;margin-bottom:4px;" id="finalMsg">Great job!</div>
-        <div class="text-muted" id="finalSub">You answered 0 questions correctly</div>
+        <div class="tm" id="finalSub">0 correct</div>
       </div>
     </div>
     <div class="divider"></div>
     <div class="section-title">🏆 Final Leaderboard</div>
-    <div id="finalLeaderboard"></div>
+    <div id="finalLB"></div>
   </div>
-
-  <!-- MEMORY BOOK -->
-  <div class="card" id="memoryCard">
+  <!-- MEMORY FORM -->
+  <div class="card" id="memCard">
     <div style="text-align:center;margin-bottom:16px;">
       <div style="font-size:2.5rem;margin-bottom:6px;">💌</div>
       <div class="section-title" style="margin-bottom:6px;">Leave a Memory</div>
-      <p class="text-muted" style="font-size:0.85rem;">Write a wish, blessing, or funny prediction for Anagha, Atharva, or both! Add your selfie too 📸</p>
+      <p class="tm" style="font-size:0.85rem;">Write a wish, blessing, or funny prediction — for Anagha, Atharva, or both!</p>
     </div>
+    <div id="memFormInner"></div>
+  </div>
+  <div class="gap"></div>
+</div>
 
-    <label>Who is this for?</label>
-    <div class="child-toggle">
-      <button class="child-toggle-btn active-anagha" id="togAnagha" onclick="setWishFor('anagha')">🌸 Anagha</button>
-      <button class="child-toggle-btn" id="togAtharva" onclick="setWishFor('atharva')">⭐ Atharva</button>
-      <button class="child-toggle-btn" id="togBoth" onclick="setWishFor('both')">💕 Both</button>
+<!-- ===== STANDALONE MEMORY SCREEN ===== -->
+<div class="page screen" id="screenMemory">
+  <div class="brand-header"><span class="crown">👑</span><div class="brand-title">Memory Book</div><div class="brand-sub">Anagha &amp; Atharva</div><div class="flowers">🌸⭐🌸</div></div>
+  <div class="card" id="memNameCard">
+    <div style="text-align:center;margin-bottom:14px;">
+      <div style="font-size:2.5rem;margin-bottom:6px;">💌</div>
+      <div class="section-title" style="margin-bottom:4px;">Who are you?</div>
+      <p class="tm" style="font-size:0.85rem;">Just your name so we know who left this memory 🌸</p>
     </div>
-
-    <label>Type</label>
-    <div class="type-chips">
-      <button class="type-chip sel" onclick="setWishType('wish',this)">💫 Wish</button>
-      <button class="type-chip" onclick="setWishType('blessing',this)">🙏 Blessing</button>
-      <button class="type-chip" onclick="setWishType('prediction',this)">🔮 Funny Prediction</button>
-    </div>
-
-    <label id="wishLabel">Your Wish</label>
-    <textarea id="wishText" rows="4" placeholder="Write your heartfelt wish here… 💕" maxlength="500"></textarea>
-    <div style="text-align:right;font-size:0.73rem;color:var(--text-light);margin-top:3px;"><span id="charCount">0</span>/500</div>
-
-    <label>Add a Photo (optional)</label>
-    <div class="photo-zone" id="photoZone">
-      <div id="photoPlaceholder">
-        <div style="font-size:2.5rem;margin-bottom:8px;">📸</div>
-        <div style="font-weight:700;font-size:0.9rem;margin-bottom:4px;">Add your selfie or family photo</div>
-        <div class="text-muted" style="font-size:0.8rem;">Tap a button below to open camera or gallery</div>
-      </div>
-      <img id="photoPreview" class="photo-preview-img" style="display:none;" />
-    </div>
-    <div class="upload-action-row" id="uploadRow" style="margin-top:12px;">
-      <button class="upl-btn upl-camera" onclick="el('cameraIn').click()"
-        style="padding:13px 22px;font-size:0.95rem;border-radius:50px;min-width:130px;">
-        📷 Camera
-      </button>
-      <button class="upl-btn upl-gallery" onclick="el('galleryIn').click()"
-        style="padding:13px 22px;font-size:0.95rem;border-radius:50px;min-width:130px;">
-        🖼 Gallery
-      </button>
-      <button class="upl-btn upl-clear" id="clearPhotoBtn" onclick="clearPhoto()"
-        style="display:none;padding:10px 18px;border-radius:50px;">✕ Remove</button>
-    </div>
-    <input type="file" id="cameraIn" accept="image/*" capture style="display:none;" onchange="onPhotoSelected(this)" />
-    <input type="file" id="galleryIn" accept="image/*" style="display:none;" onchange="onPhotoSelected(this)" />
-
-    <button class="btn btn-primary" id="wishBtn" onclick="submitWish()" style="margin-top:16px;">💌 Send My Memory</button>
-
-    <div id="wishDone" style="display:none;text-align:center;padding:18px 0;">
-      <div style="font-size:3rem;">🎉</div>
-      <div style="font-weight:800;font-size:1.1rem;color:var(--pink);margin-bottom:6px;">Memory Saved Forever! 💕</div>
-      <p class="text-muted" id="wishDoneMsg">Your memory is in the book.</p>
-      <div id="wishDonePrompt" style="margin-top:14px;padding:14px;background:var(--blue-pale);border-radius:14px;border:1.5px solid var(--blue-light);">
-        <div style="font-weight:800;font-size:0.9rem;color:var(--blue);margin-bottom:10px;">Want to leave a message for the other child too?</div>
-        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-          <button class="btn btn-blue btn-sm" onclick="anotherWishFor('anagha')" style="margin-top:0;">🌸 Write for Anagha</button>
-          <button class="btn btn-primary btn-sm" onclick="anotherWishFor('atharva')" style="margin-top:0;">⭐ Write for Atharva</button>
-        </div>
-      </div>
-      <button class="btn btn-outline" onclick="anotherWish()" style="margin-top:10px;font-size:0.85rem;">+ Different Message</button>
-    </div>
+    <label>Your Name</label>
+    <input type="text" id="memVisitorName" placeholder="e.g. Priya Aunty" maxlength="30" />
+    <button class="btn btn-primary" onclick="continueToMemory()" style="margin-top:14px;">💌 Continue</button>
+    <button class="btn btn-outline" onclick="showScreen('screenLanding')" style="margin-top:8px;">← Back</button>
+  </div>
+  <div class="card" id="memFormCard" style="display:none;">
+    <div id="standaloneMemForm"></div>
+    <button class="btn btn-outline" onclick="showScreen('screenLanding')" style="margin-top:8px;">🏠 Back to Home</button>
   </div>
   <div class="gap"></div>
 </div>
 
 <script>
-// ================================================================
+// ==========================================================
 // GLOBALS
-// ================================================================
-let db=null,storage=null;
-const S={
-  role:null,pid:null,pname:'',
-  questions:[],currentQ:0,
-  started:false,ended:false,
-  selAns:null,answered:false,
-  score:0,correct:0,
-  timerInt:null,timeLimit:15,
-  // wish state
-  wishFor:'anagha',wishType:'wish',
-  photoFile:null,photoDataUrl:null,
-  // wish projector
-  allWishes:[],slideIdx:0,wishFilter:'all',autoInt:null,
+// ==========================================================
+var db = null;
+var G = {
+  el: function(id){ return document.getElementById(id); },
+  v:  function(id){ var e=document.getElementById(id); return e?e.value:''; }
 };
-const el=id=>document.getElementById(id);
-const v=id=>el(id)?el(id).value:'';
-const ls=(k,val)=>{try{localStorage.setItem(k,val);}catch(e){}};
 
-// ================================================================
-// FIREBASE
-// ================================================================
+var FIREBASE_CONFIG = {
+  apiKey:      "AIzaSyA25tLNF9OI1LdBp52qb8wOrsVJcsXg9Qg",
+  authDomain:  "celebrating-anagha.firebaseapp.com",
+  databaseURL: "https://celebrating-anagha-default-rtdb.firebaseio.com",
+  projectId:   "celebrating-anagha",
+};
+var ADMIN_PASS  = "anagha2024";
+var TIME_LIMIT  = 15;
+
+// App state
+var S = {
+  role:'', pid:'', pname:'', questions:[],
+  currentQ:0, started:false, ended:false,
+  selAns:null, answered:false, score:0, correct:0,
+  timerInt:null
+};
+
+// Wish state (for standalone and final screen)
+var W = { wishFor:'anagha', wishType:'wish', photoFile:null, photoDataUrl:null, context:'' };
+
+// Wish projector state
+var PROJ = { slides:[], idx:0, filter:'all', autoInt:null };
+
+// Admin local questions
+var localQs = [];
+var wishFilterMode = 'all';
+var allWishesCache = [];
+var adminTimerInt = null;
+
+// ==========================================================
+// HELPERS
+// ==========================================================
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  var el = G.el(id);
+  if(el) el.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function showToast(msg){
+  var t = G.el('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastT);
+  window._toastT = setTimeout(function(){ t.classList.remove('show'); }, 2800);
+}
+
+function ls(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function lg(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+
+// ==========================================================
+// FIREBASE INIT
+// ==========================================================
 function initFirebase(cfg){
-  // Guard: check Firebase SDK loaded
   if(typeof firebase === 'undefined'){
-    var msg = 'Firebase SDK did not load. Check your internet connection and reload the page.';
-    showToast(msg);
-    var statusEl = el('fbConnStatus');
-    if(statusEl){ statusEl.textContent = 'Firebase SDK not loaded!'; statusEl.style.color='#EE4444'; }
-    var banner = el('firebaseErrorBanner');
-    if(banner) banner.style.display='block';
-    console.error(msg);
+    showToast('Firebase SDK not loaded — check internet connection');
     return false;
   }
   if(!cfg || !cfg.apiKey || !cfg.databaseURL){
-    var msg2 = 'Firebase config is incomplete - missing apiKey or databaseURL';
-    showToast(msg2);
-    console.error(msg2, cfg);
+    showToast('Firebase config incomplete');
     return false;
   }
   try{
     if(firebase.apps.length) firebase.app().delete();
     firebase.initializeApp(cfg);
     db = firebase.database();
-    try{ storage=firebase.storage(); }catch(e){ storage=null; }
-    // Live connection status
     db.ref('.info/connected').on('value', function(snap){
-      var connected = snap.val();
-      var statusEl = el('fbConnStatus');
-      if(statusEl){
-        statusEl.textContent = connected ? 'Firebase: Connected' : 'Firebase: Connecting...';
-        statusEl.style.color = connected ? '#059669' : '#FF9500';
+      var c = snap.val();
+      var el = G.el('fbConnStatus');
+      if(el){
+        el.textContent = c ? 'Firebase: Connected ✅' : 'Firebase: Connecting…';
+        el.style.color = c ? '#059669' : '#FF9500';
       }
     });
     startListeners();
-    console.log('Firebase initialised successfully with project:', cfg.projectId);
     return true;
   }catch(e){
-    var err = 'Firebase init error: ' + e.message;
-    showToast(err);
-    console.error(err, e);
-    var statusEl = el('fbConnStatus');
-    if(statusEl){ statusEl.textContent = 'Error: ' + e.message; statusEl.style.color='#EE4444'; }
+    showToast('Firebase error: ' + e.message);
     return false;
   }
 }
-function saveFirebaseConfig(){
-  const cfg={apiKey:v('fbApiKey'),authDomain:v('fbAuthDomain'),databaseURL:v('fbDbUrl'),projectId:v('fbProjectId'),storageBucket:v('fbStorageBucket')};
-  if(!cfg.apiKey||!cfg.databaseURL){showToast('❌ Fill API Key + Database URL');return;}
-  const pass=v('fbAdminPass')||'anagha2024';
-  const tl=parseInt(v('fbTimeLimit'))||15;
-  ls('fbConfig',JSON.stringify(cfg));ls('fbPass',pass);ls('fbTL',tl);
-  S.timeLimit=tl;
-  const ok=initFirebase(cfg);
-  el('fbStatus').innerHTML=ok?'<span style="color:#059669">✅ Connected!</span>':'<span style="color:#EE4444">❌ Failed</span>';
+
+function saveConfig(){
+  var cfg = {
+    apiKey:      G.v('fbApiKey'),
+    authDomain:  G.v('fbAuthDomain'),
+    databaseURL: G.v('fbDbUrl'),
+    projectId:   G.v('fbProjectId')
+  };
+  if(!cfg.apiKey||!cfg.databaseURL){ showToast('Fill API Key and Database URL'); return; }
+  var pass = G.v('fbAdminPass') || ADMIN_PASS;
+  var tl   = parseInt(G.v('fbTimeLimit')) || TIME_LIMIT;
+  ADMIN_PASS  = pass;
+  TIME_LIMIT  = tl;
+  ls('fbConfig', JSON.stringify(cfg));
+  ls('fbPass', pass);
+  ls('fbTL', tl);
+  var ok = initFirebase(cfg);
+  G.el('fbStatus').innerHTML = ok
+    ? '<span style="color:#059669">✅ Connected!</span>'
+    : '<span style="color:#EE4444">❌ Failed — check config</span>';
 }
 
-// ================================================================
-// LISTENERS
-// ================================================================
-function startListeners(){
-  if(!db)return;
-  db.ref('quizState').on('value',s=>{const d=s.val();if(d)onStateChange(d);});
-  db.ref('participants').on('value',s=>{
-    const n=Object.keys(s.val()||{}).length;
-    el('participantCount').textContent=`👥 ${n} players joined`;
-    el('waitingParticipants').textContent=`👥 ${n} players ready`;
-    el('projParticipants').textContent=`👥 ${n} players`;
+function testConn(){
+  var st = G.el('fbStatus');
+  if(!db){ st.innerHTML='<span style="color:#EE4444">No Firebase instance — click Save first</span>'; return; }
+  st.innerHTML='<span style="color:#FF9500">Testing…</span>';
+  db.ref('.info/connected').once('value').then(function(snap){
+    if(snap.val()){
+      return db.ref('questions').once('value').then(function(qs){
+        var qv = qs.val();
+        var qcount = qv ? qv.length : 0;
+        st.innerHTML='<span style="color:#059669">Connected! ' + qcount + ' questions in DB</span>';
+      });
+    } else {
+      st.innerHTML='<span style="color:#EE4444">Not connected — check Database URL and rules</span>';
+    }
+  }).catch(function(e){
+    st.innerHTML='<span style="color:#EE4444">Error: '+e.message+'</span>';
   });
-  db.ref('scores').on('value',s=>{const d=s.val()||{};renderLB(d,'adminLeaderboard');renderLB(d,'finalLeaderboard');});
-  db.ref('answers').on('value',s=>updateCounts(s.val()||{}));
-  db.ref('wishes').on('value', function(s){
-    var d=s.val()||{};
-    S.allWishes=Object.entries(d).map(function(e){
+}
+
+// ==========================================================
+// LISTENERS
+// ==========================================================
+function startListeners(){
+  if(!db) return;
+
+  db.ref('quizState').on('value', function(snap){
+    var st = snap.val();
+    if(st) onStateChange(st);
+  });
+
+  db.ref('participants').on('value', function(snap){
+    var n = Object.keys(snap.val()||{}).length;
+    var pc = G.el('partCount');   if(pc) pc.textContent='👥 '+n+' players';
+    var pb = G.el('partBadge');   if(pb) pb.textContent='👥 '+n+' players ready';
+    var pp = G.el('projParts');   if(pp) pp.textContent='👥 '+n+' players';
+  });
+
+  db.ref('scores').on('value', function(snap){
+    var d = snap.val()||{};
+    renderLB(d, 'adminLB');
+    renderLB(d, 'finalLB');
+  });
+
+  db.ref('answers').on('value', function(snap){
+    updateCounts(snap.val()||{});
+  });
+
+  db.ref('wishes').on('value', function(snap){
+    var d = snap.val()||{};
+    allWishesCache = Object.entries(d).map(function(e){
       return Object.assign({id:e[0]}, e[1]);
-    }).sort(function(a,b){return a.ts-b.ts;});
+    }).sort(function(a,b){ return a.ts-b.ts; });
+    PROJ.slides = allWishesCache.slice();
     renderAdminWishes();
   });
 }
-function onStateChange(st){
-  S.started=st.started||false;S.ended=st.ended||false;S.timeLimit=st.timeLimit||15;
 
-  // Always protect admin — never redirect them to player screens
-  if(S.role==='admin'){
-    var badge = el('quizStatusBadge');
-    if(badge) badge.textContent='Status: '+(st.ended?'Ended':st.started?'Q'+((st.currentQ||0)+1)+' running':'Not started');
+function onStateChange(st){
+  S.started = st.started||false;
+  S.ended   = st.ended||false;
+  S.currentQ = st.currentQ||0;
+  if(st.timeLimit) TIME_LIMIT = st.timeLimit;
+
+  // Admin — never redirect to player screens
+  if(S.role === 'admin'){
+    var qs = G.el('quizStatus');
+    if(qs) qs.textContent = 'Status: '+(st.ended?'Ended':st.started?'Q'+(S.currentQ+1)+' running':'Not started');
     updateAdminCtrl(st);
     return;
   }
 
-  // Only affect player screens if user has actually joined as a player
+  // Only affect players who have actually joined
   if(S.role !== 'player') return;
 
-  if(st.ended){showFinalScreen();return;}
-  if(!st.started){showScreen('screenWaiting');return;}
-  var qi=st.currentQ||0;
+  if(st.ended){ showFinalScreen(); return; }
+  if(!st.started){ showScreen('screenWaiting'); return; }
+
   if(!S.questions.length){
-    db.ref('questions').once('value').then(function(s){S.questions=s.val()||[];showQ(qi,st);});
-  } else showQ(qi,st);
-  updateProj(st);
+    db.ref('questions').once('value').then(function(snap){
+      S.questions = snap.val()||[];
+      showQ(S.currentQ, st);
+    });
+  } else {
+    showQ(S.currentQ, st);
+  }
+  updateProjQuiz(st);
 }
 
-// ================================================================
-// ADMIN AUTH + LOAD
-// ================================================================
-function showAdminLogin(){
-  try{const c=JSON.parse(localStorage.getItem('fbConfig')||'{}');
-    el('fbApiKey').value=c.apiKey||'';el('fbAuthDomain').value=c.authDomain||'';
-    el('fbDbUrl').value=c.databaseURL||'';el('fbProjectId').value=c.projectId||'';el('fbStorageBucket').value=c.storageBucket||'';
-  }catch(e){}
-  el('fbAdminPass').value=localStorage.getItem('fbPass')||'';
-  el('fbTimeLimit').value=localStorage.getItem('fbTL')||'15';
-  showScreen('screenAdminLogin');
-}
+// ==========================================================
+// ADMIN AUTH
+// ==========================================================
 function adminLogin(){
-  var pass=v('adminPassInput');
-  var stored=localStorage.getItem('fbPass')||ADMIN_PASSWORD;
-  if(pass===stored||pass===ADMIN_PASSWORD){
-    S.role='admin';
+  var pass   = G.v('adminPassInput');
+  var stored = lg('fbPass') || ADMIN_PASS;
+  if(pass === stored || pass === 'anagha2024'){
+    S.role = 'admin';
     sessionStorage.setItem('adminRole','true');
+    G.el('floatingAdmin').style.display='flex';
     showScreen('screenAdmin');
-    showAdminFloatingBtn(true);
-    loadLocalQ();
+    loadLocalQs();
     if(db){
       db.ref('questions').once('value').then(function(snap){
-        var qs=snap.val();
-        if(qs&&qs.length){ S.questions=qs; showToast(qs.length+' questions loaded.'); }
-        else showToast('Add questions in the Questions tab, then Publish.');
+        var qs = snap.val();
+        if(qs && qs.length){ S.questions=qs; showToast(qs.length+' questions loaded'); }
+        else showToast('Add questions in the Questions tab, then Publish');
       });
     }
-  } else showToast('Wrong password');
+  } else {
+    showToast('Wrong password');
+  }
 }
 
 function adminLogout(){
-  S.role=null;
+  S.role = '';
   sessionStorage.removeItem('adminRole');
-  showAdminFloatingBtn(false);
+  G.el('floatingAdmin').style.display='none';
   showScreen('screenLanding');
 }
 
-function showAdminFloatingBtn(visible){
-  var btn=el('floatingAdminBtn');
-  if(btn) btn.style.display=visible?'flex':'none';
-}
-let localQ=[];
-function loadLocalQ(){
-  try{ localQ=JSON.parse(localStorage.getItem('localQ')||'[]'); }catch(e){ localQ=[]; }
-  renderAdminQ();
-  // Also pull from DB to show what's already published
-  if(db && localQ.length===0){
+// ==========================================================
+// QUESTIONS (ADMIN)
+// ==========================================================
+function loadLocalQs(){
+  try{ localQs = JSON.parse(lg('localQs')||'[]'); }catch(e){ localQs=[]; }
+  renderAdminQs();
+  if(db && !localQs.length){
     db.ref('questions').once('value').then(function(snap){
-      var dbQ = snap.val();
-      if(dbQ && dbQ.length){
-        localQ = dbQ;
-        ls('localQ', JSON.stringify(localQ));
-        renderAdminQ();
-        showToast(dbQ.length + ' questions loaded from database');
-      }
+      var qs = snap.val();
+      if(qs && qs.length){ localQs=qs; ls('localQs',JSON.stringify(localQs)); renderAdminQs(); showToast(qs.length+' questions loaded from DB'); }
     });
   }
 }
-function toggleAddQ(){const f=el('addQForm');f.style.display=f.style.display==='none'?'block':'none';}
-function saveQuestion(){
-  const t=v('qText'),a=v('qA'),b=v('qB'),c=v('qC'),d=v('qD'),cor=v('qCorrect');
-  if(!t||!a||!b||!c||!d){showToast('❌ Fill all fields');return;}
-  localQ.push({text:t,options:{A:a,B:b,C:c,D:d},correct:cor});
-  ls('localQ',JSON.stringify(localQ));renderAdminQ();
-  el('addQForm').style.display='none';
-  ['qText','qA','qB','qC','qD'].forEach(id=>el(id).value='');
-  showToast('✅ Question saved!');
+
+function toggleAddQ(){
+  var f = G.el('addQForm');
+  f.style.display = f.style.display==='none'?'block':'none';
 }
-function deleteQ(i){localQ.splice(i,1);ls('localQ',JSON.stringify(localQ));renderAdminQ();}
-function renderAdminQ(){
-  const c=el('questionsList');
-  if(!localQ.length){c.innerHTML='<p class="text-muted text-center">No questions yet.</p>';return;}
-  c.innerHTML=localQ.map((q,i)=>`
-    <div class="q-admin-row">
-      <div style="font-weight:700;font-size:0.9rem;margin-bottom:6px;"><span class="badge badge-pink">Q${i+1}</span> ${q.text}</div>
-      <div style="font-size:0.77rem;color:var(--text-light);">A:${q.options.A} · B:${q.options.B} · C:${q.options.C} · D:${q.options.D} — ✅ <strong>${q.correct}</strong></div>
-      <button class="btn btn-danger btn-sm" style="margin-top:8px;padding:6px 14px;" onclick="deleteQ(${i})">🗑</button>
-    </div>`).join('');
+
+function saveQ(){
+  var t=G.v('qText'),a=G.v('qA'),b=G.v('qB'),c=G.v('qC'),d=G.v('qD'),cor=G.v('qCorrect');
+  if(!t||!a||!b||!c||!d){ showToast('Fill all fields'); return; }
+  localQs.push({text:t, options:{A:a,B:b,C:c,D:d}, correct:cor});
+  ls('localQs', JSON.stringify(localQs));
+  renderAdminQs();
+  G.el('addQForm').style.display='none';
+  ['qText','qA','qB','qC','qD'].forEach(function(id){ G.el(id).value=''; });
+  showToast('Question saved!');
 }
-function pushQuestionsToDb(){
-  var btn = document.querySelector('button[onclick="pushQuestionsToDb()"]');
-  if(!db){
-    showToast('Firebase not connected - check Setup tab first');
-    if(el('fbConnStatus')) el('fbConnStatus').style.color='#EE4444';
-    return;
-  }
-  if(!localQ || !localQ.length){
-    showToast('No questions to publish - add questions first');
-    return;
-  }
-  if(btn){ btn.disabled=true; btn.textContent='Publishing...'; }
-  console.log('Publishing questions:', localQ.length, localQ);
-  // Verify DB is actually connected
-  db.ref('.info/connected').once('value').then(function(snap){
-    console.log('DB connected?', snap.val());
-    if(!snap.val()){
-      showToast('Firebase not reachable - check your internet connection');
-      if(btn){ btn.disabled=false; btn.textContent='Publish to Live Quiz'; }
-      return;
-    }
-    return db.ref('questions').set(localQ);
-  }).then(function(){
-    S.questions = localQ;
-    showToast(localQ.length + ' questions published successfully!');
-    if(btn){ btn.disabled=false; btn.textContent='Publish to Live Quiz'; }
-    // Verify by reading back
-    db.ref('questions').once('value').then(function(s){
-      var saved = s.val();
-      console.log('Verified - questions in DB:', saved ? saved.length : 0);
-    });
+
+function deleteQ(i){
+  localQs.splice(i,1);
+  ls('localQs', JSON.stringify(localQs));
+  renderAdminQs();
+}
+
+function renderAdminQs(){
+  var c = G.el('qList');
+  if(!localQs.length){ c.innerHTML='<p class="tm tc">No questions yet.</p>'; return; }
+  c.innerHTML = localQs.map(function(q,i){
+    return '<div class="q-admin-row">'
+      +'<div style="font-weight:700;font-size:0.9rem;margin-bottom:6px;"><span class="badge bp">Q'+(i+1)+'</span> '+q.text+'</div>'
+      +'<div style="font-size:0.77rem;color:var(--text-light);">A:'+q.options.A+' · B:'+q.options.B+' · C:'+q.options.C+' · D:'+q.options.D+' — ✅ '+q.correct+'</div>'
+      +'<button onclick="deleteQ('+i+')" style="margin-top:8px;padding:6px 14px;border-radius:50px;background:linear-gradient(135deg,#FF6B6B,#EE4444);color:white;border:none;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;font-size:0.82rem;">🗑 Delete</button>'
+      +'</div>';
+  }).join('');
+}
+
+function publishQs(){
+  if(!db){ showToast('Firebase not connected'); return; }
+  if(!localQs.length){ showToast('No questions to publish'); return; }
+  var btn = document.querySelector('button[onclick="publishQs()"]');
+  if(btn){ btn.disabled=true; btn.textContent='Publishing…'; }
+  db.ref('questions').set(localQs).then(function(){
+    S.questions = localQs;
+    showToast(localQs.length+' questions published!');
+    if(btn){ btn.disabled=false; btn.textContent='🚀 Publish Questions'; }
   }).catch(function(e){
-    console.error('Publish error:', e);
-    showToast('Publish failed: ' + e.message + ' - check Firebase rules');
-    if(btn){ btn.disabled=false; btn.textContent='Publish to Live Quiz'; }
+    showToast('Publish failed: '+e.message);
+    if(btn){ btn.disabled=false; btn.textContent='🚀 Publish Questions'; }
   });
 }
 
-// ================================================================
-// QUIZ CONTROL
-// ================================================================
+// ==========================================================
+// QUIZ CONTROL (ADMIN)
+// ==========================================================
 function startQuiz(){
-  if(!db){ showToast('Firebase not connected - check Setup tab'); return; }
-  const btn = el('btnStartQuiz');
-  btn.disabled = true;
-  btn.textContent = 'Starting...';
+  if(!db){ showToast('Firebase not connected — check Setup tab'); return; }
+  var btn = G.el('btnStart');
+  btn.disabled=true; btn.textContent='Starting…';
   db.ref('questions').once('value').then(function(snap){
     var qs = snap.val();
-    if(!qs || !Array.isArray(qs) || qs.length === 0){
-      showToast('No questions found - go to Questions tab and click Publish first');
-      btn.disabled = false;
-      btn.textContent = 'Start Quiz';
-      return;
-    }
+    if(!qs||!qs.length){ showToast('No questions — publish first'); btn.disabled=false; btn.textContent='▶️ Start Quiz'; return; }
     S.questions = qs;
-    var tl = parseInt(localStorage.getItem('fbTL')) || S.timeLimit || 15;
-    db.ref('quizState').set({started:true, ended:false, currentQ:0, questionStartTime:Date.now(), timeLimit:tl});
-    db.ref('answers').child('q0').remove();
+    var tl = parseInt(lg('fbTL'))||TIME_LIMIT;
+    db.ref('quizState').set({started:true,ended:false,currentQ:0,questionStartTime:Date.now(),timeLimit:tl});
+    db.ref('answers/q0').remove();
     showToast('Quiz started!');
-    btn.style.display = 'none';
-    btn.disabled = false;
-    btn.textContent = 'Start Quiz';
-    el('btnNext').style.display = 'block';
-    S.currentQ = 0;
+    btn.style.display='none'; btn.disabled=false; btn.textContent='▶️ Start Quiz';
+    G.el('btnNext').style.display='block';
+    G.el('btnStop').style.display='block';
+    S.currentQ=0;
     startAdminTimer(0, tl);
-    el('controlCurrentQ').style.display = 'block';
-    el('controlQNum').textContent = 'Question 1 of ' + S.questions.length;
-    el('controlQText').textContent = S.questions[0].text;
-    el('controlProgress').style.width = (1/S.questions.length*100) + '%';
+    updateAdminCtrlDisplay(0, qs);
   }).catch(function(e){
-    showToast('Error: ' + e.message);
-    btn.disabled = false;
-    btn.textContent = 'Start Quiz';
+    showToast('Error: '+e.message);
+    btn.disabled=false; btn.textContent='▶️ Start Quiz';
   });
 }
-function nextQuestion(){
+
+function nextQ(){
   if(!db) return;
-  var next = S.currentQ + 1;
-  var tl = parseInt(localStorage.getItem('fbTL')) || S.timeLimit || 15;
+  var next = S.currentQ+1;
+  var tl = parseInt(lg('fbTL'))||TIME_LIMIT;
   if(next >= S.questions.length){
-    db.ref('quizState').update({ended:true, started:false});
-    showToast('Quiz ended! Players can now see final scores.');
-    el('btnNext').style.display = 'none';
-    el('btnStartQuiz').style.display = 'block';
-    el('btnStartQuiz').textContent = 'Restart Quiz';
-    return;
+    endQuiz(); return;
   }
-  db.ref('answers').child('q'+next).remove();
+  db.ref('answers/q'+next).remove();
   db.ref('quizState').update({currentQ:next, questionStartTime:Date.now(), timeLimit:tl});
   S.currentQ = next;
   startAdminTimer(next, tl);
-  showToast('Question ' + (next+1) + ' started');
-  el('controlQNum').textContent = 'Question ' + (next+1) + ' of ' + S.questions.length;
-  el('controlQText').textContent = S.questions[next].text;
-  el('controlProgress').style.width = ((next+1)/S.questions.length*100) + '%';
+  updateAdminCtrlDisplay(next, S.questions);
+  showToast('Q'+(next+1)+' started');
 }
+
+function stopQuiz(){
+  if(!db) return;
+  if(!confirm('Stop the quiz now? Players will see their final scores.')) return;
+  endQuiz();
+}
+
+function endQuiz(){
+  db.ref('quizState').update({ended:true, started:false});
+  clearInterval(adminTimerInt);
+  showToast('Quiz ended!');
+  G.el('btnNext').style.display='none';
+  G.el('btnStop').style.display='none';
+  G.el('btnStart').style.display='block';
+  G.el('btnStart').textContent='▶️ Restart Quiz';
+}
+
 function resetQuiz(){
-  if(!db)return;if(!confirm('Reset everything?'))return;
-  db.ref('quizState').set({started:false,ended:false,currentQ:0,timeLimit:S.timeLimit});
-  ['scores','answers','participants'].forEach(r=>db.ref(r).remove());
-  S.currentQ=0;clearInterval(adminTI);
-  showToast('🔄 Reset!');
-  el('btnStartQuiz').style.display='block';el('btnStartQuiz').textContent='▶️ Start Quiz';el('btnNext').style.display='none';
+  if(!db) return;
+  if(!confirm('Reset ALL quiz data? This clears scores, answers and participants.')) return;
+  db.ref('quizState').set({started:false,ended:false,currentQ:0,timeLimit:TIME_LIMIT});
+  ['scores','answers','participants','qscores'].forEach(function(r){ db.ref(r).remove(); });
+  S.currentQ=0; clearInterval(adminTimerInt);
+  G.el('btnStart').style.display='block'; G.el('btnStart').textContent='▶️ Start Quiz';
+  G.el('btnNext').style.display='none'; G.el('btnStop').style.display='none';
+  G.el('ctrlQ').style.display='none';
+  showToast('Quiz reset!');
 }
-let adminTI=null;
-function startAdminTimer(qi,tl){
-  clearInterval(adminTI);
-  const start=Date.now();
-  const tick=()=>{
-    const rem=Math.max(0,tl-Math.floor((Date.now()-start)/1000));
-    el('controlTimer').textContent=rem+'s';
-    el('controlTimer').style.color=rem<=3?'#EE4444':'var(--pink)';
-    el('projTimer').textContent=rem;
-    el('projTimer').className='proj-timer'+(rem<=3?' urgent':'');
-    if(rem===0){clearInterval(adminTI);revealProjAnswer(qi);}
-  };
-  tick();adminTI=setInterval(tick,500);
-}
+
 function updateAdminCtrl(st){
-  const qi=st.currentQ||0;
-  if(!S.questions.length){db.ref('questions').once('value').then(s=>{S.questions=s.val()||[];updateAdminCtrl(st);});return;}
-  const q=S.questions[qi];if(!q)return;
-  el('controlCurrentQ').style.display='block';
-  el('controlQNum').textContent=`Question ${qi+1} of ${S.questions.length}`;
-  el('controlQText').textContent=q.text;
-  el('controlProgress').style.width=((qi+1)/S.questions.length*100)+'%';
-  S.currentQ=qi;
+  if(!S.questions.length) return;
+  updateAdminCtrlDisplay(st.currentQ||0, S.questions);
 }
+
+function updateAdminCtrlDisplay(qi, qs){
+  var q = qs[qi]; if(!q) return;
+  G.el('ctrlQ').style.display='block';
+  G.el('ctrlQNum').textContent='Question '+(qi+1)+' of '+qs.length;
+  G.el('ctrlQText').textContent=q.text;
+  G.el('ctrlProg').style.width=((qi+1)/qs.length*100)+'%';
+}
+
+function startAdminTimer(qi, tl){
+  clearInterval(adminTimerInt);
+  var start = Date.now();
+  function tick(){
+    var rem = Math.max(0, tl - Math.floor((Date.now()-start)/1000));
+    G.el('ctrlTimer').textContent=rem+'s';
+    G.el('ctrlTimer').style.color = rem<=3?'#EE4444':'var(--pink)';
+    var pt = G.el('projTimer');
+    if(pt){ pt.textContent=rem; pt.className='proj-timer'+(rem<=3?' urgent':''); }
+    if(rem===0){ clearInterval(adminTimerInt); revealProjAnswer(qi); }
+  }
+  tick();
+  adminTimerInt = setInterval(tick, 500);
+}
+
 function updateCounts(all){
-  const ans=all['q'+S.currentQ]||{};
-  const c={A:0,B:0,C:0,D:0};
-  Object.values(ans).forEach(a=>{if(c[a.answer]!==undefined)c[a.answer]++;});
-  const tot=Object.values(c).reduce((s,v)=>s+v,0);
-  el('adminLiveCount').innerHTML=['A','B','C','D'].map(o=>`<div class="count-pill">${o}: ${c[o]}${tot?' ('+(Math.round(c[o]/tot*100))+'%)':''}</div>`).join('');
+  var ans = all['q'+S.currentQ]||{};
+  var counts={A:0,B:0,C:0,D:0};
+  Object.values(ans).forEach(function(a){ if(counts[a.answer]!==undefined) counts[a.answer]++; });
+  var tot = Object.values(counts).reduce(function(s,v){return s+v;},0);
+  var lc = G.el('liveCounts');
+  if(!lc) return;
+  lc.innerHTML = ['A','B','C','D'].map(function(o){
+    return '<div style="padding:4px 12px;border-radius:50px;font-size:0.78rem;font-weight:800;background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.2);">'
+      +o+': '+counts[o]+(tot?' ('+Math.round(counts[o]/tot*100)+'%)':'')
+      +'</div>';
+  }).join('');
 }
 
-// ================================================================
-// PLAYER JOIN + QUIZ
-// ================================================================
+// ==========================================================
+// PLAYER JOIN
+// ==========================================================
 function joinQuiz(){
-  var name=v('playerName').trim();
-  if(!name){showToast('Please enter your name');return;}
-  S.pname=name;
-  S.pid='p_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
-  S.role='player';S.score=0;S.correct=0;
-
-  if(!db){try{initFirebase(FIREBASE_CONFIG);}catch(e){}}
-  if(!db){showToast('Cannot connect. Please refresh and try again.');return;}
-
-  // Register player
+  var name = G.v('playerName').trim();
+  if(!name){ showToast('Please enter your name'); return; }
+  S.pname=name; S.pid='p_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
+  S.role='player'; S.score=0; S.correct=0;
+  if(!db){ showToast('Cannot connect — please refresh'); return; }
   db.ref('participants/'+S.pid).set({name:name, joinedAt:Date.now()});
   db.ref('scores/'+S.pid).set({name:name, score:0, correct:0});
-
-  // Always show welcome screen first — even if quiz is already running
-  el('waitingName').textContent='Hello, '+name+'! 🌸';
-  // Reset waiting screen to default state
-  var wd=el('waitingDots'); if(wd) wd.style.display='block';
-  var lj=el('lateJoinNotice'); if(lj) lj.style.display='none';
+  G.el('waitingName').textContent='Hello, '+name+'! 🌸';
+  G.el('waitingDots').style.display='block';
+  G.el('lateJoinNotice').style.display='none';
   showScreen('screenWaiting');
-
-  // Check current quiz state
   db.ref('quizState').once('value').then(function(snap){
-    var st=snap.val();
-
-    if(!st || !st.started){
-      // Quiz hasn't started yet — just wait, listeners will handle it
-      el('lateJoinNotice').style.display='none';
-      return;
-    }
-
-    if(st.ended){
-      // Quiz is over — go straight to final
-      db.ref('questions').once('value').then(function(qs){
-        S.questions=qs.val()||[];
-        showFinalScreen();
-      });
-      return;
-    }
-
-    // Quiz is MID-GAME — show a late join welcome for 2.5 seconds then enter
-    var qNum = (st.currentQ||0)+1;
-    var totalQ = 0;
+    var st = snap.val();
+    if(!st||!st.started) return;
+    if(st.ended){ db.ref('questions').once('value').then(function(qs){ S.questions=qs.val()||[]; showFinalScreen(); }); return; }
     db.ref('questions').once('value').then(function(qs){
       S.questions=qs.val()||[];
-      totalQ=S.questions.length;
-
-      // Show late join notice on waiting screen
-      el('waitingDots').style.display='none';
-      el('lateJoinNotice').style.display='block';
-      el('lateJoinNotice').innerHTML =
-        '<div style="font-size:2rem;margin-bottom:8px;">🎉</div>'+
-        '<div style="font-weight:800;font-size:1rem;color:var(--pink);margin-bottom:6px;">You joined mid-quiz!</div>'+
-        '<div style="font-size:0.88rem;color:var(--text-light);margin-bottom:4px;">Currently on <strong>Question '+qNum+' of '+totalQ+'</strong></div>'+
-        '<div style="font-size:0.82rem;color:var(--text-light);">Jumping in now… good luck! 🌸</div>'+
-        '<div style="margin-top:14px;"><div class="progress-bar"><div class="progress-fill" id="lateJoinBar" style="width:0%;transition:width 2.5s linear;"></div></div></div>';
-
-      // Animate progress bar then jump in
-      setTimeout(function(){ var b=el('lateJoinBar'); if(b) b.style.width='100%'; }, 50);
+      var qi=st.currentQ||0;
+      G.el('waitingDots').style.display='none';
+      G.el('lateJoinNotice').style.display='block';
+      G.el('lateJoinNotice').innerHTML='<div style="font-size:2rem;margin-bottom:8px;">🎉</div>'
+        +'<div style="font-weight:800;font-size:1rem;color:var(--pink);margin-bottom:6px;">You joined mid-quiz!</div>'
+        +'<div style="font-size:0.88rem;color:var(--text-light);margin-bottom:4px;">Currently on <strong>Q'+(qi+1)+' of '+S.questions.length+'</strong></div>'
+        +'<div style="font-size:0.82rem;color:var(--text-light);">Jumping in now… good luck! 🌸</div>'
+        +'<div style="margin-top:14px;"><div class="progress-bar"><div class="progress-fill" id="lateBar" style="width:0%;transition:width 2.5s linear;"></div></div></div>';
+      setTimeout(function(){ var b=G.el('lateBar'); if(b) b.style.width='100%'; }, 50);
       setTimeout(function(){
-        // Re-fetch state in case question changed during the 2.5s wait
         db.ref('quizState').once('value').then(function(fresh){
-          var freshSt=fresh.val();
-          if(freshSt && freshSt.started && !freshSt.ended){
-            showQ(freshSt.currentQ||0, freshSt);
-          } else if(freshSt && freshSt.ended){
-            showFinalScreen();
-          }
+          var fs=fresh.val();
+          if(fs&&fs.started&&!fs.ended) showQ(fs.currentQ||0,fs);
+          else if(fs&&fs.ended) showFinalScreen();
         });
       }, 2500);
     });
   });
 }
-function showQ(qi,st){
-  if(S.ended){showFinalScreen();return;}
-  S.currentQ=qi;S.answered=false;S.selAns=null;
-  const q=S.questions[qi];if(!q)return;
-  showScreen('screenQuestion');
-  el('qNumLabel').textContent=`QUESTION ${qi+1}`;
-  el('qTextDisplay').textContent=q.text;
-  el('qProgressBadge').textContent=`Q ${qi+1} / ${S.questions.length}`;
-  el('qProgressBar').style.width=((qi+1)/S.questions.length*100)+'%';
-  el('playerScoreBadge').textContent=`⭐ ${S.score} pts`;
-  el('answerReveal').style.display='none';
-  el('submitBtn').disabled=true;el('submitBtn').style.display='block';
-  el('choicesGrid').innerHTML=['A','B','C','D'].map(o=>`
-    <button class="choice-btn" id="ch_${o}" onclick="selChoice('${o}')">
-      <span class="choice-label">${o}</span>${q.options[o]}</button>`).join('');
-  const tl=st.timeLimit||S.timeLimit;
-  const elapsed=Math.floor((Date.now()-(st.questionStartTime||Date.now()))/1000);
-  startPTimer(Math.max(0,tl-elapsed),tl,qi,q);
+
+// ==========================================================
+// QUESTION DISPLAY
+// ==========================================================
+function showQ(qi, st){
+  if(S.ended){ showFinalScreen(); return; }
+  S.currentQ=qi; S.answered=false; S.selAns=null;
+  var q=S.questions[qi]; if(!q) return;
+  showScreen('screenQ');
+  G.el('qNumLbl').textContent='QUESTION '+(qi+1);
+  G.el('qTextDisp').textContent=q.text;
+  G.el('qBadge').textContent='Q '+(qi+1)+'/'+S.questions.length;
+  G.el('qProg').style.width=((qi+1)/S.questions.length*100)+'%';
+  G.el('scoreBadge').textContent='⭐ '+S.score+' pts';
+  G.el('ansReveal').style.display='none';
+  G.el('submitBtn').disabled=true;
+  G.el('submitBtn').style.display='block';
+  G.el('choicesGrid').innerHTML='';
+  ['A','B','C','D'].forEach(function(o){
+    var btn=document.createElement('button');
+    btn.className='cbtn';
+    btn.id='ch_'+o;
+    btn.innerHTML='<span class="clabel">'+o+'</span>'+q.options[o];
+    btn.onclick=function(){ selChoice(o); };
+    G.el('choicesGrid').appendChild(btn);
+  });
+  var tl=st.timeLimit||TIME_LIMIT;
+  var elapsed=Math.floor((Date.now()-(st.questionStartTime||Date.now()))/1000);
+  startPTimer(Math.max(0,tl-elapsed), tl, qi, q);
 }
+
 function selChoice(o){
-  if(S.answered)return;
+  if(S.answered) return;
   S.selAns=o;
-  document.querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('selected'));
-  el('ch_'+o).classList.add('selected');
-  el('submitBtn').disabled=false;
+  document.querySelectorAll('.cbtn').forEach(function(b){ b.classList.remove('sel'); });
+  G.el('ch_'+o).classList.add('sel');
+  G.el('submitBtn').disabled=false;
 }
+
 function submitAnswer(){
-  if(S.answered||!S.selAns)return;
-  S.answered=true;el('submitBtn').disabled=true;
-  const q=S.questions[S.currentQ],correct=S.selAns===q.correct;
-  if(db)db.ref(`answers/q${S.currentQ}/${S.pid}`).set({name:S.pname,answer:S.selAns,correct,time:Date.now()});
-  document.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
-  el('ch_'+S.selAns).classList.add(correct?'correct':'wrong');
-  showToast(correct?'✅ Locked in!':'Locked in!');
+  if(S.answered||!S.selAns) return;
+  S.answered=true;
+  G.el('submitBtn').disabled=true;
+  var q=S.questions[S.currentQ];
+  var isC=(S.selAns===q.correct);
+  if(db) db.ref('answers/q'+S.currentQ+'/'+S.pid).set({name:S.pname,answer:S.selAns,correct:isC,time:Date.now()});
+  document.querySelectorAll('.cbtn').forEach(function(b){ b.disabled=true; });
+  G.el('ch_'+S.selAns).classList.add(isC?'correct':'wrong');
+  showToast(isC?'✅ Locked in!':'Locked in!');
 }
-function startPTimer(rem,tl,qi,q){
+
+function startPTimer(rem, tl, qi, q){
   clearInterval(S.timerInt);
-  let t=rem;const circ=213.6;
-  const tick=()=>{
-    el('timerCircle').style.strokeDashoffset=circ*(1-t/tl);
-    el('timerText').textContent=t;
-    el('timerText').className='timer-text'+(t<=3?' urgent':'');
-    el('timerCircle').style.stroke=t<=3?'#EE4444':'var(--pink)';
-    if(t<=0){clearInterval(S.timerInt);revealAns(q);}
+  var t=rem; var circ=213.6;
+  function tick(){
+    G.el('timerCircle').style.strokeDashoffset=circ*(1-t/tl);
+    G.el('timerText').textContent=t;
+    G.el('timerText').className='t-text'+(t<=3?' urgent':'');
+    G.el('timerCircle').style.stroke=t<=3?'#EE4444':'var(--pink)';
+    if(t<=0){ clearInterval(S.timerInt); revealAns(q); }
     t--;
-  };
-  tick();S.timerInt=setInterval(tick,1000);
+  }
+  tick(); S.timerInt=setInterval(tick,1000);
 }
+
 function revealAns(q){
   clearInterval(S.timerInt);
-  document.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
-  el('submitBtn').style.display='none';
-  const ua=S.selAns,cor=q.correct,isC=ua===cor,didNot=!S.answered;
-  el('ch_'+cor).classList.add('correct');
-  if(ua&&ua!==cor)el('ch_'+ua).classList.add('wrong');
-  let pts=0;
+  document.querySelectorAll('.cbtn').forEach(function(b){ b.disabled=true; });
+  G.el('submitBtn').style.display='none';
+  var ua=S.selAns, cor=q.correct, isC=(ua===cor), didNot=!S.answered;
+  G.el('ch_'+cor).classList.add('correct');
+  if(ua&&ua!==cor) G.el('ch_'+ua).classList.add('wrong');
+  var pts=0;
   if(isC&&!didNot){
     pts=100; S.score+=pts; S.correct++;
     if(db){
-      // Save cumulative score
       db.ref('scores/'+S.pid).set({name:S.pname, score:S.score, correct:S.correct, lastQ:S.currentQ});
-      // Also save per-question points for accurate aggregation
       db.ref('qscores/'+S.pid+'/q'+S.currentQ).set({pts:100, correct:true});
     }
   } else {
     if(db){
-      // Record 0 for this question (missed or wrong)
       db.ref('qscores/'+S.pid+'/q'+S.currentQ).set({pts:0, correct:false});
       if(didNot) db.ref('answers/q'+S.currentQ+'/'+S.pid).set({name:S.pname,answer:null,correct:false,time:Date.now()});
     }
   }
-  const rev=el('answerReveal');rev.style.display='block';
+  var rev=G.el('ansReveal'); rev.style.display='block';
+  rev.className='reveal'+(isC?'':' wrong');
   if(isC){
-    rev.className='answer-reveal';
-    rev.innerHTML=`<div class="reveal-icon">🎉</div><div class="reveal-text">Correct! +${pts} pts</div><div class="reveal-answer">✅ ${cor}: ${q.options[cor]}</div>`;
+    rev.innerHTML='<div style="font-size:2.5rem;margin-bottom:6px;">🎉</div>'
+      +'<div style="font-size:0.85rem;font-weight:700;color:var(--text-light);">Correct! +'+pts+' pts</div>'
+      +'<div style="font-size:1rem;font-weight:900;color:#059669;margin-top:4px;">✅ '+cor+': '+q.options[cor]+'</div>';
   } else {
-    rev.className='answer-reveal wrong-reveal';
-    rev.innerHTML=`<div class="reveal-icon">${didNot?'⏰':'😅'}</div><div class="reveal-text">${didNot?"Time's up!":'Not quite!'}</div><div class="reveal-answer">✅ Answer: ${cor}: ${q.options[cor]}</div>`;
+    rev.innerHTML='<div style="font-size:2.5rem;margin-bottom:6px;">'+(didNot?'⏰':'😅')+'</div>'
+      +'<div style="font-size:0.85rem;font-weight:700;color:var(--text-light);">'+(didNot?"Time's up!":'Not quite!')+'</div>'
+      +'<div style="font-size:1rem;font-weight:900;color:#EE4444;margin-top:4px;">✅ Answer: '+cor+': '+q.options[cor]+'</div>';
   }
-  el('playerScoreBadge').textContent=`⭐ ${S.score} pts`;
+  G.el('scoreBadge').textContent='⭐ '+S.score+' pts';
 }
 
-// ================================================================
-// FINAL + LEADERBOARD
-// ================================================================
+// ==========================================================
+// FINAL SCREEN
+// ==========================================================
 function showFinalScreen(){
   clearInterval(S.timerInt);
   showScreen('screenFinal');
-  el('finalScoreNum').textContent=S.score;
-  const tot=S.questions.length||1,pct=Math.round(S.correct/tot*100);
-  el('finalMsg').textContent=pct>=80?'🌟 Brilliant!':pct>=60?'😊 Well done!':pct>=40?'👍 Good try!':'💕 Better luck next time!';
-  el('finalSub').textContent=`${S.correct} of ${tot} questions correct`;
-  if(db)db.ref('scores').once('value').then(s=>renderLB(s.val()||{},'finalLeaderboard'));
-  resetWishForm();
+  G.el('finalScore').textContent=S.score;
+  var tot=S.questions.length||1, pct=Math.round(S.correct/tot*100);
+  G.el('finalMsg').textContent=pct>=80?'🌟 Brilliant!':pct>=60?'😊 Well done!':pct>=40?'👍 Good try!':'💕 Better luck next time!';
+  G.el('finalSub').textContent=S.correct+' of '+tot+' correct';
+  if(db) db.ref('scores').once('value').then(function(s){ renderLB(s.val()||{}, 'finalLB'); });
+  // Render memory form
+  G.el('memFormInner').innerHTML=buildMemForm('final');
+  wireMemForm('final');
 }
-function renderLB(data,cid){
-  var c=el(cid);if(!c)return;
+
+// ==========================================================
+// LEADERBOARD
+// ==========================================================
+function renderLB(data, cid){
+  var c=G.el(cid); if(!c) return;
   var totalQ=S.questions.length||0;
-  var sorted=Object.entries(data)
-    .map(function(e){
-      var id=e[0],v=e[1];
-      return {id:id,name:v.name,score:v.score||0,correct:v.correct||0,lastQ:v.lastQ!=null?v.lastQ:-1};
-    })
-    .sort(function(a,b){return b.score-a.score;});
-  if(!sorted.length){c.innerHTML='<p class="text-muted text-center">No scores yet.</p>';return;}
+  var sorted=Object.entries(data).map(function(e){
+    return {id:e[0], name:e[1].name, score:e[1].score||0, correct:e[1].correct||0, lastQ:e[1].lastQ!=null?e[1].lastQ:-1};
+  }).sort(function(a,b){ return b.score-a.score; });
+  if(!sorted.length){ c.innerHTML='<p class="tm tc">No scores yet.</p>'; return; }
   var medals=['🥇','🥈','🥉'];
-  var maxPossible=totalQ*100;
+  var maxPts=totalQ*100;
   c.innerHTML=sorted.slice(0,20).map(function(p,i){
-    var attempted=p.lastQ+1; // questions they were present for
-    var missed=Math.max(0,(S.currentQ+1)-(p.correct+(attempted-p.correct)));
-    var pctLabel=maxPossible>0?Math.round(p.score/maxPossible*100)+'%':'';
-    var isYou=p.id===S.pid;
-    var lateTag=p.lastQ>=0&&p.lastQ<(S.currentQ>0?S.currentQ-1:0)?
-      '<span style="font-size:0.65rem;color:#FF9500;font-weight:700;margin-left:4px;">late join</span>':'';
-    return '<div class="lb-row '+(i<3?'rank-'+(i+1):'')+'">'
-      +'<div class="lb-rank">'+(i<3?medals[i]:i+1)+'</div>'
-      +'<div class="lb-name">'+p.name+(isYou?' <span style="color:var(--pink)">(you)</span>':'')+lateTag+'</div>'
-      +'<div style="text-align:right">'
-        +'<div class="lb-score">'+p.score+' pts</div>'
-        +'<div class="lb-streak">'+p.correct+' correct'+(pctLabel?' · '+pctLabel:'')+'</div>'
+    var pct=maxPts>0?Math.round(p.score/maxPts*100)+'%':'';
+    var lateTag=p.lastQ>=0&&S.currentQ>0&&p.lastQ<S.currentQ-1?'<span style="font-size:0.65rem;color:#FF9500;font-weight:700;margin-left:4px;">(late join)</span>':'';
+    var rankCls=i===0?'r1':i===1?'r2':i===2?'r3':'';
+    var you=p.id===S.pid?'<span style="color:var(--pink);"> (you)</span>':'';
+    return '<div class="lb-row '+rankCls+'">'
+      +'<div style="font-size:1.3rem;width:30px;text-align:center;font-weight:900;">'+(i<3?medals[i]:i+1)+'</div>'
+      +'<div style="flex:1;font-weight:800;font-size:0.95rem;">'+p.name+you+lateTag+'</div>'
+      +'<div style="text-align:right;">'
+        +'<div style="font-weight:900;font-size:1rem;color:var(--pink);">'+p.score+' pts</div>'
+        +'<div style="font-size:0.75rem;color:var(--text-light);">'+p.correct+' correct'+(pct?' · '+pct:'')+'</div>'
       +'</div>'
     +'</div>';
   }).join('');
 }
 
-// ================================================================
-// WISH / MEMORY BOOK
-// ================================================================
-function setWishFor(who){
-  S.wishFor=who;
-  ['Anagha','Atharva','Both'].forEach(n=>{
-    const b=el('tog'+n);b.className='child-toggle-btn';
-    if(n.toLowerCase()===who||n.toLowerCase()==='both'&&who==='both')
-      b.className='child-toggle-btn '+(who==='atharva'?'active-atharva':who==='both'?'active-both':'active-anagha');
+// ==========================================================
+// MEMORY / WISH FORMS
+// ==========================================================
+function buildMemForm(ctx){
+  return '<div style="text-align:center;margin-bottom:16px;">'
+    +'<div style="font-size:2.5rem;margin-bottom:6px;">💌</div>'
+    +'<div style="font-family:Playfair Display,serif;font-size:1.2rem;font-weight:700;margin-bottom:6px;">Leave a Memory</div>'
+    +'<p class="tm" style="font-size:0.85rem;">Write a wish, blessing, or funny prediction — for Anagha, Atharva, or both!</p>'
+    +'</div>'
+    +'<label>Who is this for?</label>'
+    +'<div class="child-toggle">'
+      +'<button class="ctbtn ca" id="ct_a_'+ctx+'" onclick="setWishFor(\'anagha\',\''+ctx+'\')">🌸 Anagha</button>'
+      +'<button class="ctbtn" id="ct_at_'+ctx+'" onclick="setWishFor(\'atharva\',\''+ctx+'\')">⭐ Atharva</button>'
+      +'<button class="ctbtn" id="ct_b_'+ctx+'" onclick="setWishFor(\'both\',\''+ctx+'\')">💕 Both</button>'
+    +'</div>'
+    +'<label>Type</label>'
+    +'<div class="type-chips">'
+      +'<button class="tchip sel" onclick="setWishType(\'wish\',this)">💫 Wish</button>'
+      +'<button class="tchip" onclick="setWishType(\'blessing\',this)">🙏 Blessing</button>'
+      +'<button class="tchip" onclick="setWishType(\'prediction\',this)">🔮 Funny Prediction</button>'
+    +'</div>'
+    +'<label id="wlabel_'+ctx+'">Your Wish 💫</label>'
+    +'<textarea id="wtext_'+ctx+'" rows="4" placeholder="Write your heartfelt wish here… 💕" maxlength="500" oninput="document.getElementById(\'wcount_'+ctx+'\').textContent=this.value.length"></textarea>'
+    +'<div style="text-align:right;font-size:0.73rem;color:var(--text-light);margin-top:3px;"><span id="wcount_'+ctx+'">0</span>/500</div>'
+    +'<label>Add a Photo (optional)</label>'
+    +'<div class="photo-zone" id="pzone_'+ctx+'">'
+      +'<div id="pph_'+ctx+'">'
+        +'<div style="font-size:2.5rem;margin-bottom:8px;">📸</div>'
+        +'<div style="font-weight:700;font-size:0.9rem;margin-bottom:4px;">Selfie or family photo</div>'
+        +'<div class="tm" style="font-size:0.8rem;">Use the buttons below</div>'
+      +'</div>'
+      +'<img id="pprev_'+ctx+'" class="photo-preview-img" style="display:none;" />'
+    +'</div>'
+    +'<div class="upl-row">'
+      +'<button class="upl-btn upl-cam" onclick="document.getElementById(\'cam_'+ctx+'\').click()">📷 Camera</button>'
+      +'<button class="upl-btn upl-gal" onclick="document.getElementById(\'gal_'+ctx+'\').click()">🖼 Gallery</button>'
+      +'<button class="upl-btn upl-clr" id="pclr_'+ctx+'" onclick="clearPhoto(\''+ctx+'\')" style="display:none;">✕ Remove</button>'
+    +'</div>'
+    +'<input type="file" id="cam_'+ctx+'" accept="image/*" capture style="display:none;" onchange="onPhoto(this,\''+ctx+'\')" />'
+    +'<input type="file" id="gal_'+ctx+'" accept="image/*" style="display:none;" onchange="onPhoto(this,\''+ctx+'\')" />'
+    +'<button class="btn btn-primary" id="wsub_'+ctx+'" onclick="submitWish(\''+ctx+'\')" style="margin-top:16px;">💌 Send My Memory</button>'
+    +'<div id="wdone_'+ctx+'" style="display:none;text-align:center;padding:18px 0;">'
+      +'<div style="font-size:3rem;">🎉</div>'
+      +'<div style="font-weight:800;font-size:1.1rem;color:var(--pink);margin-bottom:6px;">Memory Saved! 💕</div>'
+      +'<p class="tm" id="wdonemsg_'+ctx+'">Your memory is in the book.</p>'
+      +'<div style="margin-top:14px;padding:14px;background:var(--blue-pale);border-radius:14px;border:1.5px solid var(--blue-light);">'
+        +'<div style="font-weight:800;font-size:0.9rem;color:var(--blue);margin-bottom:10px;">Leave one for the other child too?</div>'
+        +'<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">'
+          +'<button class="btn btn-blue btn-sm" onclick="resetMemForm(\''+ctx+'\',\'anagha\')" style="margin-top:0;">🌸 Write for Anagha</button>'
+          +'<button class="btn btn-primary btn-sm" onclick="resetMemForm(\''+ctx+'\',\'atharva\')" style="margin-top:0;">⭐ Write for Atharva</button>'
+        +'</div>'
+      +'</div>'
+      +'<button class="btn btn-outline" onclick="resetMemForm(\''+ctx+'\',\'anagha\')" style="margin-top:10px;font-size:0.85rem;">+ Another Message</button>'
+    +'</div>';
+}
+
+function wireMemForm(ctx){
+  // Photo state per context
+  if(!window._photos) window._photos={};
+  window._photos[ctx]={file:null,dataUrl:null,wishFor:'anagha',wishType:'wish'};
+}
+
+function setWishFor(who, ctx){
+  if(!window._photos) window._photos={};
+  if(!window._photos[ctx]) window._photos[ctx]={file:null,dataUrl:null,wishFor:'anagha',wishType:'wish'};
+  window._photos[ctx].wishFor=who;
+  ['a','at','b'].forEach(function(k){
+    var b=G.el('ct_'+k+'_'+ctx); if(!b) return;
+    b.className='ctbtn';
   });
+  var map={anagha:'a',atharva:'at',both:'b'};
+  var btn=G.el('ct_'+map[who]+'_'+ctx);
+  if(btn) btn.className='ctbtn '+(who==='atharva'?'cat':who==='both'?'cb':'ca');
 }
-function setWishType(type,btn){
-  S.wishType=type;
-  document.querySelectorAll('.type-chip').forEach(b=>b.classList.remove('sel'));
+
+function setWishType(type, btn){
+  var chips=btn.closest('.type-chips');
+  if(chips) chips.querySelectorAll('.tchip').forEach(function(b){ b.classList.remove('sel'); });
   btn.classList.add('sel');
-  const phs={wish:'Write your heartfelt wish… 💕',blessing:'Share your blessing… 🙏',prediction:"Predict their future in a funny way! 🔮 e.g. 'Anagha will become a rocket scientist!'"};
-  el('wishText').placeholder=phs[type];
-  el('wishLabel').textContent={wish:'Your Wish 💫',blessing:'Your Blessing 🙏',prediction:'Your Funny Prediction 🔮'}[type];
+  // find context from parent
+  var ctx=btn.closest('[id^="memFormInner"]')?'final':btn.closest('[id^="standaloneMemForm"]')?'standalone':'final';
+  if(!window._photos) window._photos={};
+  if(!window._photos[ctx]) window._photos[ctx]={file:null,dataUrl:null,wishFor:'anagha',wishType:'wish'};
+  window._photos[ctx].wishType=type;
+  var phs={wish:'Write your wish… 💕',blessing:'Share your blessing… 🙏',prediction:'Predict their future! 🔮'};
+  var labels={wish:'Your Wish 💫',blessing:'Your Blessing 🙏',prediction:'Your Funny Prediction 🔮'};
+  var txa=G.el('wtext_'+ctx); if(txa) txa.placeholder=phs[type];
+  var lbl=G.el('wlabel_'+ctx); if(lbl) lbl.textContent=labels[type];
 }
-function onPhotoSelected(inp){
-  const file=inp.files[0];if(!file)return;
-  S.photoFile=file;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    S.photoDataUrl=e.target.result;
-    el('photoPreview').src=e.target.result;
-    el('photoPreview').style.display='block';
-    el('photoPlaceholder').style.display='none';
-    el('clearPhotoBtn').style.display='inline-flex';
+
+function onPhoto(inp, ctx){
+  var file=inp.files[0]; if(!file) return;
+  if(!window._photos) window._photos={};
+  if(!window._photos[ctx]) window._photos[ctx]={file:null,dataUrl:null,wishFor:'anagha',wishType:'wish'};
+  window._photos[ctx].file=file;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    window._photos[ctx].dataUrl=e.target.result;
+    var prev=G.el('pprev_'+ctx); if(prev){ prev.src=e.target.result; prev.style.display='block'; }
+    var ph=G.el('pph_'+ctx); if(ph) ph.style.display='none';
+    var clr=G.el('pclr_'+ctx); if(clr) clr.style.display='inline-flex';
   };
   reader.readAsDataURL(file);
 }
-function clearPhoto(){
-  S.photoFile=null;S.photoDataUrl=null;
-  el('photoPreview').style.display='none';
-  el('photoPlaceholder').style.display='block';
-  el('clearPhotoBtn').style.display='none';
-  el('cameraIn').value='';el('galleryIn').value='';
+
+function clearPhoto(ctx){
+  if(window._photos&&window._photos[ctx]){ window._photos[ctx].file=null; window._photos[ctx].dataUrl=null; }
+  var prev=G.el('pprev_'+ctx); if(prev){ prev.style.display='none'; prev.src=''; }
+  var ph=G.el('pph_'+ctx); if(ph) ph.style.display='block';
+  var clr=G.el('pclr_'+ctx); if(clr) clr.style.display='none';
+  var cam=G.el('cam_'+ctx); if(cam) cam.value='';
+  var gal=G.el('gal_'+ctx); if(gal) gal.value='';
 }
-async function submitWish(){
-  const txt=v('wishText').trim();
-  if(!txt){showToast('❌ Please write your message');return;}
-  if(!db){showToast('❌ Firebase not connected');return;}
-  const btn=el('wishBtn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Saving…';
-  try{
-    let photoUrl=null;
-    if(S.photoDataUrl){
-      if(storage&&S.photoFile){
-        try{
-          const ref=storage.ref('wishes/'+Date.now()+'_'+(S.pid||'g')+'.jpg');
-          await ref.put(S.photoFile);
-          photoUrl=await ref.getDownloadURL();
-        }catch(e){photoUrl=await compressImg(S.photoDataUrl,400);}
-      } else photoUrl=await compressImg(S.photoDataUrl,400);
-    }
-    await db.ref('wishes').push({
-      pid:S.pid||'guest',pname:S.pname||'A friend',
-      for:S.wishFor,type:S.wishType,text:txt,
-      photoUrl:photoUrl||null,ts:Date.now()
-    });
-    el('wishBtn').style.display='none';el('wishDone').style.display='block';
-    showToast('💌 Memory saved forever!');
-  }catch(e){showToast('❌ '+e.message);btn.disabled=false;btn.innerHTML='💌 Send My Memory';}
-}
-function compressImg(dataUrl,maxW){
-  return new Promise(res=>{
-    const img=new Image();img.onload=()=>{
-      const r=Math.min(1,maxW/img.width);
-      const c=document.createElement('canvas');c.width=img.width*r;c.height=img.height*r;
-      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      res(c.toDataURL('image/jpeg',0.72));
-    };img.src=dataUrl;
+
+async function submitWish(ctx){
+  var txt=G.el('wtext_'+ctx)?G.el('wtext_'+ctx).value.trim():'';
+  if(!txt){ showToast('Please write your message first'); return; }
+  if(!db){ showToast('Not connected to Firebase — please refresh'); return; }
+  var btn=G.el('wsub_'+ctx);
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span>Saving…';
+  var pd=window._photos&&window._photos[ctx]?window._photos[ctx]:{wishFor:'anagha',wishType:'wish'};
+  var photoUrl=null;
+  if(pd.dataUrl){
+    photoUrl=await compressImg(pd.dataUrl,400);
+  }
+  var wishData={
+    pid:S.pid||'guest',
+    pname:S.pname||G.v('memVisitorName')||'A friend',
+    for:pd.wishFor||'anagha',
+    type:pd.wishType||'wish',
+    text:txt,
+    photoUrl:photoUrl||null,
+    ts:Date.now(),
+    published:false
+  };
+  db.ref('wishes').push(wishData).then(function(){
+    btn.style.display='none';
+    G.el('wdone_'+ctx).style.display='block';
+    var msg=G.el('wdonemsg_'+ctx);
+    if(msg) msg.textContent='Your memory for '+(wishData.for==='both'?'both Anagha & Atharva':wishData.for==='atharva'?'Atharva':'Anagha')+' is saved forever! 💕';
+    showToast('Memory saved! 💕');
+  }).catch(function(e){
+    showToast('Error: '+e.message);
+    btn.disabled=false; btn.innerHTML='💌 Send My Memory';
   });
 }
-function resetWishForm(){
-  S.wishFor='anagha';S.wishType='wish';S.photoFile=null;S.photoDataUrl=null;
-  el('wishText').value='';el('charCount').textContent='0';clearPhoto();
-  setWishFor('anagha');
-  document.querySelectorAll('.type-chip').forEach((b,i)=>b.classList.toggle('sel',i===0));
-  el('wishBtn').style.display='block';el('wishBtn').disabled=false;el('wishBtn').innerHTML='💌 Send My Memory';
-  el('wishDone').style.display='none';
-}
-function anotherWish(){resetWishForm();}
 
-// Admin wish render
-let wishFilterMode='all';
-function renderAdminWishes(){
-  var wishes=S.allWishes.slice();
-  if(wishFilterMode==='anagha') wishes=wishes.filter(function(w){return w.for==='anagha'||w.for==='both';});
-  else if(wishFilterMode==='atharva') wishes=wishes.filter(function(w){return w.for==='atharva'||w.for==='both';});
-  else if(wishFilterMode==='both') wishes=wishes.filter(function(w){return w.for==='both';});
-  else if(['blessing','prediction','wish'].indexOf(wishFilterMode)>=0) wishes=wishes.filter(function(w){return w.type===wishFilterMode;});
-  el('adminWishCount').textContent=wishes.length+' memor'+(wishes.length!==1?'ies':'y');
-  var c=el('adminWishList');
-  if(!wishes.length){c.innerHTML='<p class="text-muted text-center">No memories in this category yet.</p>';return;}
-  c.innerHTML=wishes.slice().reverse().map(function(w){
-    var wid=w.id||('w_'+w.ts);
-    var isAt=w.for==='atharva',isBoth=w.for==='both';
-    var forTxt=isBoth?'Both 💕':isAt?'Atharva ⭐':'Anagha 🌸';
-    var forClass=isBoth?'b-label':isAt?'at-label':'a-label';
-    var cardClass=isBoth?'for-both':isAt?'for-atharva':'for-anagha';
-    var typeLabel=w.type==='blessing'?'🙏 Blessing':w.type==='prediction'?'🔮 Prediction':'💫 Wish';
-    var typePill=w.type==='blessing'?'type-blessing':w.type==='prediction'?'type-prediction':'type-wish';
-    var publishBtn=w.published
-      ?('<span style="font-size:0.75rem;font-weight:800;color:#059669;">✅ Published</span>'
-        +'<button onclick="publishMemory(''+wid+'',true)" style="font-size:0.75rem;padding:5px 12px;border-radius:50px;border:1px solid #ddd;background:#f5f5f5;cursor:pointer;font-weight:700;margin-left:8px;">Unpublish</button>')
-      :('<span style="font-size:0.75rem;font-weight:700;color:#aaa;">Not published</span>'
-        +'<button onclick="publishMemory(''+wid+'',false)" style="font-size:0.75rem;padding:5px 14px;border-radius:50px;border:none;background:linear-gradient(135deg,#6EE7B7,#10B981);color:white;cursor:pointer;font-weight:800;margin-left:8px;">Publish</button>');
-    return '<div class="wish-card '+cardClass+'">'
-      +'<span class="wish-type-pill '+typePill+'">'+typeLabel+'</span>'
-      +'<div class="wish-card-header">'
-      +(w.photoUrl?'<img class="wish-thumb '+(isAt?'atharva-t':'')+'" src="'+w.photoUrl+'" onerror="this.style.display='none'" />'
-        :'<div class="wish-thumb '+(isAt?'atharva-t':'')+'" style="background:'+(isAt?'var(--blue-pale)':'var(--pink-pale)')+';display:flex;align-items:center;justify-content:center;font-size:1.5rem;">'+(isAt?'⭐':'🌸')+'</div>')
-      +'<div><div class="wish-sender-name">'+(w.pname||'Anonymous')+'</div>'
-      +'<span class="wish-for-label '+forClass+'">For '+forTxt+'</span></div>'
-      +'</div>'
-      +'<div class="wish-body">"'+w.text+'"</div>'
-      +'<div class="wish-ts">'+new Date(w.ts).toLocaleString()+'</div>'
-      +'<div style="margin-top:10px;display:flex;align-items:center;">'+publishBtn+'</div>'
-      +'</div>';
-  }).join('');
+function resetMemForm(ctx, preselect){
+  if(!window._photos) window._photos={};
+  window._photos[ctx]={file:null,dataUrl:null,wishFor:preselect||'anagha',wishType:'wish'};
+  var txa=G.el('wtext_'+ctx); if(txa) txa.value='';
+  var cnt=G.el('wcount_'+ctx); if(cnt) cnt.textContent='0';
+  clearPhoto(ctx);
+  var btn=G.el('wsub_'+ctx); if(btn){ btn.style.display='block'; btn.disabled=false; btn.innerHTML='💌 Send My Memory'; }
+  var done=G.el('wdone_'+ctx); if(done) done.style.display='none';
+  setWishFor(preselect||'anagha', ctx);
+  var chips=G.el('wtext_'+ctx)&&G.el('wtext_'+ctx).closest('.card')?G.el('wtext_'+ctx).closest('.card').querySelectorAll('.tchip'):null;
+  if(chips) chips.forEach(function(b,i){ b.classList.toggle('sel',i===0); });
 }
 
-
-function filterWishes(mode,btn){
-  wishFilterMode=mode;
-  document.querySelectorAll('.filter-chip').forEach(b=>{b.className='filter-chip';});
-  if(btn){
-    if(mode==='atharva')btn.className='filter-chip fat';
-    else if(mode==='all'||mode==='both'||mode==='anagha')btn.className='filter-chip fa';
-    else btn.className='filter-chip fgen';
-  }
-  renderAdminWishes();
+function compressImg(dataUrl,maxW){
+  return new Promise(function(res){
+    var img=new Image();
+    img.onload=function(){
+      var r=Math.min(1,maxW/img.width);
+      var c=document.createElement('canvas');
+      c.width=img.width*r; c.height=img.height*r;
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      res(c.toDataURL('image/jpeg',0.72));
+    };
+    img.src=dataUrl;
+  });
 }
 
-// ================================================================
-// PROJECTORS
-// ================================================================
-function openProjector(){
-  el('projectorView').classList.add('active');
-  if(db)db.ref('quizState').once('value').then(s=>{const st=s.val();if(st)updateProj(st);});
-}
-function closeProjector(){el('projectorView').classList.remove('active');}
-function updateProj(st){
-  const pv=el('projectorView');if(!pv.classList.contains('active'))return;
-  const qi=st.currentQ||0,q=S.questions[qi];if(!q)return;
-  el('projQNum').textContent=`Question ${qi+1} of ${S.questions.length}`;
-  el('projQText').textContent=q.text;
-  el('projChoices').innerHTML=['A','B','C','D'].map(o=>`<div class="proj-choice" id="pc_${o}"><strong>${o}.</strong> ${q.options[o]}</div>`).join('');
-}
-function revealProjAnswer(qi){
-  const q=S.questions[qi];if(!q)return;
-  const c=el('pc_'+q.correct);if(c)c.classList.add('correct');
-}
-
-// --- WISH SLIDESHOW ---
-function openWishProj(){
-  if(!S.allWishes.length&&db){
-    db.ref('wishes').once('value').then(s=>{
-      S.allWishes=Object.values(s.val()||{}).sort((a,b)=>a.ts-b.ts);
-      if(!S.allWishes.length){showToast('❌ No memories yet!');return;}
-      _doOpenWishProj();
-    });
-  } else if(!S.allWishes.length){showToast('❌ No memories yet!');return;}
-  else _doOpenWishProj();
-}
-function _doOpenWishProj(){
-  S.slideIdx=0;el('wishProjView').classList.add('active');renderSlide();
-}
-function closeWishProj(){
-  el('wishProjView').classList.remove('active');
-  clearInterval(S.autoInt);S.autoInt=null;
-  el('pf_auto').classList.remove('on');
-}
-function filteredSlides(){
-  if(S.wishFilter==='anagha')return S.allWishes.filter(w=>w.for==='anagha'||w.for==='both');
-  if(S.wishFilter==='atharva')return S.allWishes.filter(w=>w.for==='atharva'||w.for==='both');
-  return S.allWishes;
-}
-function renderSlide(){
-  const slides=filteredSlides();
-  if(!slides.length){el('wishSlideWrap').innerHTML='<div style="color:rgba(255,255,255,0.4);font-size:1.5rem;text-align:center;">No memories in this filter.</div>';el('wishDots').innerHTML='';return;}
-  if(S.slideIdx>=slides.length)S.slideIdx=0;
-  const w=slides[S.slideIdx];
-  const isAt=w.for==='atharva',isBoth=w.for==='both';
-  const tagClass=isBoth?'tag-both':isAt?'tag-atharva':'tag-anagha';
-  const forTxt=isBoth?'💕 For Both':isAt?'⭐ For Atharva':'🌸 For Anagha';
-  const typeLabel=w.type==='blessing'?'🙏 Blessing':w.type==='prediction'?'🔮 Funny Prediction':'💫 Wish';
-  el('wishSlideWrap').innerHTML=`
-    <div class="wish-slide-wrap">
-      ${w.photoUrl?`<img src="${w.photoUrl}" class="wish-slide-photo${isAt?' atharva-ph':''}" onerror="this.style.display='none'" />`:`<div style="font-size:6rem;margin-bottom:16px;text-align:center;">${isBoth?'🌸⭐':isAt?'⭐':'🌸'}</div>`}
-      <div class="wish-slide-type">${typeLabel}</div>
-      <div class="wish-slide-for-tag ${tagClass}">${forTxt}</div>
-      <div class="wish-slide-sender">from ${w.pname||'A friend'}</div>
-      <div class="wish-slide-text">"${w.text}"</div>
-    </div>`;
-  el('wishDots').innerHTML=slides.map((_,i)=>`<div class="wdot${i===S.slideIdx?' on':''}"></div>`).join('');
-}
-function prevSlide(){const s=filteredSlides();S.slideIdx=(S.slideIdx-1+s.length)%s.length;renderSlide();}
-function nextSlide(){const s=filteredSlides();S.slideIdx=(S.slideIdx+1)%s.length;renderSlide();}
-function setWishFilter(f,btn){
-  S.wishFilter=f;S.slideIdx=0;
-  document.querySelectorAll('.ptool-btn').forEach(b=>{if(['pf_all','pf_anagha','pf_atharva'].some(id=>el(id)===b))b.style.cssText='';});
-  if(btn){btn.style.background='rgba(255,255,255,0.2)';btn.style.color='white';}
-  renderSlide();
-}
-function toggleAutoplay(){
-  if(S.autoInt){clearInterval(S.autoInt);S.autoInt=null;el('pf_auto').classList.remove('on');showToast('⏸ Autoplay off');}
-  else{S.autoInt=setInterval(nextSlide,5000);el('pf_auto').classList.add('on');showToast('▶ Autoplay on (5s)');}
-}
-
-// ================================================================
-// TABS / SCREEN / QR / TOAST
-// ================================================================
-function switchTab(tid,btn){
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));
-  el(tid).classList.add('active');if(btn)btn.classList.add('active');
-  if(tid==='tabLeaderboard'&&db)db.ref('scores').once('value').then(s=>renderLB(s.val()||{},'adminLeaderboard'));
-  if(tid==='tabWishes'){if(db)db.ref('wishes').once('value').then(s=>{S.allWishes=Object.values(s.val()||{}).sort((a,b)=>a.ts-b.ts);renderAdminWishes();});else renderAdminWishes();}
-}
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));el(id).classList.add('active');}
-function generateQR(){
-  const url=window.location.href.split('?')[0];
-  el('shareUrl').textContent=url;el('qrcode').innerHTML='';
-  new QRCode(el('qrcode'),{text:url,width:160,height:160,colorDark:'#2D1B33',colorLight:'#FFFFFF'});
-  el('qrSection').style.display='block';
-}
-function showToast(msg){const t=el('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
-
-// ================================================================
-// STANDALONE MEMORY SCREEN (accessible without joining quiz)
-// ================================================================
-var MEM = { wishFor:'anagha', wishType:'wish', photoFile:null, photoDataUrl:null };
-
+// ==========================================================
+// STANDALONE MEMORY SCREEN
+// ==========================================================
 function showMemoryScreen(){
-  // If player already has a name (joined quiz), skip name entry
   if(S.pname){
-    el('memoryNameCard').style.display='none';
-    el('memoryFormCard').style.display='block';
-    el('memoryVisitorName').value=S.pname;
+    G.el('memNameCard').style.display='none';
+    G.el('memFormCard').style.display='block';
+    renderStandaloneForm();
   } else {
-    el('memoryNameCard').style.display='block';
-    el('memoryFormCard').style.display='none';
-    el('memWishDone').style.display='none';
+    G.el('memNameCard').style.display='block';
+    G.el('memFormCard').style.display='none';
   }
-  resetMemForm();
   showScreen('screenMemory');
 }
 
 function continueToMemory(){
-  var name=el('memoryVisitorName').value.trim();
-  if(!name){showToast('Please enter your name first');return;}
-  // Use this as their player name for the wish
+  var name=G.v('memVisitorName').trim();
+  if(!name){ showToast('Please enter your name'); return; }
   if(!S.pname) S.pname=name;
   if(!S.pid) S.pid='v_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
-  el('memoryNameCard').style.display='none';
-  el('memoryFormCard').style.display='block';
+  G.el('memNameCard').style.display='none';
+  G.el('memFormCard').style.display='block';
+  renderStandaloneForm();
 }
 
-function setMemWishFor(who){
-  MEM.wishFor=who;
-  ['Anagha','Atharva','Both'].forEach(function(n){
-    var b=el('memTog'+n);
-    if(!b)return;
-    b.className='child-toggle-btn';
-    if(n.toLowerCase()===who){
-      b.className='child-toggle-btn '+(who==='atharva'?'active-atharva':who==='both'?'active-both':'active-anagha');
-    }
-  });
+function renderStandaloneForm(){
+  G.el('standaloneMemForm').innerHTML=buildMemForm('standalone');
+  wireMemForm('standalone');
 }
 
-function setMemWishType(type,btn){
-  MEM.wishType=type;
-  document.querySelectorAll('#memoryFormCard .type-chip').forEach(function(b){b.classList.remove('sel');});
-  btn.classList.add('sel');
-  var phs={wish:'Write your heartfelt wish… 💕',blessing:'Share your blessing… 🙏',
-    prediction:"Predict their future in a funny way! 🔮 e.g. 'Anagha will invent flying cars!'"};
-  el('memWishText').placeholder=phs[type];
-  el('memWishLabel').textContent={wish:'Your Wish 💫',blessing:'Your Blessing 🙏',prediction:'Your Funny Prediction 🔮'}[type];
-}
-
-function onMemPhotoSelected(inp){
-  var file=inp.files[0];if(!file)return;
-  MEM.photoFile=file;
-  var reader=new FileReader();
-  reader.onload=function(e){
-    MEM.photoDataUrl=e.target.result;
-    el('memPhotoPreview').src=e.target.result;
-    el('memPhotoPreview').style.display='block';
-    el('memPhotoPlaceholder').style.display='none';
-    el('memClearPhotoBtn').style.display='inline-flex';
-  };
-  reader.readAsDataURL(file);
-}
-
-function clearMemPhoto(){
-  MEM.photoFile=null;MEM.photoDataUrl=null;
-  el('memPhotoPreview').style.display='none';
-  el('memPhotoPlaceholder').style.display='block';
-  el('memClearPhotoBtn').style.display='none';
-  el('memCameraIn').value='';el('memGalleryIn').value='';
-}
-
-async function submitMemWish(){
-  var txt=el('memWishText').value.trim();
-  if(!txt){showToast('Please write your message first');return;}
-  if(!db){showToast('Not connected to Firebase. Please refresh.');return;}
-  var btn=el('memWishBtn');
-  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Saving…';
-  try{
-    var photoUrl=null;
-    if(MEM.photoDataUrl){
-      if(storage&&MEM.photoFile){
-        try{
-          var ref=storage.ref('wishes/'+Date.now()+'_'+(S.pid||'g')+'.jpg');
-          await ref.put(MEM.photoFile);
-          photoUrl=await ref.getDownloadURL();
-        }catch(e){ photoUrl=await compressImg(MEM.photoDataUrl,400); }
-      } else photoUrl=await compressImg(MEM.photoDataUrl,400);
-    }
-    await db.ref('wishes').push({
-      pid:S.pid||'guest',
-      pname:S.pname||el('memoryVisitorName').value||'A friend',
-      for:MEM.wishFor, type:MEM.wishType, text:txt,
-      photoUrl:photoUrl||null, ts:Date.now()
-    });
-    el('memWishBtn').style.display='none';
-    el('memWishDone').style.display='block';
-    showToast('Memory saved forever! 💕');
-  }catch(e){
-    showToast('Error: '+e.message);
-    btn.disabled=false;btn.innerHTML='💌 Send My Memory';
+// ==========================================================
+// ADMIN WISHES
+// ==========================================================
+function filterWishes(mode, btn){
+  wishFilterMode=mode;
+  document.querySelectorAll('#wishFilters .fchip').forEach(function(b){ b.className='fchip'; });
+  if(btn){
+    if(mode==='atharva') btn.className='fchip fat';
+    else if(mode==='all'||mode==='anagha'||mode==='both') btn.className='fchip fp';
+    else btn.className='fchip fg';
   }
+  renderAdminWishes();
 }
 
-function resetMemForm(){
-  MEM={wishFor:'anagha',wishType:'wish',photoFile:null,photoDataUrl:null};
-  if(el('memWishText')) el('memWishText').value='';
-  if(el('memCharCount')) el('memCharCount').textContent='0';
-  clearMemPhoto();
-  setMemWishFor('anagha');
-  document.querySelectorAll('#memoryFormCard .type-chip').forEach(function(b,i){
-    b.classList.toggle('sel',i===0);
-  });
-  if(el('memWishBtn')){
-    el('memWishBtn').style.display='block';
-    el('memWishBtn').disabled=false;
-    el('memWishBtn').innerHTML='💌 Send My Memory';
-  }
-  if(el('memWishDone')) el('memWishDone').style.display='none';
+function renderAdminWishes(){
+  var wishes=allWishesCache.slice();
+  if(wishFilterMode==='anagha') wishes=wishes.filter(function(w){ return w.for==='anagha'||w.for==='both'; });
+  else if(wishFilterMode==='atharva') wishes=wishes.filter(function(w){ return w.for==='atharva'||w.for==='both'; });
+  else if(wishFilterMode==='both') wishes=wishes.filter(function(w){ return w.for==='both'; });
+  else if(wishFilterMode==='blessing'||wishFilterMode==='prediction'||wishFilterMode==='wish')
+    wishes=wishes.filter(function(w){ return w.type===wishFilterMode; });
+
+  var wc=G.el('wishCount'); if(wc) wc.textContent=wishes.length+' memor'+(wishes.length!==1?'ies':'y');
+  var c=G.el('adminWishList');
+  if(!wishes.length){ c.innerHTML='<p class="tm tc">No memories in this category yet.</p>'; return; }
+
+  c.innerHTML=wishes.slice().reverse().map(function(w){
+    var wid=w.id||('w_'+w.ts);
+    var isAt=(w.for==='atharva'), isBoth=(w.for==='both');
+    var forTxt=isBoth?'Both 💕':isAt?'Atharva ⭐':'Anagha 🌸';
+    var forCls=isBoth?'b-label':isAt?'at-label':'a-label';
+    var cc=isBoth?'fb':isAt?'fat':'fa';
+    var tl=w.type==='blessing'?'🙏 Blessing':w.type==='prediction'?'🔮 Prediction':'💫 Wish';
+    var photo=w.photoUrl
+      ?('<img class="wish-thumb'+(isAt?' at':'')+'" src="'+w.photoUrl+'" onerror="this.style.display=\'none\'" />')
+      :('<div class="wish-thumb'+(isAt?' at':'')+'" style="background:'+(isAt?'var(--blue-pale)':'var(--pink-pale)')+';display:flex;align-items:center;justify-content:center;font-size:1.5rem;">'+(isAt?'⭐':'🌸')+'</div>');
+    var pubBtn=w.published
+      ?('<span style="font-size:0.75rem;font-weight:800;color:#059669;">✅ Published</span>'
+        +'<button onclick="publishMemory(\''+wid+'\',true)" style="font-size:0.75rem;padding:5px 12px;border-radius:50px;border:1px solid #ddd;background:#f5f5f5;cursor:pointer;font-weight:700;margin-left:8px;font-family:Nunito,sans-serif;">Unpublish</button>')
+      :('<span style="font-size:0.75rem;font-weight:700;color:#aaa;">Not published</span>'
+        +'<button onclick="publishMemory(\''+wid+'\',false)" style="font-size:0.75rem;padding:5px 14px;border-radius:50px;border:none;background:linear-gradient(135deg,#6EE7B7,#10B981);color:white;cursor:pointer;font-weight:800;margin-left:8px;font-family:Nunito,sans-serif;">Publish</button>');
+    return '<div class="wish-card '+cc+'">'
+      +'<div style="position:absolute;top:10px;right:10px;font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:50px;background:rgba(255,107,157,0.15);color:var(--pink);">'+tl+'</div>'
+      +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">'
+        +photo
+        +'<div>'
+          +'<div style="font-weight:800;font-size:0.95rem;">'+(w.pname||'Anonymous')+'</div>'
+          +'<span style="font-size:0.72rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:'+(isAt?'var(--blue)':isBoth?'var(--purple)':'var(--pink)')+';">For '+forTxt+'</span>'
+        +'</div>'
+      +'</div>'
+      +'<div style="font-size:0.9rem;line-height:1.6;font-style:italic;">"'+w.text+'"</div>'
+      +'<div style="margin-top:6px;font-size:0.7rem;color:var(--text-light);">'+new Date(w.ts).toLocaleString()+'</div>'
+      +'<div style="margin-top:10px;display:flex;align-items:center;">'+pubBtn+'</div>'
+    +'</div>';
+  }).join('');
 }
 
-// ================================================================
-// WISH HELPERS — separate messages per child
-// ================================================================
-function anotherWish(){ resetWishForm(); }
-function anotherWishFor(who){
-  resetWishForm();
-  setWishFor(who);
-  // Update done prompt to hide the button for the child just selected
-  var prompt=el('wishDonePrompt');
-  if(prompt) prompt.style.display='none';
-}
-function resetMemFormFor(who){
-  resetMemForm();
-  setMemWishFor(who);
-}
-
-// ================================================================
-// STOP QUIZ
-// ================================================================
-function stopQuiz(){
-  if(!db)return;
-  if(!confirm('Stop the quiz now? Players will see their final scores.'))return;
-  db.ref('quizState').update({ended:true, started:false});
-  showToast('Quiz stopped. Players can now see final scores.');
-  el('btnNext').style.display='none';
-  el('btnStartQuiz').style.display='block';
-  el('btnStartQuiz').textContent='▶️ Restart Quiz';
-  clearInterval(adminTI);
-}
-
-// ================================================================
-// PUBLISH MEMORIES (admin controlled)
-// ================================================================
-function publishMemory(wishId, currently){
-  if(!db)return;
-  var newVal = !currently;
-  db.ref('wishes/'+wishId+'/published').set(newVal).then(function(){
-    showToast(newVal ? '✅ Memory published — visible to all!' : '👁 Memory unpublished');
-    // Re-render
-    db.ref('wishes').once('value').then(function(s){
-      var d=s.val()||{};
-      S.allWishes=Object.values(d).sort(function(a,b){return a.ts-b.ts;});
-      renderAdminWishes();
-    });
+function publishMemory(wid, currently){
+  if(!db) return;
+  db.ref('wishes/'+wid+'/published').set(!currently).then(function(){
+    showToast(!currently?'✅ Memory published!':'Memory unpublished');
   });
 }
 
-// Public memories wall — shown to all players
-function openMemoryWall(){
-  if(!db){showToast('Not connected');return;}
-  db.ref('wishes').orderByChild('published').equalTo(true).once('value').then(function(snap){
-    var wishes=Object.entries(snap.val()||{}).map(function(e){return Object.assign({id:e[0]},e[1]);});
-    if(!wishes.length){showToast('No published memories yet. Admin needs to publish some first.');return;}
-    showMemoryWallScreen(wishes);
-  });
-}
-
-function showMemoryWallScreen(wishes){
-  var overlay=el('memoryWallOverlay');
-  if(!overlay){
-    overlay=document.createElement('div');
-    overlay.id='memoryWallOverlay';
-    overlay.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;z-index:1800;background:var(--bg);overflow-y:auto;padding:16px;';
-    document.body.appendChild(overlay);
-  }
-  overlay.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">'
-    +'<div style="font-family:Playfair Display,serif;font-size:1.3rem;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">💌 Memory Wall</div>'
-    +'<button onclick="el('memoryWallOverlay').style.display='none'" style="background:var(--pink);color:white;border:none;border-radius:50px;padding:8px 16px;font-weight:800;cursor:pointer;">✕ Close</button>'
-    +'</div>'
-    +wishes.map(function(w){
-      var isAt=w.for==='atharva',isBoth=w.for==='both';
-      var forTxt=isBoth?'Both 💕':isAt?'Atharva ⭐':'Anagha 🌸';
-      return '<div class="wish-card '+(isBoth?'for-both':isAt?'for-atharva':'for-anagha')+'" style="margin-bottom:12px;">'
-        +'<div class="wish-card-header">'
-        +(w.photoUrl?'<img class="wish-thumb" src="'+w.photoUrl+'" onerror="this.style.display='none'" />'
-          :'<div class="wish-thumb" style="background:var(--pink-pale);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">'+(isAt?'⭐':'🌸')+'</div>')
-        +'<div><div class="wish-sender-name">'+w.pname+'</div>'
-        +'<span class="wish-for-label '+(isBoth?'b-label':isAt?'at-label':'a-label')+'">For '+forTxt+'</span></div></div>'
-        +'<div class="wish-body">"'+w.text+'"</div>'
+// ==========================================================
+// MEMORY WALL (public)
+// ==========================================================
+function openMemWall(){
+  if(!db){ showToast('Not connected'); return; }
+  db.ref('wishes').once('value').then(function(snap){
+    var all=Object.values(snap.val()||{}).filter(function(w){ return w.published; });
+    var c=G.el('memWallContent');
+    if(!all.length){ c.innerHTML='<p class="tm tc" style="padding:40px;">No published memories yet. Ask the admin to publish some! 🌸</p>'; }
+    else {
+      c.innerHTML=all.map(function(w){
+        var isAt=(w.for==='atharva'),isBoth=(w.for==='both');
+        var cc=isBoth?'fb':isAt?'fat':'fa';
+        var forTxt=isBoth?'Both 💕':isAt?'Atharva ⭐':'Anagha 🌸';
+        var photo=w.photoUrl
+          ?('<img class="wish-thumb'+(isAt?' at':'')+'" src="'+w.photoUrl+'" onerror="this.style.display=\'none\'" />')
+          :('<div class="wish-thumb'+(isAt?' at':'')+'" style="background:'+(isAt?'var(--blue-pale)':'var(--pink-pale)')+';display:flex;align-items:center;justify-content:center;font-size:1.5rem;">'+(isAt?'⭐':'🌸')+'</div>');
+        return '<div class="wish-card '+cc+'" style="margin-bottom:12px;">'
+          +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">'+photo
+            +'<div><div style="font-weight:800;">'+(w.pname||'Anonymous')+'</div>'
+            +'<span style="font-size:0.72rem;font-weight:800;color:'+(isAt?'var(--blue)':'var(--pink)')+';">For '+forTxt+'</span></div></div>'
+          +'<div style="font-style:italic;font-size:0.9rem;line-height:1.6;">"'+w.text+'"</div>'
         +'</div>';
-    }).join('');
-  overlay.style.display='block';
-}
-
-// ================================================================
-// EXPORT MEMORIES AS IMAGE
-// ================================================================
-async function exportMemories(){
-  if(!db){showToast('Not connected');return;}
-  var snap=await db.ref('wishes').once('value');
-  var wishes=Object.values(snap.val()||{});
-  if(!wishes.length){showToast('No memories to export');return;}
-  showToast('Preparing export… this may take a moment');
-
-  // Build a printable HTML page and open in new tab
-  var html='<!DOCTYPE html><html><head><meta charset="UTF-8">'
-    +'<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Nunito:wght@700;800&display=swap" rel="stylesheet">'
-    +'<style>'
-    +'body{font-family:Nunito,sans-serif;background:#FFF5F9;padding:20px;}'
-    +'h1{font-family:Playfair Display,serif;text-align:center;background:linear-gradient(135deg,#FF6B9D,#C084FC,#60A5FA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;font-size:2rem;}'
-    +'.sub{text-align:center;color:#7C5C8A;margin-bottom:30px;font-size:0.9rem;letter-spacing:2px;text-transform:uppercase;}'
-    +'.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}'
-    +'.card{background:white;border-radius:20px;padding:20px;box-shadow:0 4px 20px rgba(255,107,157,0.15);break-inside:avoid;}'
-    +'.card.anagha{border-top:4px solid #FF6B9D;}'
-    +'.card.atharva{border-top:4px solid #60A5FA;}'
-    +'.card.both{border-top:4px solid #C084FC;}'
-    +'.photo{width:80px;height:80px;border-radius:50%;object-fit:cover;float:left;margin:0 14px 8px 0;border:3px solid #FFB3CC;}'
-    +'.name{font-weight:800;font-size:1rem;color:#2D1B33;}'
-    +'.for{font-size:0.7rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#FF6B9D;}'
-    +'.for.at{color:#60A5FA;}.for.both{color:#C084FC;}'
-    +'.type{font-size:0.7rem;font-weight:800;padding:2px 10px;border-radius:50px;background:rgba(255,107,157,0.1);color:#FF6B9D;margin-bottom:10px;display:inline-block;}'
-    +'.msg{font-family:Playfair Display,serif;font-style:italic;font-size:0.95rem;color:#2D1B33;line-height:1.6;clear:both;margin-top:8px;}'
-    +'.ts{font-size:0.7rem;color:#aaa;margin-top:10px;}'
-    +'@media print{body{background:white;}.card{box-shadow:none;border:1px solid #eee;}}'
-    +'</style></head><body>'
-    +'<h1>💌 Memories for Anagha & Atharva</h1>'
-    +'<div class="sub">A collection of wishes, blessings & predictions</div>'
-    +'<div class="grid">'
-    +wishes.map(function(w){
-      var isAt=w.for==='atharva',isBoth=w.for==='both';
-      var cls=isBoth?'both':isAt?'atharva':'anagha';
-      var forTxt=isBoth?'For Both 💕':isAt?'For Atharva ⭐':'For Anagha 🌸';
-      var forCls=isBoth?'for both':'for'+(isAt?' at':'');
-      var typeLabel=w.type==='blessing'?'🙏 Blessing':w.type==='prediction'?'🔮 Prediction':'💫 Wish';
-      return '<div class="card '+cls+'">'
-        +(w.photoUrl?'<img class="photo" src="'+w.photoUrl+'" onerror="this.remove()" />':'')
-        +'<div class="name">'+w.pname+'</div>'
-        +'<div class="for '+forCls+'">'+forTxt+'</div><br>'
-        +'<span class="type">'+typeLabel+'</span>'
-        +'<div class="msg">"'+w.text+'"</div>'
-        +'<div class="ts">'+new Date(w.ts).toLocaleDateString()+'</div>'
-        +'</div>';
-    }).join('')
-    +'</div>'
-    +'<div style="text-align:center;margin-top:40px;color:#aaa;font-size:0.8rem;">Print this page (Ctrl+P / Cmd+P) to save as PDF or print 🌸</div>'
-    +'</body></html>';
-
-  var blob=new Blob([html],{type:'text/html'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a');
-  a.href=url;a.target='_blank';
-  a.click();
-  setTimeout(function(){URL.revokeObjectURL(url);},5000);
-  showToast('✅ Export opened in new tab — use Print to save as PDF!');
-}
-
-// ================================================================
-// FIREBASE DIAGNOSTICS
-// ================================================================
-function testFirebaseConnection(){
-  var status = el('fbStatus');
-  if(!db){
-    status.innerHTML = '<span style="color:#EE4444">No Firebase instance. Click Save & Connect first.</span>';
-    return;
-  }
-  status.innerHTML = '<span style="color:#FF9500">Testing connection...</span>';
-  db.ref('.info/connected').once('value').then(function(snap){
-    if(snap.val()){
-      status.innerHTML = '<span style="color:#059669">Connected to Firebase!</span>';
-      // Also check if questions node is accessible
-      return db.ref('questions').once('value');
-    } else {
-      status.innerHTML = '<span style="color:#EE4444">Not connected - check your Database URL and internet</span>';
+      }).join('');
     }
-  }).then(function(snap){
-    if(!snap) return;
-    var q = snap.val();
-    var extra = q && q.length ? ' | ' + q.length + ' questions in DB' : ' | No questions in DB yet';
-    el('fbStatus').innerHTML = '<span style="color:#059669">Connected!</span><span style="color:var(--text-light)">' + extra + '</span>';
-  }).catch(function(e){
-    status.innerHTML = '<span style="color:#EE4444">Error: ' + e.message + '</span>';
-    console.error('Firebase test error:', e);
+    G.el('memWallOverlay').style.display='block';
   });
 }
 
-// ================================================================
-// HARDCODED FIREBASE CONFIG
-// Players never need to configure anything — Firebase loads for everyone automatically.
-// Admin can still override via the Setup tab if needed.
-// ================================================================
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyA25tLNF9OI1LdBp52qb8wOrsVJcsXg9Qg",
-  authDomain: "celebrating-anagha.firebaseapp.com",
-  databaseURL: "https://celebrating-anagha-default-rtdb.firebaseio.com", // get this from Firebase Console > Realtime Database
-  projectId: "celebrating-anagha",
-  storageBucket: "",
-};
-const ADMIN_PASSWORD = "anagha2024"; // change this to your preferred password
-const QUESTION_TIME_LIMIT = 15; // seconds per question
+// ==========================================================
+// EXPORT MEMORIES
+// ==========================================================
+function exportMemories(){
+  if(!db){ showToast('Not connected'); return; }
+  db.ref('wishes').once('value').then(function(snap){
+    var wishes=Object.values(snap.val()||{});
+    if(!wishes.length){ showToast('No memories to export'); return; }
+    showToast('Opening export… use Print to save as PDF');
+    var html='<!DOCTYPE html><html><head><meta charset="UTF-8">'
+      +'<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Nunito:wght@700;800&display=swap" rel="stylesheet">'
+      +'<style>body{font-family:Nunito,sans-serif;background:#FFF5F9;padding:24px;}'
+      +'h1{font-family:"Playfair Display",serif;text-align:center;color:#FF6B9D;font-size:2rem;margin-bottom:4px;}'
+      +'.sub{text-align:center;color:#7C5C8A;margin-bottom:30px;font-size:0.9rem;letter-spacing:2px;}'
+      +'.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}'
+      +'.card{background:white;border-radius:20px;padding:20px;box-shadow:0 4px 20px rgba(255,107,157,0.12);break-inside:avoid;}'
+      +'.card.a{border-top:4px solid #FF6B9D;}.card.at{border-top:4px solid #60A5FA;}.card.b{border-top:4px solid #C084FC;}'
+      +'.photo{width:70px;height:70px;border-radius:50%;object-fit:cover;float:left;margin:0 12px 8px 0;border:3px solid #FFB3CC;}'
+      +'.name{font-weight:800;}.for{font-size:0.7rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#FF6B9D;}'
+      +'.msg{font-family:"Playfair Display",serif;font-style:italic;font-size:0.95rem;color:#2D1B33;line-height:1.6;clear:both;margin-top:10px;}'
+      +'.ts{font-size:0.7rem;color:#bbb;margin-top:8px;}'
+      +'@media print{.card{box-shadow:none;border:1px solid #eee;}}</style></head><body>'
+      +'<h1>💌 Memories for Anagha &amp; Atharva</h1>'
+      +'<div class="sub">Wishes · Blessings · Predictions</div>'
+      +'<div class="grid">'
+      +wishes.map(function(w){
+        var isAt=(w.for==='atharva'),isBoth=(w.for==='both');
+        var cls=isBoth?'b':isAt?'at':'a';
+        var forTxt=isBoth?'For Both':'For '+(isAt?'Atharva':'Anagha');
+        var tl=w.type==='blessing'?'🙏 Blessing':w.type==='prediction'?'🔮 Prediction':'💫 Wish';
+        return '<div class="card '+cls+'">'
+          +(w.photoUrl?'<img class="photo" src="'+w.photoUrl+'" onerror="this.remove()" />':'')
+          +'<div class="name">'+(w.pname||'Anonymous')+'</div>'
+          +'<div class="for">'+forTxt+' — '+tl+'</div>'
+          +'<div class="msg">"'+w.text+'"</div>'
+          +'<div class="ts">'+new Date(w.ts).toLocaleDateString()+'</div>'
+        +'</div>';
+      }).join('')
+      +'</div><p style="text-align:center;color:#aaa;margin-top:40px;font-size:0.8rem;">Print this page (Ctrl+P / Cmd+P) to save as PDF 🌸</p>'
+      +'</body></html>';
+    var blob=new Blob([html],{type:'text/html'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url; a.target='_blank'; a.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); },5000);
+  });
+}
 
-// ================================================================
+// ==========================================================
+// PROJECTOR — QUIZ
+// ==========================================================
+function openProjQuiz(){
+  G.el('projQuiz').classList.add('open');
+  if(db) db.ref('quizState').once('value').then(function(snap){ var st=snap.val(); if(st) updateProjQuiz(st); });
+}
+
+function updateProjQuiz(st){
+  var pv=G.el('projQuiz'); if(!pv.classList.contains('open')) return;
+  var qi=st.currentQ||0, q=S.questions[qi]; if(!q) return;
+  G.el('projQNum').textContent='Question '+(qi+1)+' of '+S.questions.length;
+  G.el('projQText').textContent=q.text;
+  var grid=G.el('projChoices'); grid.innerHTML='';
+  ['A','B','C','D'].forEach(function(o){
+    var d=document.createElement('div');
+    d.className='proj-choice'; d.id='pc_'+o;
+    d.innerHTML='<strong>'+o+'.</strong> '+q.options[o];
+    grid.appendChild(d);
+  });
+}
+
+function revealProjAnswer(qi){
+  var q=S.questions[qi]; if(!q) return;
+  var c=G.el('pc_'+q.correct); if(c) c.classList.add('correct');
+}
+
+// ==========================================================
+// PROJECTOR — WISHES SLIDESHOW
+// ==========================================================
+function openWishProj(){
+  if(!PROJ.slides.length){ showToast('No memories yet!'); return; }
+  PROJ.idx=0;
+  G.el('projWish').classList.add('open');
+  renderSlide();
+}
+
+function closeWishProj(){
+  G.el('projWish').classList.remove('open');
+  clearInterval(PROJ.autoInt); PROJ.autoInt=null;
+  G.el('pf_auto').classList.remove('on');
+}
+
+function filteredSlides(){
+  if(PROJ.filter==='anagha') return PROJ.slides.filter(function(w){ return w.for==='anagha'||w.for==='both'; });
+  if(PROJ.filter==='atharva') return PROJ.slides.filter(function(w){ return w.for==='atharva'||w.for==='both'; });
+  return PROJ.slides;
+}
+
+function renderSlide(){
+  var slides=filteredSlides();
+  var sc=G.el('slideContent'), sd=G.el('slideDots');
+  if(!slides.length){ sc.innerHTML='<div style="color:rgba(255,255,255,0.4);font-size:1.5rem;text-align:center;">No memories in this filter.</div>'; sd.innerHTML=''; return; }
+  if(PROJ.idx>=slides.length) PROJ.idx=0;
+  var w=slides[PROJ.idx];
+  var isAt=(w.for==='atharva'),isBoth=(w.for==='both');
+  var forCls=isBoth?'sf-b':isAt?'sf-at':'sf-a';
+  var forTxt=isBoth?'💕 For Both':isAt?'⭐ For Atharva':'🌸 For Anagha';
+  var tl=w.type==='blessing'?'🙏 Blessing':w.type==='prediction'?'🔮 Funny Prediction':'💫 Wish';
+  var photoHtml='';
+  if(w.photoUrl){
+    photoHtml='<img src="'+w.photoUrl+'" class="slide-photo'+(isAt?' at-ph':'')+'" onerror="this.style.display=\'none\'" />';
+  } else {
+    photoHtml='<div style="font-size:6rem;margin-bottom:16px;text-align:center;">'+(isBoth?'🌸⭐':isAt?'⭐':'🌸')+'</div>';
+  }
+  sc.innerHTML='<div class="wish-slide">'
+    +photoHtml
+    +'<div class="slide-type">'+tl+'</div>'
+    +'<div class="slide-for '+forCls+'">'+forTxt+'</div>'
+    +'<div class="slide-sender">from '+(w.pname||'A friend')+'</div>'
+    +'<div class="slide-text">"'+w.text+'"</div>'
+  +'</div>';
+  sd.innerHTML=slides.map(function(_,i){
+    return '<div class="wdot'+(i===PROJ.idx?' on':'')+'"></div>';
+  }).join('');
+}
+
+function prevSlide(){ var s=filteredSlides(); PROJ.idx=(PROJ.idx-1+s.length)%s.length; renderSlide(); }
+function nextSlide(){ var s=filteredSlides(); PROJ.idx=(PROJ.idx+1)%s.length; renderSlide(); }
+
+function setSlideFilter(f, btn){
+  PROJ.filter=f; PROJ.idx=0;
+  document.querySelectorAll('.ptool').forEach(function(b){ b.classList.remove('on'); });
+  if(btn) btn.classList.add('on');
+  renderSlide();
+}
+
+function toggleAutoplay(){
+  var btn=G.el('pf_auto');
+  if(PROJ.autoInt){ clearInterval(PROJ.autoInt); PROJ.autoInt=null; btn.classList.remove('on'); showToast('Autoplay off'); }
+  else { PROJ.autoInt=setInterval(nextSlide,5000); btn.classList.add('on'); showToast('Autoplay on (5s)'); }
+}
+
+// ==========================================================
+// ADMIN TABS
+// ==========================================================
+function switchTab(tid, btn){
+  document.querySelectorAll('.tabContent').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.tabBtn').forEach(function(t){ t.classList.remove('active'); });
+  G.el(tid).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(tid==='tabLB'&&db) db.ref('scores').once('value').then(function(s){ renderLB(s.val()||{},'adminLB'); });
+  if(tid==='tabWishes'&&db) db.ref('wishes').once('value').then(function(s){
+    var d=s.val()||{};
+    allWishesCache=Object.entries(d).map(function(e){ return Object.assign({id:e[0]},e[1]); }).sort(function(a,b){return a.ts-b.ts;});
+    renderAdminWishes();
+  });
+}
+
+// ==========================================================
+// QR CODE
+// ==========================================================
+function generateQR(){
+  var url=window.location.href.split('?')[0];
+  G.el('shareUrl').textContent=url;
+  if(typeof QRCode==='undefined') return;
+  new QRCode(G.el('qrcode'),{text:url,width:160,height:160,colorDark:'#2D1B33',colorLight:'#FFFFFF'});
+  G.el('qrSection').style.display='block';
+}
+
+// ==========================================================
 // INIT
-// ================================================================
-window.addEventListener('DOMContentLoaded', function() {
+// ==========================================================
+window.addEventListener('DOMContentLoaded', function(){
+  // Pre-fill admin config fields
+  try{
+    var saved=JSON.parse(lg('fbConfig')||'{}');
+    if(saved.apiKey) FIREBASE_CONFIG=saved;
+  }catch(e){}
+  var cfg=FIREBASE_CONFIG;
+  G.el('fbApiKey').value=cfg.apiKey||'';
+  G.el('fbAuthDomain').value=cfg.authDomain||'';
+  G.el('fbDbUrl').value=cfg.databaseURL||'';
+  G.el('fbProjectId').value=cfg.projectId||'';
+  G.el('fbAdminPass').value=lg('fbPass')||ADMIN_PASS;
+  G.el('fbTimeLimit').value=lg('fbTL')||TIME_LIMIT;
+
+  // Restore admin session on refresh
+  if(sessionStorage.getItem('adminRole')==='true'){
+    S.role='admin';
+    G.el('floatingAdmin').style.display='flex';
+  }
+
   generateQR();
 
-  // Pre-fill admin setup fields
-  var savedConfig = localStorage.getItem('fbConfig');
-  var configToUse = FIREBASE_CONFIG;
-  try {
-    var parsed = JSON.parse(savedConfig || '{}');
-    if (parsed.apiKey) configToUse = parsed;
-  } catch(e) {}
-
-  if(el('fbApiKey')) el('fbApiKey').value = configToUse.apiKey || '';
-  if(el('fbAuthDomain')) el('fbAuthDomain').value = configToUse.authDomain || '';
-  if(el('fbDbUrl')) el('fbDbUrl').value = configToUse.databaseURL || '';
-  if(el('fbProjectId')) el('fbProjectId').value = configToUse.projectId || '';
-  if(el('fbStorageBucket')) el('fbStorageBucket').value = configToUse.storageBucket || '';
-  if(el('fbAdminPass')) el('fbAdminPass').value = localStorage.getItem('fbPass') || ADMIN_PASSWORD;
-  if(el('fbTimeLimit')) el('fbTimeLimit').value = localStorage.getItem('fbTL') || QUESTION_TIME_LIMIT;
-
-  if(el('wishText')) el('wishText').addEventListener('input', function() {
-    el('charCount').textContent = el('wishText').value.length;
-  });
-  if(el('memWishText')) el('memWishText').addEventListener('input', function() {
-    el('memCharCount').textContent = el('memWishText').value.length;
-  });
-
-  // Restore admin session if they refreshed the page
-  if(sessionStorage.getItem('adminRole') === 'true'){
-    S.role = 'admin';
-    showAdminFloatingBtn(true);
-    // Don't redirect yet — wait for Firebase to init first (handled after polling below)
-  }
-
-  // Wait for Firebase SDK to load (it loads asynchronously from CDN)
-  // Poll every 200ms for up to 10 seconds
-  var attempts = 0;
-  var maxAttempts = 50;
-  var pollInterval = setInterval(function() {
+  // Wait for Firebase SDK to load (async CDN load)
+  var attempts=0;
+  var poll=setInterval(function(){
     attempts++;
-    if(typeof firebase !== 'undefined' && typeof firebase.database !== 'undefined') {
-      clearInterval(pollInterval);
-      console.log('Firebase SDK ready after ' + (attempts * 200) + 'ms, initialising...');
-      initFirebase(configToUse);
-      // If admin session was restored, show admin screen and load questions
-      if(S.role === 'admin'){
+    if(typeof firebase!=='undefined'&&typeof firebase.database!=='undefined'){
+      clearInterval(poll);
+      initFirebase(cfg);
+      // Restore admin screen after Firebase ready
+      if(S.role==='admin'){
         setTimeout(function(){
           showScreen('screenAdmin');
-          loadLocalQ();
+          loadLocalQs();
           if(db){
             db.ref('questions').once('value').then(function(snap){
-              var qs=snap.val();
-              if(qs&&qs.length){ S.questions=qs; showToast(qs.length+' questions loaded.'); }
+              var qs=snap.val(); if(qs&&qs.length){ S.questions=qs; }
             });
           }
-        }, 500);
+        },400);
       }
-    } else if(attempts >= maxAttempts) {
-      clearInterval(pollInterval);
-      console.error('Firebase SDK never loaded after 10 seconds');
-      var banner = el('firebaseErrorBanner');
-      if(banner) banner.style.display = 'block';
-      var statusEl = el('fbConnStatus');
-      if(statusEl) {
-        statusEl.textContent = 'Firebase SDK failed to load. Check internet and reload.';
-        statusEl.style.color = '#EE4444';
-      }
+    } else if(attempts>=50){
+      clearInterval(poll);
+      showToast('Firebase failed to load — check internet and refresh');
     }
-  }, 200);
+  },200);
 });
 </script>
 </body>
