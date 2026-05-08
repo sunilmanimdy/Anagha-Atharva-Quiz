@@ -389,6 +389,7 @@ label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;mar
     </div>
     <button class="btn btn-primary" onclick="showScreen('screenJoin')" style="margin-top:14px;">🙋 Join the Quiz</button>
     <button class="btn btn-blue" onclick="showMemoryScreen()" style="margin-top:8px;">💌 Leave a Memory for Anagha &amp; Atharva</button>
+    <button class="btn btn-outline-blue" onclick="openMemoryWall()" style="margin-top:8px;">👁 View Memory Wall</button>
     <button class="btn btn-outline" onclick="showAdminLogin()" style="margin-top:8px;">🔐 Admin Login</button>
   </div>
   <div class="card text-center" id="qrSection" style="display:none;">
@@ -489,7 +490,8 @@ label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;mar
       <div class="divider"></div>
       <button class="btn btn-primary" onclick="openProjector()">🖥 Quiz Projector</button>
       <button class="btn btn-blue" onclick="openWishProj()" style="margin-top:8px;">💌 Memories Slideshow</button>
-      <button class="btn btn-danger" onclick="resetQuiz()" style="margin-top:8px;">🔄 Reset Quiz</button>
+      <button class="btn btn-danger" onclick="stopQuiz()" style="margin-top:8px;">⏹ Stop Quiz Now</button>
+      <button class="btn btn-danger" onclick="resetQuiz()" style="margin-top:8px;opacity:0.7;">🔄 Full Reset</button>
     </div>
 
     <!-- LEADERBOARD -->
@@ -500,7 +502,11 @@ label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;mar
 
     <!-- WISHES / MEMORY BOOK -->
     <div class="tab-content" id="tabWishes">
-      <div class="section-title">💌 Memory Book</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div class="section-title" style="margin-bottom:0;">💌 Memory Book</div>
+        <button class="btn btn-mint btn-sm" onclick="exportMemories()">⬇️ Export</button>
+      </div>
+      <button class="btn btn-blue" onclick="openMemoryWall()" style="margin-bottom:12px;">👁 Open Public Memory Wall</button>
       <div class="filter-row" id="adminWishFilters">
         <button class="filter-chip fa" onclick="filterWishes('all',this)">All</button>
         <button class="filter-chip" onclick="filterWishes('anagha',this)">🌸 Anagha</button>
@@ -653,8 +659,15 @@ label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;mar
     <div id="memWishDone" style="display:none;text-align:center;padding:18px 0;">
       <div style="font-size:3rem;">🎉</div>
       <div style="font-weight:800;font-size:1.1rem;color:var(--pink);margin-bottom:6px;">Memory Saved Forever! 💕</div>
-      <p class="text-muted">Your memory is now in Anagha &amp; Atharva's book.</p>
-      <button class="btn btn-primary" onclick="resetMemForm()" style="margin-top:12px;">+ Add Another Memory</button>
+      <p class="text-muted" id="memWishDoneMsg">Your memory is in the book.</p>
+      <div style="margin-top:14px;padding:14px;background:var(--blue-pale);border-radius:14px;border:1.5px solid var(--blue-light);">
+        <div style="font-weight:800;font-size:0.9rem;color:var(--blue);margin-bottom:10px;">Leave a message for the other child too?</div>
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-blue btn-sm" onclick="resetMemFormFor('anagha')" style="margin-top:0;">🌸 Write for Anagha</button>
+          <button class="btn btn-primary btn-sm" onclick="resetMemFormFor('atharva')" style="margin-top:0;">⭐ Write for Atharva</button>
+        </div>
+      </div>
+      <button class="btn btn-outline" onclick="resetMemForm()" style="margin-top:10px;font-size:0.85rem;">+ Different Message</button>
       <button class="btn btn-outline" onclick="showScreen('screenLanding')" style="margin-top:8px;">🏠 Back to Home</button>
     </div>
   </div>
@@ -735,8 +748,15 @@ label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;mar
     <div id="wishDone" style="display:none;text-align:center;padding:18px 0;">
       <div style="font-size:3rem;">🎉</div>
       <div style="font-weight:800;font-size:1.1rem;color:var(--pink);margin-bottom:6px;">Memory Saved Forever! 💕</div>
-      <p class="text-muted">Your memory is now in Anagha &amp; Atharva's book.</p>
-      <button class="btn btn-outline" onclick="anotherWish()" style="margin-top:12px;">+ Add Another Memory</button>
+      <p class="text-muted" id="wishDoneMsg">Your memory is in the book.</p>
+      <div id="wishDonePrompt" style="margin-top:14px;padding:14px;background:var(--blue-pale);border-radius:14px;border:1.5px solid var(--blue-light);">
+        <div style="font-weight:800;font-size:0.9rem;color:var(--blue);margin-bottom:10px;">Want to leave a message for the other child too?</div>
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-blue btn-sm" onclick="anotherWishFor('anagha')" style="margin-top:0;">🌸 Write for Anagha</button>
+          <button class="btn btn-primary btn-sm" onclick="anotherWishFor('atharva')" style="margin-top:0;">⭐ Write for Atharva</button>
+        </div>
+      </div>
+      <button class="btn btn-outline" onclick="anotherWish()" style="margin-top:10px;font-size:0.85rem;">+ Different Message</button>
     </div>
   </div>
   <div class="gap"></div>
@@ -836,9 +856,11 @@ function startListeners(){
   });
   db.ref('scores').on('value',s=>{const d=s.val()||{};renderLB(d,'adminLeaderboard');renderLB(d,'finalLeaderboard');});
   db.ref('answers').on('value',s=>updateCounts(s.val()||{}));
-  db.ref('wishes').on('value',s=>{
-    const d=s.val()||{};
-    S.allWishes=Object.values(d).sort((a,b)=>a.ts-b.ts);
+  db.ref('wishes').on('value', function(s){
+    var d=s.val()||{};
+    S.allWishes=Object.entries(d).map(function(e){
+      return Object.assign({id:e[0]}, e[1]);
+    }).sort(function(a,b){return a.ts-b.ts;});
     renderAdminWishes();
   });
 }
@@ -1213,9 +1235,21 @@ function revealAns(q){
   el('ch_'+cor).classList.add('correct');
   if(ua&&ua!==cor)el('ch_'+ua).classList.add('wrong');
   let pts=0;
-  if(isC&&!didNot){pts=100;S.score+=pts;S.correct++;
-    if(db)db.ref(`scores/${S.pid}`).set({name:S.pname,score:S.score,correct:S.correct});}
-  else if(didNot&&db)db.ref(`answers/q${S.currentQ}/${S.pid}`).set({name:S.pname,answer:null,correct:false,time:Date.now()});
+  if(isC&&!didNot){
+    pts=100; S.score+=pts; S.correct++;
+    if(db){
+      // Save cumulative score
+      db.ref('scores/'+S.pid).set({name:S.pname, score:S.score, correct:S.correct, lastQ:S.currentQ});
+      // Also save per-question points for accurate aggregation
+      db.ref('qscores/'+S.pid+'/q'+S.currentQ).set({pts:100, correct:true});
+    }
+  } else {
+    if(db){
+      // Record 0 for this question (missed or wrong)
+      db.ref('qscores/'+S.pid+'/q'+S.currentQ).set({pts:0, correct:false});
+      if(didNot) db.ref('answers/q'+S.currentQ+'/'+S.pid).set({name:S.pname,answer:null,correct:false,time:Date.now()});
+    }
+  }
   const rev=el('answerReveal');rev.style.display='block';
   if(isC){
     rev.className='answer-reveal';
@@ -1241,16 +1275,33 @@ function showFinalScreen(){
   resetWishForm();
 }
 function renderLB(data,cid){
-  const c=el(cid);if(!c)return;
-  const sorted=Object.entries(data).map(([id,v])=>({id,name:v.name,score:v.score||0,correct:v.correct||0})).sort((a,b)=>b.score-a.score);
+  var c=el(cid);if(!c)return;
+  var totalQ=S.questions.length||0;
+  var sorted=Object.entries(data)
+    .map(function(e){
+      var id=e[0],v=e[1];
+      return {id:id,name:v.name,score:v.score||0,correct:v.correct||0,lastQ:v.lastQ!=null?v.lastQ:-1};
+    })
+    .sort(function(a,b){return b.score-a.score;});
   if(!sorted.length){c.innerHTML='<p class="text-muted text-center">No scores yet.</p>';return;}
-  const medals=['🥇','🥈','🥉'];
-  c.innerHTML=sorted.slice(0,20).map((p,i)=>`
-    <div class="lb-row ${i<3?'rank-'+(i+1):''}">
-      <div class="lb-rank">${i<3?medals[i]:i+1}</div>
-      <div class="lb-name">${p.name}${p.id===S.pid?' <span style="color:var(--pink)">(you)</span>':''}</div>
-      <div><div class="lb-score">${p.score} pts</div><div class="lb-streak">${p.correct} correct</div></div>
-    </div>`).join('');
+  var medals=['🥇','🥈','🥉'];
+  var maxPossible=totalQ*100;
+  c.innerHTML=sorted.slice(0,20).map(function(p,i){
+    var attempted=p.lastQ+1; // questions they were present for
+    var missed=Math.max(0,(S.currentQ+1)-(p.correct+(attempted-p.correct)));
+    var pctLabel=maxPossible>0?Math.round(p.score/maxPossible*100)+'%':'';
+    var isYou=p.id===S.pid;
+    var lateTag=p.lastQ>=0&&p.lastQ<(S.currentQ>0?S.currentQ-1:0)?
+      '<span style="font-size:0.65rem;color:#FF9500;font-weight:700;margin-left:4px;">late join</span>':'';
+    return '<div class="lb-row '+(i<3?'rank-'+(i+1):'')+'">'
+      +'<div class="lb-rank">'+(i<3?medals[i]:i+1)+'</div>'
+      +'<div class="lb-name">'+p.name+(isYou?' <span style="color:var(--pink)">(you)</span>':'')+lateTag+'</div>'
+      +'<div style="text-align:right">'
+        +'<div class="lb-score">'+p.score+' pts</div>'
+        +'<div class="lb-streak">'+p.correct+' correct'+(pctLabel?' · '+pctLabel:'')+'</div>'
+      +'</div>'
+    +'</div>';
+  }).join('');
 }
 
 // ================================================================
@@ -1340,32 +1391,43 @@ function anotherWish(){resetWishForm();}
 // Admin wish render
 let wishFilterMode='all';
 function renderAdminWishes(){
-  let wishes=S.allWishes;
-  if(wishFilterMode==='anagha')wishes=wishes.filter(w=>w.for==='anagha'||w.for==='both');
-  else if(wishFilterMode==='atharva')wishes=wishes.filter(w=>w.for==='atharva'||w.for==='both');
-  else if(wishFilterMode==='both')wishes=wishes.filter(w=>w.for==='both');
-  else if(['blessing','prediction','wish'].includes(wishFilterMode))wishes=wishes.filter(w=>w.type===wishFilterMode);
-  el('adminWishCount').textContent=`${wishes.length} memor${wishes.length!==1?'ies':'y'}`;
-  const c=el('adminWishList');
+  var wishes=S.allWishes.slice();
+  if(wishFilterMode==='anagha') wishes=wishes.filter(function(w){return w.for==='anagha'||w.for==='both';});
+  else if(wishFilterMode==='atharva') wishes=wishes.filter(function(w){return w.for==='atharva'||w.for==='both';});
+  else if(wishFilterMode==='both') wishes=wishes.filter(function(w){return w.for==='both';});
+  else if(['blessing','prediction','wish'].indexOf(wishFilterMode)>=0) wishes=wishes.filter(function(w){return w.type===wishFilterMode;});
+  el('adminWishCount').textContent=wishes.length+' memor'+(wishes.length!==1?'ies':'y');
+  var c=el('adminWishList');
   if(!wishes.length){c.innerHTML='<p class="text-muted text-center">No memories in this category yet.</p>';return;}
-  c.innerHTML=[...wishes].reverse().map(w=>{
-    const isAt=w.for==='atharva',isBoth=w.for==='both';
-    const forTxt=isBoth?'Both 💕':isAt?'Atharva ⭐':'Anagha 🌸';
-    const forClass=isBoth?'b-label':isAt?'at-label':'a-label';
-    const cardClass=isBoth?'for-both':isAt?'for-atharva':'for-anagha';
-    const typeLabel=w.type==='blessing'?'🙏 Blessing':w.type==='prediction'?'🔮 Prediction':'💫 Wish';
-    const typePill=w.type==='blessing'?'type-blessing':w.type==='prediction'?'type-prediction':'type-wish';
-    return `<div class="wish-card ${cardClass}">
-      <span class="wish-type-pill ${typePill}">${typeLabel}</span>
-      <div class="wish-card-header">
-        ${w.photoUrl?`<img class="wish-thumb ${isAt?'atharva-t':''}" src="${w.photoUrl}" onerror="this.style.display='none'" />`
-          :`<div class="wish-thumb ${isAt?'atharva-t':''}" style="background:${isAt?'var(--blue-pale)':'var(--pink-pale)'};display:flex;align-items:center;justify-content:center;font-size:1.5rem;">${isAt?'⭐':'🌸'}</div>`}
-        <div><div class="wish-sender-name">${w.pname||'Anonymous'}</div><span class="wish-for-label ${forClass}">For ${forTxt}</span></div>
-      </div>
-      <div class="wish-body">"${w.text}"</div>
-      <div class="wish-ts">${new Date(w.ts).toLocaleString()}</div>
-    </div>`;}).join('');
+  c.innerHTML=wishes.slice().reverse().map(function(w){
+    var wid=w.id||('w_'+w.ts);
+    var isAt=w.for==='atharva',isBoth=w.for==='both';
+    var forTxt=isBoth?'Both 💕':isAt?'Atharva ⭐':'Anagha 🌸';
+    var forClass=isBoth?'b-label':isAt?'at-label':'a-label';
+    var cardClass=isBoth?'for-both':isAt?'for-atharva':'for-anagha';
+    var typeLabel=w.type==='blessing'?'🙏 Blessing':w.type==='prediction'?'🔮 Prediction':'💫 Wish';
+    var typePill=w.type==='blessing'?'type-blessing':w.type==='prediction'?'type-prediction':'type-wish';
+    var publishBtn=w.published
+      ?('<span style="font-size:0.75rem;font-weight:800;color:#059669;">✅ Published</span>'
+        +'<button onclick="publishMemory(''+wid+'',true)" style="font-size:0.75rem;padding:5px 12px;border-radius:50px;border:1px solid #ddd;background:#f5f5f5;cursor:pointer;font-weight:700;margin-left:8px;">Unpublish</button>')
+      :('<span style="font-size:0.75rem;font-weight:700;color:#aaa;">Not published</span>'
+        +'<button onclick="publishMemory(''+wid+'',false)" style="font-size:0.75rem;padding:5px 14px;border-radius:50px;border:none;background:linear-gradient(135deg,#6EE7B7,#10B981);color:white;cursor:pointer;font-weight:800;margin-left:8px;">Publish</button>');
+    return '<div class="wish-card '+cardClass+'">'
+      +'<span class="wish-type-pill '+typePill+'">'+typeLabel+'</span>'
+      +'<div class="wish-card-header">'
+      +(w.photoUrl?'<img class="wish-thumb '+(isAt?'atharva-t':'')+'" src="'+w.photoUrl+'" onerror="this.style.display='none'" />'
+        :'<div class="wish-thumb '+(isAt?'atharva-t':'')+'" style="background:'+(isAt?'var(--blue-pale)':'var(--pink-pale)')+';display:flex;align-items:center;justify-content:center;font-size:1.5rem;">'+(isAt?'⭐':'🌸')+'</div>')
+      +'<div><div class="wish-sender-name">'+(w.pname||'Anonymous')+'</div>'
+      +'<span class="wish-for-label '+forClass+'">For '+forTxt+'</span></div>'
+      +'</div>'
+      +'<div class="wish-body">"'+w.text+'"</div>'
+      +'<div class="wish-ts">'+new Date(w.ts).toLocaleString()+'</div>'
+      +'<div style="margin-top:10px;display:flex;align-items:center;">'+publishBtn+'</div>'
+      +'</div>';
+  }).join('');
 }
+
+
 function filterWishes(mode,btn){
   wishFilterMode=mode;
   document.querySelectorAll('.filter-chip').forEach(b=>{b.className='filter-chip';});
@@ -1593,6 +1655,152 @@ function resetMemForm(){
     el('memWishBtn').innerHTML='💌 Send My Memory';
   }
   if(el('memWishDone')) el('memWishDone').style.display='none';
+}
+
+// ================================================================
+// WISH HELPERS — separate messages per child
+// ================================================================
+function anotherWish(){ resetWishForm(); }
+function anotherWishFor(who){
+  resetWishForm();
+  setWishFor(who);
+  // Update done prompt to hide the button for the child just selected
+  var prompt=el('wishDonePrompt');
+  if(prompt) prompt.style.display='none';
+}
+function resetMemFormFor(who){
+  resetMemForm();
+  setMemWishFor(who);
+}
+
+// ================================================================
+// STOP QUIZ
+// ================================================================
+function stopQuiz(){
+  if(!db)return;
+  if(!confirm('Stop the quiz now? Players will see their final scores.'))return;
+  db.ref('quizState').update({ended:true, started:false});
+  showToast('Quiz stopped. Players can now see final scores.');
+  el('btnNext').style.display='none';
+  el('btnStartQuiz').style.display='block';
+  el('btnStartQuiz').textContent='▶️ Restart Quiz';
+  clearInterval(adminTI);
+}
+
+// ================================================================
+// PUBLISH MEMORIES (admin controlled)
+// ================================================================
+function publishMemory(wishId, currently){
+  if(!db)return;
+  var newVal = !currently;
+  db.ref('wishes/'+wishId+'/published').set(newVal).then(function(){
+    showToast(newVal ? '✅ Memory published — visible to all!' : '👁 Memory unpublished');
+    // Re-render
+    db.ref('wishes').once('value').then(function(s){
+      var d=s.val()||{};
+      S.allWishes=Object.values(d).sort(function(a,b){return a.ts-b.ts;});
+      renderAdminWishes();
+    });
+  });
+}
+
+// Public memories wall — shown to all players
+function openMemoryWall(){
+  if(!db){showToast('Not connected');return;}
+  db.ref('wishes').orderByChild('published').equalTo(true).once('value').then(function(snap){
+    var wishes=Object.entries(snap.val()||{}).map(function(e){return Object.assign({id:e[0]},e[1]);});
+    if(!wishes.length){showToast('No published memories yet. Admin needs to publish some first.');return;}
+    showMemoryWallScreen(wishes);
+  });
+}
+
+function showMemoryWallScreen(wishes){
+  var overlay=el('memoryWallOverlay');
+  if(!overlay){
+    overlay=document.createElement('div');
+    overlay.id='memoryWallOverlay';
+    overlay.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;z-index:1800;background:var(--bg);overflow-y:auto;padding:16px;';
+    document.body.appendChild(overlay);
+  }
+  overlay.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">'
+    +'<div style="font-family:Playfair Display,serif;font-size:1.3rem;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">💌 Memory Wall</div>'
+    +'<button onclick="el('memoryWallOverlay').style.display='none'" style="background:var(--pink);color:white;border:none;border-radius:50px;padding:8px 16px;font-weight:800;cursor:pointer;">✕ Close</button>'
+    +'</div>'
+    +wishes.map(function(w){
+      var isAt=w.for==='atharva',isBoth=w.for==='both';
+      var forTxt=isBoth?'Both 💕':isAt?'Atharva ⭐':'Anagha 🌸';
+      return '<div class="wish-card '+(isBoth?'for-both':isAt?'for-atharva':'for-anagha')+'" style="margin-bottom:12px;">'
+        +'<div class="wish-card-header">'
+        +(w.photoUrl?'<img class="wish-thumb" src="'+w.photoUrl+'" onerror="this.style.display='none'" />'
+          :'<div class="wish-thumb" style="background:var(--pink-pale);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">'+(isAt?'⭐':'🌸')+'</div>')
+        +'<div><div class="wish-sender-name">'+w.pname+'</div>'
+        +'<span class="wish-for-label '+(isBoth?'b-label':isAt?'at-label':'a-label')+'">For '+forTxt+'</span></div></div>'
+        +'<div class="wish-body">"'+w.text+'"</div>'
+        +'</div>';
+    }).join('');
+  overlay.style.display='block';
+}
+
+// ================================================================
+// EXPORT MEMORIES AS IMAGE
+// ================================================================
+async function exportMemories(){
+  if(!db){showToast('Not connected');return;}
+  var snap=await db.ref('wishes').once('value');
+  var wishes=Object.values(snap.val()||{});
+  if(!wishes.length){showToast('No memories to export');return;}
+  showToast('Preparing export… this may take a moment');
+
+  // Build a printable HTML page and open in new tab
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8">'
+    +'<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Nunito:wght@700;800&display=swap" rel="stylesheet">'
+    +'<style>'
+    +'body{font-family:Nunito,sans-serif;background:#FFF5F9;padding:20px;}'
+    +'h1{font-family:Playfair Display,serif;text-align:center;background:linear-gradient(135deg,#FF6B9D,#C084FC,#60A5FA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;font-size:2rem;}'
+    +'.sub{text-align:center;color:#7C5C8A;margin-bottom:30px;font-size:0.9rem;letter-spacing:2px;text-transform:uppercase;}'
+    +'.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}'
+    +'.card{background:white;border-radius:20px;padding:20px;box-shadow:0 4px 20px rgba(255,107,157,0.15);break-inside:avoid;}'
+    +'.card.anagha{border-top:4px solid #FF6B9D;}'
+    +'.card.atharva{border-top:4px solid #60A5FA;}'
+    +'.card.both{border-top:4px solid #C084FC;}'
+    +'.photo{width:80px;height:80px;border-radius:50%;object-fit:cover;float:left;margin:0 14px 8px 0;border:3px solid #FFB3CC;}'
+    +'.name{font-weight:800;font-size:1rem;color:#2D1B33;}'
+    +'.for{font-size:0.7rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#FF6B9D;}'
+    +'.for.at{color:#60A5FA;}.for.both{color:#C084FC;}'
+    +'.type{font-size:0.7rem;font-weight:800;padding:2px 10px;border-radius:50px;background:rgba(255,107,157,0.1);color:#FF6B9D;margin-bottom:10px;display:inline-block;}'
+    +'.msg{font-family:Playfair Display,serif;font-style:italic;font-size:0.95rem;color:#2D1B33;line-height:1.6;clear:both;margin-top:8px;}'
+    +'.ts{font-size:0.7rem;color:#aaa;margin-top:10px;}'
+    +'@media print{body{background:white;}.card{box-shadow:none;border:1px solid #eee;}}'
+    +'</style></head><body>'
+    +'<h1>💌 Memories for Anagha & Atharva</h1>'
+    +'<div class="sub">A collection of wishes, blessings & predictions</div>'
+    +'<div class="grid">'
+    +wishes.map(function(w){
+      var isAt=w.for==='atharva',isBoth=w.for==='both';
+      var cls=isBoth?'both':isAt?'atharva':'anagha';
+      var forTxt=isBoth?'For Both 💕':isAt?'For Atharva ⭐':'For Anagha 🌸';
+      var forCls=isBoth?'for both':'for'+(isAt?' at':'');
+      var typeLabel=w.type==='blessing'?'🙏 Blessing':w.type==='prediction'?'🔮 Prediction':'💫 Wish';
+      return '<div class="card '+cls+'">'
+        +(w.photoUrl?'<img class="photo" src="'+w.photoUrl+'" onerror="this.remove()" />':'')
+        +'<div class="name">'+w.pname+'</div>'
+        +'<div class="for '+forCls+'">'+forTxt+'</div><br>'
+        +'<span class="type">'+typeLabel+'</span>'
+        +'<div class="msg">"'+w.text+'"</div>'
+        +'<div class="ts">'+new Date(w.ts).toLocaleDateString()+'</div>'
+        +'</div>';
+    }).join('')
+    +'</div>'
+    +'<div style="text-align:center;margin-top:40px;color:#aaa;font-size:0.8rem;">Print this page (Ctrl+P / Cmd+P) to save as PDF or print 🌸</div>'
+    +'</body></html>';
+
+  var blob=new Blob([html],{type:'text/html'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.target='_blank';
+  a.click();
+  setTimeout(function(){URL.revokeObjectURL(url);},5000);
+  showToast('✅ Export opened in new tab — use Print to save as PDF!');
 }
 
 // ================================================================
