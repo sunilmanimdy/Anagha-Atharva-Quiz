@@ -5,9 +5,59 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>🌸 Celebrating Anagha & Atharva</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+<script>
+// ---- Dynamic Firebase loader with 3 CDN fallbacks ----
+// Defined FIRST so it exists before any script onerror fires
+(function() {
+  var CDNS = [
+    'https://www.gstatic.com/firebasejs/9.22.0/',
+    'https://cdn.jsdelivr.net/npm/firebase@9.22.0/compat/',
+    'https://unpkg.com/firebase@9.22.0/compat/'
+  ];
+  var SCRIPTS = ['app', 'database'];
+  var cdnIdx = 0;
+
+  function loadFromCDN(idx) {
+    if(idx >= CDNS.length) {
+      // All CDNs failed — show error banner
+      window.addEventListener('DOMContentLoaded', function() {
+        var b = document.getElementById('firebaseErrorBanner');
+        if(b) b.style.display = 'block';
+      });
+      console.error('All Firebase CDNs failed');
+      return;
+    }
+    var base = CDNS[idx];
+    var loaded = 0;
+    var failed = false;
+
+    function tryNext() {
+      if(!failed) { failed=true; loadFromCDN(idx+1); }
+    }
+
+    SCRIPTS.forEach(function(name) {
+      var s = document.createElement('script');
+      // gstatic uses different filename pattern
+      if(idx === 0) {
+        s.src = base + 'firebase-' + name + '-compat.js';
+      } else {
+        s.src = base + 'firebase-' + name + '.js';
+      }
+      s.onload = function() {
+        loaded++;
+        console.log('Loaded firebase-' + name + ' from CDN ' + idx);
+      };
+      s.onerror = function() {
+        console.warn('Failed firebase-' + name + ' from CDN ' + idx + ', trying next CDN');
+        tryNext();
+      };
+      document.head.appendChild(s);
+    });
+  }
+
+  loadFromCDN(0);
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root {
@@ -265,6 +315,17 @@ label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;mar
 </head>
 <body>
 
+<!-- Firebase load error banner -->
+<div id="firebaseErrorBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;
+  background:#EE4444;color:white;padding:14px 16px;font-family:Nunito,sans-serif;font-weight:800;
+  font-size:0.9rem;text-align:center;line-height:1.6;">
+  ⚠️ Firebase scripts failed to load. Please check your internet connection and reload the page.
+  <br><span style="font-weight:400;font-size:0.8rem;">If this keeps happening, try opening in Chrome or Safari.</span>
+  <button onclick="location.reload()" style="margin-left:12px;padding:6px 16px;border-radius:50px;
+    border:2px solid white;background:transparent;color:white;font-weight:800;cursor:pointer;">
+    🔄 Reload
+  </button>
+</div>
 <div class="toast" id="toast"></div>
 
 <!-- ===== QUIZ PROJECTOR ===== -->
@@ -364,6 +425,7 @@ label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;mar
       <label>Admin Password</label><input type="text" id="fbAdminPass" placeholder="e.g. anagha2024" />
       <label>Question Timer (seconds)</label><input type="number" id="fbTimeLimit" value="15" min="5" max="60" />
       <button class="btn btn-primary" onclick="saveFirebaseConfig()">💾 Save &amp; Connect</button>
+      <button class="btn btn-outline" onclick="testFirebaseConnection()" style="margin-top:8px;">🔍 Test Connection</button>
       <div id="fbStatus" style="margin-top:10px;font-size:0.85rem;font-weight:700;text-align:center;"></div>
     </div>
 
@@ -396,6 +458,7 @@ label{font-weight:700;font-size:0.9rem;color:var(--text-light);display:block;mar
       <div class="section-title">Quiz Control</div>
       <div id="participantCount" class="participant-badge" style="display:flex;">👥 0 players joined</div>
       <div id="quizStatusBadge" style="margin:8px 0;font-size:0.85rem;font-weight:700;color:var(--text-light);">Status: Not started</div>
+      <div id="fbConnStatus" style="margin:4px 0;font-size:0.8rem;font-weight:700;color:#EE4444;">Firebase: Checking...</div>
       <div class="divider"></div>
       <div id="controlCurrentQ" style="background:var(--pink-pale);border-radius:14px;padding:14px;margin-bottom:12px;display:none;">
         <div class="q-number" id="controlQNum">Question 1</div>
@@ -588,15 +651,48 @@ const ls=(k,val)=>{try{localStorage.setItem(k,val);}catch(e){}};
 // FIREBASE
 // ================================================================
 function initFirebase(cfg){
+  // Guard: check Firebase SDK loaded
+  if(typeof firebase === 'undefined'){
+    var msg = 'Firebase SDK did not load. Check your internet connection and reload the page.';
+    showToast(msg);
+    var statusEl = el('fbConnStatus');
+    if(statusEl){ statusEl.textContent = 'Firebase SDK not loaded!'; statusEl.style.color='#EE4444'; }
+    var banner = el('firebaseErrorBanner');
+    if(banner) banner.style.display='block';
+    console.error(msg);
+    return false;
+  }
+  if(!cfg || !cfg.apiKey || !cfg.databaseURL){
+    var msg2 = 'Firebase config is incomplete - missing apiKey or databaseURL';
+    showToast(msg2);
+    console.error(msg2, cfg);
+    return false;
+  }
   try{
-    if(firebase.apps.length)firebase.app().delete();
+    if(firebase.apps.length) firebase.app().delete();
     firebase.initializeApp(cfg);
-    db=firebase.database();
-    try{storage=firebase.storage();}catch(e){storage=null;}
-    showToast('🔥 Firebase connected!');
+    db = firebase.database();
+    try{ storage=firebase.storage(); }catch(e){ storage=null; }
+    // Live connection status
+    db.ref('.info/connected').on('value', function(snap){
+      var connected = snap.val();
+      var statusEl = el('fbConnStatus');
+      if(statusEl){
+        statusEl.textContent = connected ? 'Firebase: Connected' : 'Firebase: Connecting...';
+        statusEl.style.color = connected ? '#059669' : '#FF9500';
+      }
+    });
     startListeners();
+    console.log('Firebase initialised successfully with project:', cfg.projectId);
     return true;
-  }catch(e){showToast('❌ '+e.message);return false;}
+  }catch(e){
+    var err = 'Firebase init error: ' + e.message;
+    showToast(err);
+    console.error(err, e);
+    var statusEl = el('fbConnStatus');
+    if(statusEl){ statusEl.textContent = 'Error: ' + e.message; statusEl.style.color='#EE4444'; }
+    return false;
+  }
 }
 function saveFirebaseConfig(){
   const cfg={apiKey:v('fbApiKey'),authDomain:v('fbAuthDomain'),databaseURL:v('fbDbUrl'),projectId:v('fbProjectId'),storageBucket:v('fbStorageBucket')};
@@ -660,13 +756,40 @@ function adminLogin(){
   const pass=v('adminPassInput');
   const stored=localStorage.getItem('fbPass')||'anagha2024';
   if(pass===stored||pass==='anagha2024'){
-    S.role='admin';showScreen('screenAdmin');
-    try{const c=JSON.parse(localStorage.getItem('fbConfig')||'{}');if(c.apiKey)initFirebase(c);}catch(e){}
+    S.role='admin';
+    showScreen('screenAdmin');
     loadLocalQ();
-  } else showToast('❌ Wrong password');
+    // Pre-fetch questions from DB into memory so Start Quiz works immediately
+    if(db){
+      db.ref('questions').once('value').then(function(snap){
+        var qs = snap.val();
+        if(qs && qs.length){
+          S.questions = qs;
+          showToast('Ready! ' + qs.length + ' questions loaded.');
+        } else {
+          showToast('Go to Questions tab to add and publish questions first.');
+        }
+      });
+    }
+  } else showToast('Wrong password - try anagha2024');
 }
 let localQ=[];
-function loadLocalQ(){try{localQ=JSON.parse(localStorage.getItem('localQ')||'[]');}catch(e){}renderAdminQ();}
+function loadLocalQ(){
+  try{ localQ=JSON.parse(localStorage.getItem('localQ')||'[]'); }catch(e){ localQ=[]; }
+  renderAdminQ();
+  // Also pull from DB to show what's already published
+  if(db && localQ.length===0){
+    db.ref('questions').once('value').then(function(snap){
+      var dbQ = snap.val();
+      if(dbQ && dbQ.length){
+        localQ = dbQ;
+        ls('localQ', JSON.stringify(localQ));
+        renderAdminQ();
+        showToast(dbQ.length + ' questions loaded from database');
+      }
+    });
+  }
+}
 function toggleAddQ(){const f=el('addQForm');f.style.display=f.style.display==='none'?'block':'none';}
 function saveQuestion(){
   const t=v('qText'),a=v('qA'),b=v('qB'),c=v('qC'),d=v('qD'),cor=v('qCorrect');
@@ -689,39 +812,100 @@ function renderAdminQ(){
     </div>`).join('');
 }
 function pushQuestionsToDb(){
-  if(!db){showToast('❌ Firebase not connected');return;}
-  if(!localQ.length){showToast('❌ No questions');return;}
-  db.ref('questions').set(localQ).then(()=>{showToast(`✅ ${localQ.length} questions published!`);S.questions=localQ;});
+  var btn = document.querySelector('button[onclick="pushQuestionsToDb()"]');
+  if(!db){
+    showToast('Firebase not connected - check Setup tab first');
+    if(el('fbConnStatus')) el('fbConnStatus').style.color='#EE4444';
+    return;
+  }
+  if(!localQ || !localQ.length){
+    showToast('No questions to publish - add questions first');
+    return;
+  }
+  if(btn){ btn.disabled=true; btn.textContent='Publishing...'; }
+  console.log('Publishing questions:', localQ.length, localQ);
+  // Verify DB is actually connected
+  db.ref('.info/connected').once('value').then(function(snap){
+    console.log('DB connected?', snap.val());
+    if(!snap.val()){
+      showToast('Firebase not reachable - check your internet connection');
+      if(btn){ btn.disabled=false; btn.textContent='Publish to Live Quiz'; }
+      return;
+    }
+    return db.ref('questions').set(localQ);
+  }).then(function(){
+    S.questions = localQ;
+    showToast(localQ.length + ' questions published successfully!');
+    if(btn){ btn.disabled=false; btn.textContent='Publish to Live Quiz'; }
+    // Verify by reading back
+    db.ref('questions').once('value').then(function(s){
+      var saved = s.val();
+      console.log('Verified - questions in DB:', saved ? saved.length : 0);
+    });
+  }).catch(function(e){
+    console.error('Publish error:', e);
+    showToast('Publish failed: ' + e.message + ' - check Firebase rules');
+    if(btn){ btn.disabled=false; btn.textContent='Publish to Live Quiz'; }
+  });
 }
 
 // ================================================================
 // QUIZ CONTROL
 // ================================================================
 function startQuiz(){
-  if(!db){showToast('❌ Firebase not connected');return;}
-  const run=()=>{
-    const tl=parseInt(localStorage.getItem('fbTL'))||S.timeLimit;
-    db.ref('quizState').set({started:true,ended:false,currentQ:0,questionStartTime:Date.now(),timeLimit:tl});
-    db.ref('answers/q0').remove();
-    showToast('🚀 Quiz started!');
-    el('btnStartQuiz').style.display='none';el('btnNext').style.display='block';
-    S.currentQ=0;startAdminTimer(0,tl);
-  };
-  if(!S.questions.length)db.ref('questions').once('value').then(s=>{S.questions=s.val()||[];if(!S.questions.length){showToast('❌ Publish questions first');return;}run();});
-  else run();
+  if(!db){ showToast('Firebase not connected - check Setup tab'); return; }
+  const btn = el('btnStartQuiz');
+  btn.disabled = true;
+  btn.textContent = 'Starting...';
+  db.ref('questions').once('value').then(function(snap){
+    var qs = snap.val();
+    if(!qs || !Array.isArray(qs) || qs.length === 0){
+      showToast('No questions found - go to Questions tab and click Publish first');
+      btn.disabled = false;
+      btn.textContent = 'Start Quiz';
+      return;
+    }
+    S.questions = qs;
+    var tl = parseInt(localStorage.getItem('fbTL')) || S.timeLimit || 15;
+    db.ref('quizState').set({started:true, ended:false, currentQ:0, questionStartTime:Date.now(), timeLimit:tl});
+    db.ref('answers').child('q0').remove();
+    showToast('Quiz started!');
+    btn.style.display = 'none';
+    btn.disabled = false;
+    btn.textContent = 'Start Quiz';
+    el('btnNext').style.display = 'block';
+    S.currentQ = 0;
+    startAdminTimer(0, tl);
+    el('controlCurrentQ').style.display = 'block';
+    el('controlQNum').textContent = 'Question 1 of ' + S.questions.length;
+    el('controlQText').textContent = S.questions[0].text;
+    el('controlProgress').style.width = (1/S.questions.length*100) + '%';
+  }).catch(function(e){
+    showToast('Error: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = 'Start Quiz';
+  });
 }
 function nextQuestion(){
-  if(!db)return;
-  const next=S.currentQ+1,tl=parseInt(localStorage.getItem('fbTL'))||S.timeLimit;
-  if(next>=S.questions.length){
-    db.ref('quizState').update({ended:true,started:false});
-    showToast('🏁 Quiz ended!');
-    el('btnNext').style.display='none';el('btnStartQuiz').style.display='block';el('btnStartQuiz').textContent='▶️ Restart Quiz';
+  if(!db) return;
+  var next = S.currentQ + 1;
+  var tl = parseInt(localStorage.getItem('fbTL')) || S.timeLimit || 15;
+  if(next >= S.questions.length){
+    db.ref('quizState').update({ended:true, started:false});
+    showToast('Quiz ended! Players can now see final scores.');
+    el('btnNext').style.display = 'none';
+    el('btnStartQuiz').style.display = 'block';
+    el('btnStartQuiz').textContent = 'Restart Quiz';
     return;
   }
-  db.ref('answers/q'+next).remove();
-  db.ref('quizState').update({currentQ:next,questionStartTime:Date.now(),timeLimit:tl});
-  S.currentQ=next;startAdminTimer(next,tl);showToast('⏭ Q'+(next+1)+' started');
+  db.ref('answers').child('q'+next).remove();
+  db.ref('quizState').update({currentQ:next, questionStartTime:Date.now(), timeLimit:tl});
+  S.currentQ = next;
+  startAdminTimer(next, tl);
+  showToast('Question ' + (next+1) + ' started');
+  el('controlQNum').textContent = 'Question ' + (next+1) + ' of ' + S.questions.length;
+  el('controlQText').textContent = S.questions[next].text;
+  el('controlProgress').style.width = ((next+1)/S.questions.length*100) + '%';
 }
 function resetQuiz(){
   if(!db)return;if(!confirm('Reset everything?'))return;
@@ -1099,6 +1283,35 @@ function generateQR(){
 function showToast(msg){const t=el('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 
 // ================================================================
+// FIREBASE DIAGNOSTICS
+// ================================================================
+function testFirebaseConnection(){
+  var status = el('fbStatus');
+  if(!db){
+    status.innerHTML = '<span style="color:#EE4444">No Firebase instance. Click Save & Connect first.</span>';
+    return;
+  }
+  status.innerHTML = '<span style="color:#FF9500">Testing connection...</span>';
+  db.ref('.info/connected').once('value').then(function(snap){
+    if(snap.val()){
+      status.innerHTML = '<span style="color:#059669">Connected to Firebase!</span>';
+      // Also check if questions node is accessible
+      return db.ref('questions').once('value');
+    } else {
+      status.innerHTML = '<span style="color:#EE4444">Not connected - check your Database URL and internet</span>';
+    }
+  }).then(function(snap){
+    if(!snap) return;
+    var q = snap.val();
+    var extra = q && q.length ? ' | ' + q.length + ' questions in DB' : ' | No questions in DB yet';
+    el('fbStatus').innerHTML = '<span style="color:#059669">Connected!</span><span style="color:var(--text-light)">' + extra + '</span>';
+  }).catch(function(e){
+    status.innerHTML = '<span style="color:#EE4444">Error: ' + e.message + '</span>';
+    console.error('Firebase test error:', e);
+  });
+}
+
+// ================================================================
 // HARDCODED FIREBASE CONFIG
 // Players never need to configure anything — Firebase loads for everyone automatically.
 // Admin can still override via the Setup tab if needed.
@@ -1106,9 +1319,9 @@ function showToast(msg){const t=el('toast');t.textContent=msg;t.classList.add('s
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyA25tLNF9OI1LdBp52qb8wOrsVJcsXg9Qg",
   authDomain: "celebrating-anagha.firebaseapp.com",
-  databaseURL: "https://celebrating-anagha-default-rtdb.firebaseio.com",
+  databaseURL: "https://celebrating-anagha-default-rtdb.firebaseio.com", // get this from Firebase Console > Realtime Database
   projectId: "celebrating-anagha",
-  storageBucket: "", // leave blank — using DB fallback for photos
+  storageBucket: "",
 };
 const ADMIN_PASSWORD = "anagha2024"; // change this to your preferred password
 const QUESTION_TIME_LIMIT = 15; // seconds per question
@@ -1116,20 +1329,17 @@ const QUESTION_TIME_LIMIT = 15; // seconds per question
 // ================================================================
 // INIT
 // ================================================================
-window.addEventListener('DOMContentLoaded',()=>{
+window.addEventListener('DOMContentLoaded', function() {
   generateQR();
 
-  // Auto-connect Firebase for ALL devices using hardcoded config
-  // (overridden by localStorage if admin has saved a different config)
-  const savedConfig = localStorage.getItem('fbConfig');
-  let configToUse = FIREBASE_CONFIG;
+  // Pre-fill admin setup fields
+  var savedConfig = localStorage.getItem('fbConfig');
+  var configToUse = FIREBASE_CONFIG;
   try {
-    const parsed = JSON.parse(savedConfig || '{}');
+    var parsed = JSON.parse(savedConfig || '{}');
     if (parsed.apiKey) configToUse = parsed;
   } catch(e) {}
-  initFirebase(configToUse);
 
-  // Pre-fill admin setup tab with hardcoded values
   if(el('fbApiKey')) el('fbApiKey').value = configToUse.apiKey || '';
   if(el('fbAuthDomain')) el('fbAuthDomain').value = configToUse.authDomain || '';
   if(el('fbDbUrl')) el('fbDbUrl').value = configToUse.databaseURL || '';
@@ -1138,7 +1348,32 @@ window.addEventListener('DOMContentLoaded',()=>{
   if(el('fbAdminPass')) el('fbAdminPass').value = localStorage.getItem('fbPass') || ADMIN_PASSWORD;
   if(el('fbTimeLimit')) el('fbTimeLimit').value = localStorage.getItem('fbTL') || QUESTION_TIME_LIMIT;
 
-  el('wishText').addEventListener('input',()=>{el('charCount').textContent=el('wishText').value.length;});
+  if(el('wishText')) el('wishText').addEventListener('input', function() {
+    el('charCount').textContent = el('wishText').value.length;
+  });
+
+  // Wait for Firebase SDK to load (it loads asynchronously from CDN)
+  // Poll every 200ms for up to 10 seconds
+  var attempts = 0;
+  var maxAttempts = 50;
+  var pollInterval = setInterval(function() {
+    attempts++;
+    if(typeof firebase !== 'undefined' && typeof firebase.database !== 'undefined') {
+      clearInterval(pollInterval);
+      console.log('Firebase SDK ready after ' + (attempts * 200) + 'ms, initialising...');
+      initFirebase(configToUse);
+    } else if(attempts >= maxAttempts) {
+      clearInterval(pollInterval);
+      console.error('Firebase SDK never loaded after 10 seconds');
+      var banner = el('firebaseErrorBanner');
+      if(banner) banner.style.display = 'block';
+      var statusEl = el('fbConnStatus');
+      if(statusEl) {
+        statusEl.textContent = 'Firebase SDK failed to load. Check internet and reload.';
+        statusEl.style.color = '#EE4444';
+      }
+    }
+  }, 200);
 });
 </script>
 </body>
